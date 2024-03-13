@@ -91,6 +91,8 @@ public:
 
     void rdp_input_mouse(int device_flags, int x, int y) override {(void) device_flags; (void) x; (void) y; }
 
+    void rdp_input_mouse_ex(uint16_t device_flags, uint16_t x, uint16_t y) override {(void) device_flags; (void) x; (void) y; }
+
     void rdp_input_synchronize(KeyLocks locks) override { (void)locks; }
 
     void rdp_input_invalidate(Rect r) override { (void) r; }

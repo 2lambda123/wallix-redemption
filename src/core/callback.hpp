@@ -43,7 +43,8 @@ enum : uint16_t {
     // RDP_INPUT_VIRTKEY              = 2,
     RDP_INPUT_SCANCODE             = 4,
     RDP_INPUT_UNICODE              = 5,
-    RDP_INPUT_MOUSE                = 0x8001
+    RDP_INPUT_MOUSE                = 0x8001,
+    RDP_INPUT_MOUSE_EX             = 0x8002
 };
 
 enum : uint16_t {
@@ -69,6 +70,7 @@ struct RdpInput : private noncopyable
     virtual void rdp_input_scancode(KbdFlags flags, Scancode scancode, uint32_t event_time, Keymap const& keymap) = 0;
     virtual void rdp_input_unicode(KbdFlags flag, uint16_t unicode) { (void)unicode; (void)flag; }
     virtual void rdp_input_mouse(int device_flags, int x, int y) = 0;
+    virtual void rdp_input_mouse_ex(uint16_t device_flags, uint16_t x, uint16_t y) = 0;
     virtual void rdp_input_synchronize(KeyLocks locks) = 0;
     virtual void rdp_input_invalidate(Rect r) = 0;
     virtual void rdp_input_invalidate2(array_view<Rect> vr) {
@@ -94,4 +96,3 @@ struct Callback : RdpInput
 {
     virtual void send_to_mod_channel(CHANNELS::ChannelNameId front_channel_name, InStream & chunk, std::size_t length, uint32_t flags) = 0;
 };
-

@@ -99,6 +99,11 @@ void WidgetTestMod::rdp_input_mouse(int device_flags, int x, int y)
     this->d->screen.rdp_input_mouse(device_flags, x, y);
 }
 
+void WidgetTestMod::rdp_input_mouse_ex(uint16_t device_flags, uint16_t x, uint16_t y)
+{
+    this->d->screen.rdp_input_mouse_ex(device_flags, x, y);
+}
+
 void WidgetTestMod::rdp_input_scancode(
     KbdFlags flags, Scancode scancode, uint32_t event_time, Keymap const& keymap)
 {

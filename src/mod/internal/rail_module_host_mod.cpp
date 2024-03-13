@@ -153,6 +153,14 @@ void RailModuleHostMod::rdp_input_mouse(int device_flags, int x, int y)
     }
 }
 
+void RailModuleHostMod::rdp_input_mouse_ex(uint16_t device_flags, uint16_t x, uint16_t y)
+{
+    this->old_mouse_x = x;
+    this->old_mouse_y = y;
+
+    this->screen.rdp_input_mouse_ex(device_flags, x, y);
+}
+
 // Callback
 
 void RailModuleHostMod::send_to_mod_channel(

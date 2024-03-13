@@ -103,6 +103,8 @@ public:
 
     void rdp_input_mouse(int device_flags, int x, int y) override;
 
+    void rdp_input_mouse_ex(uint16_t device_flags, uint16_t x, uint16_t y) override;
+
     void rdp_gdi_down() override {}
 
     void rdp_gdi_up_and_running() override;

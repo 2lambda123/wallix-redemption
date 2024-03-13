@@ -726,6 +726,18 @@ test-run tests/acl/test_mod_wrapper :
   <library>src/gdi/protected_graphics.o
   <library>src/gdi/text_metrics.o
   <library>src/keyboard/keymap.o
+  <library>src/mod/internal/close_mod.o
+  <library>src/mod/internal/copy_paste.o
+  <library>src/mod/internal/rail_mod_base.o
+  <library>src/mod/internal/widget/button.o
+  <library>src/mod/internal/widget/composite.o
+  <library>src/mod/internal/widget/image.o
+  <library>src/mod/internal/widget/label.o
+  <library>src/mod/internal/widget/multiline.o
+  <library>src/mod/internal/widget/screen.o
+  <library>src/mod/internal/widget/tooltip.o
+  <library>src/mod/internal/widget/wab_close.o
+  <library>src/mod/internal/widget/widget_rect.o
   <library>src/system/linux/system/i18n/message_translator_gettext.o
   <library>src/utils/bitmap.o
   <library>src/utils/bitmap_data_allocator.o

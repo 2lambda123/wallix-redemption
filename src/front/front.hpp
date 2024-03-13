@@ -2451,11 +2451,12 @@ public:
                 {
                     FastPath::MouseExEvent_Recv me(cfpie.payload, byte);
 
-                    LOG(LOG_WARNING,
-                        "Front::Received unexpected fast-path PDU, extended mouse pointerFlags=0x%X, xPos=0x%X, yPos=0x%X",
+                    LOG_IF(bool(this->verbose & Verbose::basic_trace3), LOG_INFO,
+                        "Front::incoming: Received Fast-Path PDU, extended mouse pointerFlags=0x%X, xPos=0x%X, yPos=0x%X",
                         me.pointerFlags, me.xPos, me.yPos);
 
                     if (this->state == FRONT_UP_AND_RUNNING) {
+                        cb.rdp_input_mouse_ex(me.pointerFlags, me.xPos, me.yPos);
                         this->has_user_activity = true;
                     }
 
@@ -3255,6 +3256,7 @@ private:
                 // Slow/Fast-path
                 input_caps.inputFlags          =
                     INPUT_FLAG_SCANCODES
+                    | INPUT_FLAG_MOUSEX
                     | (this->ini.get<cfg::globals::unicode_keyboard_event_support>() ? INPUT_FLAG_UNICODE : 0)
                     | (this->fastpath_support ? (INPUT_FLAG_FASTPATH_INPUT | INPUT_FLAG_FASTPATH_INPUT2) : 0);
                 input_caps.keyboardLayout      = 0;
@@ -4103,10 +4105,12 @@ private:
                         {
                             SlowPath::ExtendedMouseEvent_Recv me(ie.payload);
 
-                            LOG(LOG_WARNING, "Front::process_data: Unexpected Slow-Path INPUT_EVENT_MOUSEX eventTime=%u pointerFlags=0x%04X, xPos=%u, yPos=%u)",
+                            LOG_IF(bool(this->verbose & Verbose::basic_trace3), LOG_INFO,
+                                "Front::process_data: Slow-Path INPUT_EVENT_MOUSEEX eventTime=%u pointerFlags=0x%04X, xPos=%u, yPos=%u)",
                                 ie.eventTime, me.pointerFlags, me.xPos, me.yPos);
 
                             if (this->state == FRONT_UP_AND_RUNNING) {
+                                cb.rdp_input_mouse_ex(me.pointerFlags, me.xPos, me.yPos);
                                 this->has_user_activity = true;
                             }
 

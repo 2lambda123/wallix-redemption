@@ -339,6 +339,11 @@ private:
         }
     }
 
+    void rdp_input_mouse_ex(uint16_t device_flags, uint16_t x, uint16_t y) override
+    {
+        this->get_mod().rdp_input_mouse_ex(device_flags, x, y);
+    }
+
     void rdp_input_unicode(KbdFlags flag, uint16_t unicode) override
     {
         this->get_mod().rdp_input_unicode(flag, unicode);
