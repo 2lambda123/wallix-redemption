@@ -107,8 +107,6 @@ std::unique_ptr<char[]> crypto_cert_fingerprint(X509 const* xcert)
     const char* ip_address,
     int port)
 {
-    X509* px509 = &x509;
-
     // TODO("Before to have default value certificate doesn't exists")
     bool bad_certificate_path = false;
     error_type checking_exception = NO_ERROR;
@@ -186,7 +184,7 @@ std::unique_ptr<char[]> crypto_cert_fingerprint(X509 const* xcert)
                 snprintf(tmpfilename, sizeof(tmpfilename) - 1, "/tmp/rdp,%s,%d,X509,XXXXXX", ip_address, port);
                 tmpfilename[sizeof(tmpfilename) - 1] = 0;
                 int tmpfd = ::mkostemp(tmpfilename, O_RDWR|O_CREAT);
-                PEM_write_X509(File(::fdopen(tmpfd, "w+")).get(), px509);
+                PEM_write_X509(File(::fdopen(tmpfd, "w+")).get(), &x509);
 
                 certificate_matches = file_equals(filename, tmpfilename);
                 ::unlink(tmpfilename);
@@ -199,9 +197,9 @@ std::unique_ptr<char[]> crypto_cert_fingerprint(X509 const* xcert)
                 LOG(LOG_INFO, "TLS::X509 existing::subject=%s", subject_existing.get());
                 LOG(LOG_INFO, "TLS::X509 existing::fingerprint=%s", fingerprint_existing.get());
 
-                const std::unique_ptr<char[]> issuer               = crypto_print_name(X509_get_issuer_name(px509));
-                const std::unique_ptr<char[]> subject              = crypto_print_name(X509_get_subject_name(px509));
-                const std::unique_ptr<char[]> fingerprint          = crypto_cert_fingerprint(px509);
+                const std::unique_ptr<char[]> issuer               = crypto_print_name(X509_get_issuer_name(&x509));
+                const std::unique_ptr<char[]> subject              = crypto_print_name(X509_get_subject_name(&x509));
+                const std::unique_ptr<char[]> fingerprint          = crypto_cert_fingerprint(&x509);
 
                 if (!certificate_matches
                     // Read certificate fields to ensure change is not irrelevant
@@ -254,7 +252,7 @@ std::unique_ptr<char[]> crypto_cert_fingerprint(X509 const* xcert)
 
             LOG(LOG_INFO, "Dumping X509 peer certificate: \"%s\"", filename);
             if (File fp{filename, "w+"}) {
-                PEM_write_X509(fp.get(), px509);
+                PEM_write_X509(fp.get(), &x509);
                 fp.close();
                 LOG(LOG_INFO, "Dumped X509 peer certificate");
                 server_notifier.server_cert_status(ServerNotifier::Status::CertCreate);
@@ -309,7 +307,6 @@ std::unique_ptr<char[]> crypto_cert_fingerprint(X509 const* xcert)
         // Finally, there's the supertype X509_INFO, which can contain a CRL, a certificate
         // and a corresponding private key.
 
-        X509* xcert = px509;
         X509_STORE* cert_ctx = X509_STORE_new();
 
         // OpenSSL_add_all_algorithms(3SSL)
@@ -337,7 +334,7 @@ std::unique_ptr<char[]> crypto_cert_fingerprint(X509 const* xcert)
 
         X509_STORE_CTX* csc = X509_STORE_CTX_new();
         X509_STORE_set_flags(cert_ctx, 0);
-        X509_STORE_CTX_init(csc, cert_ctx, xcert, nullptr);
+        X509_STORE_CTX_init(csc, cert_ctx, &x509, nullptr);
         X509_verify_cert(csc);
         X509_STORE_CTX_free(csc);
 
@@ -348,13 +345,13 @@ std::unique_ptr<char[]> crypto_cert_fingerprint(X509 const* xcert)
         // ASN1_STRING * entry_data = X509_NAME_ENTRY_get_data(entry);
         // void * subject_alt_names = X509_get_ext_d2i(xcert, NID_subject_alt_name, 0, 0);
 
-        X509_NAME * issuer_name = X509_get_issuer_name(xcert);
+        X509_NAME * issuer_name = X509_get_issuer_name(&x509);
         LOG(LOG_INFO, "TLS::X509::issuer=%s", crypto_print_name(issuer_name).get());
 
-        X509_NAME * subject_name = X509_get_subject_name(xcert);
+        X509_NAME * subject_name = X509_get_subject_name(&x509);
         LOG(LOG_INFO, "TLS::X509::subject=%s", crypto_print_name(subject_name).get());
 
-        LOG(LOG_INFO, "TLS::X509::fingerprint=%s", crypto_cert_fingerprint(xcert).get());
+        LOG(LOG_INFO, "TLS::X509::fingerprint=%s", crypto_cert_fingerprint(&x509).get());
     }
     else {
         throw Error(checking_exception);
