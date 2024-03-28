@@ -103,7 +103,6 @@ std::unique_ptr<char[]> crypto_cert_fingerprint(X509 const* xcert)
     bool ensure_server_certificate_exists,
     ServerNotifier& server_notifier,
     const char* certif_path,
-    std::string* error_message,
     const char* ip_address,
     int port)
 {
@@ -115,9 +114,6 @@ std::unique_ptr<char[]> crypto_cert_fingerprint(X509 const* xcert)
     LOG(LOG_INFO, "certificate directory is: '%s'", certif_path);
     if (recursive_create_directory(certif_path, S_IRWXU|S_IRWXG, -1) != 0) {
         LOG(LOG_WARNING, "Failed to create certificate directory: %s ", certif_path);
-        if (error_message) {
-            str_assign(*error_message, "Failed to create certificate directory: \"", certif_path, "\"\n");
-        }
         bad_certificate_path = true;
 
         server_notifier.server_cert_status(ServerNotifier::Status::CertError, strerror(errno));
@@ -142,9 +138,6 @@ std::unique_ptr<char[]> crypto_cert_fingerprint(X509 const* xcert)
             default: {
                 // failed to open stored certificate file
                 LOG(LOG_WARNING, "Failed to open stored certificate: \"%s\"", filename);
-                if (error_message) {
-                    str_assign(*error_message, "Failed to open stored certificate: \"", filename, "\"\n");
-                }
                 server_notifier.server_cert_status(ServerNotifier::Status::CertError, strerror(errno));
                 checking_exception = ERR_TRANSPORT_TLS_CERTIFICATE_INACCESSIBLE;
             }
@@ -152,10 +145,6 @@ std::unique_ptr<char[]> crypto_cert_fingerprint(X509 const* xcert)
             case ENOENT:
             {
                 LOG(LOG_WARNING, "There's no stored certificate: \"%s\"", filename);
-                if (error_message) {
-                    str_assign(*error_message, "There's no stored certificate: \"", filename, "\"\n");
-                }
-
                 if (ensure_server_certificate_exists) {
                     server_notifier.server_cert_status(ServerNotifier::Status::CertFailure);
                     checking_exception = ERR_TRANSPORT_TLS_CERTIFICATE_MISSED;
@@ -171,10 +160,6 @@ std::unique_ptr<char[]> crypto_cert_fingerprint(X509 const* xcert)
             if (!px509Existing) {
                 // failed to read stored certificate file
                 LOG(LOG_WARNING, "Failed to read stored certificate: \"%s\"", filename);
-                if (error_message) {
-                    str_assign(*error_message, "Failed to read stored certificate: \"", filename, "\"\n");
-                }
-
                 server_notifier.server_cert_status(ServerNotifier::Status::CertError, strerror(errno));
                 checking_exception = ERR_TRANSPORT_TLS_CERTIFICATE_CORRUPTED;
             }
@@ -214,22 +199,13 @@ std::unique_ptr<char[]> crypto_cert_fingerprint(X509 const* xcert)
                     || ((!subject_existing || !subject) && (subject_existing != subject))
                     // All of subject_existing and subject are not null
                     || (subject && (0 != strcmp(subject_existing.get(), subject.get())))
-                    || (0 != strcmp(fingerprint_existing.get(), fingerprint.get())))) {
-                    if (error_message) {
-                        char buff[256];
-                        snprintf(buff, sizeof(buff), "The certificate for host %s:%d has changed!",
-                                    ip_address, port);
-                        *error_message = buff;
-                    }
+                    || (0 != strcmp(fingerprint_existing.get(), fingerprint.get())))
+                ) {
                     LOG(LOG_WARNING, "The certificate for host %s:%d has changed Previous=\"%s\" \"%s\" \"%s\", New=\"%s\" \"%s\" \"%s\"",
                         ip_address, port,
                         issuer_existing.get(), subject_existing.get(),
                         fingerprint_existing.get(), issuer.get(),
                         subject.get(), fingerprint.get());
-                    if (error_message) {
-                        str_assign(*error_message, "The certificate has changed: \"", filename, "\"\n");
-                    }
-
                     if (ensure_server_certificate_match) {
                         server_notifier.server_cert_status(ServerNotifier::Status::CertFailure);
                         checking_exception = ERR_TRANSPORT_TLS_CERTIFICATE_CHANGED;
@@ -355,10 +331,6 @@ std::unique_ptr<char[]> crypto_cert_fingerprint(X509 const* xcert)
     }
     else {
         throw Error(checking_exception);
-    }
-
-    if (error_message) {
-        error_message->clear();
     }
 
     return true;
