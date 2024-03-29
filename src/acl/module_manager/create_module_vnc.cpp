@@ -47,8 +47,7 @@ struct VncData
 
     VncData(EventContainer & events,
         Inifile & ini, SocketTransport::Name name, unique_fd sck,
-        SocketTransport::Verbose verbose,
-        std::string * error_message
+        SocketTransport::Verbose verbose
     )
     : events_guard(events)
     , socket_transport( name, std::move(sck)
@@ -58,7 +57,7 @@ struct VncData
                       , ini.get<cfg::all_target_mod::connection_retry_count>()
                       , ini.get<cfg::all_target_mod::tcp_user_timeout>()
                       , std::chrono::milliseconds(ini.get<cfg::globals::mod_recv_timeout>())
-                      , verbose, error_message)
+                      , verbose)
     {}
 
     ~VncData() = default;
@@ -98,7 +97,6 @@ public:
         gdi::GraphicApi & drawable,
         Inifile & ini, SocketTransport::Name name, unique_fd sck,
         SocketTransport::Verbose verbose,
-        std::string * error_message,
         EventContainer& events,
         SessionLogApi& session_log,
         const char* username,
@@ -120,7 +118,7 @@ public:
         VNCVerbose vnc_verbose,
         VNCMetrics * metrics
         )
-    : VncData(events, ini, name, std::move(sck), verbose, error_message)
+    : VncData(events, ini, name, std::move(sck), verbose)
     , mod_vnc(
           this->get_transport(), drawable,
           events, username, password, front, front_width, front_height,
@@ -189,7 +187,6 @@ ModPack create_mod_vnc(
         "VNC Target"_sck_name,
         std::move(client_sck),
         safe_cast<SocketTransport::Verbose>(ini.get<cfg::debug::sck_mod>()),
-        nullptr,
         events,
         session_log,
         ini.get<cfg::globals::target_user>().c_str(),

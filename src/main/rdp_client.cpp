@@ -197,7 +197,7 @@ int main(int argc, char** argv)
         target_port, connection_establishment_timeout_ms, connection_retry_count,
         std::chrono::seconds::zero(),
         std::chrono::seconds(1),
-        safe_cast<SocketTransport::Verbose>(uint32_t(verbose >> 32)), nullptr);
+        safe_cast<SocketTransport::Verbose>(uint32_t(verbose >> 32)));
 
     ScopedSslInit scoped_ssl;
 

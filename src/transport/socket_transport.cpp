@@ -51,12 +51,11 @@ SocketTransport::SocketTransport(
     int connection_retry_count,
     std::chrono::milliseconds tcp_user_timeout,
     std::chrono::milliseconds recv_timeout,
-    Verbose verbose, std::string * error_message
+    Verbose verbose
 )
     : sck(sck.release())
     , name(name.name)
     , port(port)
-    , error_message(error_message)
     , tls(nullptr)
     , connection_establishment_timeout(connection_establishment_timeout)
     , connection_retry_count(connection_retry_count)
@@ -126,13 +125,13 @@ Transport::TlsResult SocketTransport::enable_client_tls(ServerNotifier & server_
         case TLSState::Uninit:
             LOG(LOG_INFO, "Client TLS start");
             this->tls = std::make_unique<TLSContext>();
-            if (!this->tls->enable_client_tls_start(this->sck, this->error_message, tls_client_params)) {
+            if (!this->tls->enable_client_tls_start(this->sck, tls_client_params)) {
                 return Transport::TlsResult::Fail;
             }
             this->tls_state = TLSState::Want;
             [[fallthrough]];
         case TLSState::Want: {
-            Transport::TlsResult ret = this->tls->enable_client_tls_loop(this->error_message);
+            Transport::TlsResult ret = this->tls->enable_client_tls_loop();
             switch (ret) {
                 case TlsResult::Fail:
                     this->tls.reset();

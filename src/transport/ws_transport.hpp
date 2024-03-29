@@ -42,7 +42,7 @@ public:
         Name name, unique_fd sck, chars_view ip_address, int port,
         std::chrono::milliseconds connection_establishment_timeout, int connection_retry_count,
         std::chrono::milliseconds tcp_user_timeout, std::chrono::milliseconds recv_timeout, UseTls use_tls, TlsOptions tls_options,
-        Verbose verbose, std::string * error_message = nullptr);
+        Verbose verbose);
 
     bool disconnect() override;
 

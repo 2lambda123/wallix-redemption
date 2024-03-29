@@ -104,9 +104,8 @@ public:
 
 private:
     // RDP
-    CHANNELS::ChannelDefArray   cl;
-    std::string          _error;
-    std::string   error_message;
+    CHANNELS::ChannelDefArray cl;
+    std::string _error;
     std::unique_ptr<Random> gen;
     std::array<uint8_t, 28> server_auto_reconnect_packet_ref;
     Inifile ini;
@@ -526,8 +525,7 @@ public:
                     connection_retry_count,
                     std::chrono::milliseconds::zero(),
                     std::chrono::seconds(1),
-                    SocketTransport::Verbose(),
-                    &this->error_message);
+                    SocketTransport::Verbose());
 
                 if (this->config.is_full_capturing) {
                     this->_socket_in_recorder = std::move(this->socket);
