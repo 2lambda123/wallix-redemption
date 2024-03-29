@@ -185,7 +185,7 @@ int main(int argc, char** argv)
         is_vnc ? "VNC Server"_sck_name : "RDP Server"_sck_name,
         std::move(sck), target_device, target_port,
         std::chrono::milliseconds(1000), std::chrono::milliseconds::zero(), std::chrono::seconds(1),
-        safe_cast<SocketTransport::Verbose>(uint32_t(verbose >> 32)), nullptr);
+        safe_cast<SocketTransport::Verbose>(uint32_t(verbose >> 32)));
 
     ScopedSslInit scoped_ssl;
 
