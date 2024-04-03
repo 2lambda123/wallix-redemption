@@ -1027,10 +1027,6 @@ void config_spec_definition(Writer && W)
         W.member(no_ini_no_gui, proxy_to_sesman, no_reset_back_to_selector, L, type_<types::u16>(), names{.all="opt_height", .sesman="height"}, set(600));
         W.member(no_ini_no_gui, proxy_to_sesman, no_reset_back_to_selector, L, type_<types::u16>(), names{.all="opt_width", .sesman="width"}, set(800));
 
-        // auth_error_message is left as std::string type because SocketTransport and ReplayMod
-        // take it as argument on constructor and modify it as a std::string
-        W.member(no_ini_no_gui, no_sesman, L, type_<std::string>(), names{"auth_error_message"});
-
         W.member(no_ini_no_gui, sesman_to_proxy, no_reset_back_to_selector, L, type_<bool>(), names{"selector"}, set(false));
         W.member(no_ini_no_gui, sesman_rw, reset_back_to_selector, L, type_<types::unsigned_>(), names{"selector_current_page"}, set(1));
         W.member(no_ini_no_gui, proxy_to_sesman, reset_back_to_selector, L, type_<std::string>(), names{"selector_device_filter"});

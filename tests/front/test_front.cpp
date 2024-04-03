@@ -34,15 +34,15 @@
 // Uncomment the code block below to generate testing data.
 //include "transport/socket_transport.hpp"
 #include "core/client_info.hpp"
+#include "core/events.hpp"
 #include "utils/theme.hpp"
 #include "utils/redirection_info.hpp"
+#include "utils/error_message_ctx.hpp"
 
 #include "mod/null/null.hpp"
 #include "mod/rdp/new_mod_rdp.hpp"
 #include "mod/rdp/rdp_params.hpp"
 #include "mod/rdp/mod_rdp_factory.hpp"
-#include "core/events.hpp"
-#include "utils/timebase.hpp"
 #include "core/channels_authorizations.hpp"
 #include "gdi/osd_api.hpp"
 
@@ -204,9 +204,10 @@ RED_AUTO_TEST_CASE(TestFront)
 
     TLSClientParams tls_client_params;
     RedirectionInfo redir_info;
+    ErrorMessageCtx err_msg_ctx;
 
     auto mod = new_mod_rdp(
-        t, front.gd(), osd, events, session_log,
+        t, front.gd(), osd, events, session_log, err_msg_ctx,
         front, info, redir_info, gen2, channels_authorizations, mod_rdp_params,
         tls_client_params, license_store, ini, metrics, file_validator_service,
         mod_rdp_factory);

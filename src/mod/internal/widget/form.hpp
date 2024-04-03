@@ -93,7 +93,7 @@ public:
 
 private:
     template<class T, class... Ts>
-    void set_warning_buffer(trkeys::TrKeyFmt<T> k, Ts const&... xs);
+    void set_warning_buffer(TrKeyFmt<T> k, Ts const&... xs);
 
     void check_confirmation();
 };

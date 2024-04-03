@@ -21,6 +21,7 @@
 
 #include "mod/internal/widget/form.hpp"
 #include "utils/translation.hpp"
+#include "utils/trkeys.hpp"
 #include "utils/theme.hpp"
 
 using namespace std::chrono_literals;
@@ -233,7 +234,7 @@ namespace
 } // anonymous namespace
 
 template<class T, class... Ts>
-void WidgetForm::set_warning_buffer(trkeys::TrKeyFmt<T> k, Ts const&... xs)
+void WidgetForm::set_warning_buffer(TrKeyFmt<T> k, Ts const&... xs)
 {
     tr.fmt(this->warning_buffer, sizeof(this->warning_buffer), k, to_ctype(xs)...);
     this->warning_msg.set_text(this->warning_buffer);

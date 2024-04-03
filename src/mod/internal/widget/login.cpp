@@ -25,6 +25,7 @@
 #include "keyboard/keymap.hpp"
 #include "mod/internal/widget/login.hpp"
 #include "utils/theme.hpp"
+#include "utils/trkeys.hpp"
 
 
 enum {

@@ -23,6 +23,7 @@
 #include "mod/internal/login_mod.hpp"
 #include "main/version.hpp"
 #include "utils/strutils.hpp"
+#include "utils/trkeys.hpp"
 
 #include <string>
 #include <utility>

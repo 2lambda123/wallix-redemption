@@ -23,6 +23,7 @@
 #include "mod/internal/dialog_mod2.hpp"
 #include "mod/internal/widget/edit.hpp"
 #include "utils/translation.hpp"
+#include "utils/trkeys.hpp"
 
 
 DialogMod2::DialogMod2(

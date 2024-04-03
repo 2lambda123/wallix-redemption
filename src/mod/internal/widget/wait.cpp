@@ -22,6 +22,7 @@
 #include "mod/internal/widget/wait.hpp"
 
 #include "utils/translation.hpp"
+#include "utils/trkeys.hpp"
 #include "utils/theme.hpp"
 
 

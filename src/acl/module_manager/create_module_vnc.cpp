@@ -89,7 +89,8 @@ private:
 
 class ModVNCWithSocketAndMetrics final : public VncData, public mod_vnc
 {
-    Inifile & ini;
+    Inifile& ini;
+    ErrorMessageCtx& err_msg_ctx;
 
 public:
     ModVNCWithSocketAndMetrics(
@@ -98,6 +99,7 @@ public:
         SocketTransport::Verbose verbose,
         EventContainer& events,
         SessionLogApi& session_log,
+        ErrorMessageCtx& err_msg_ctx,
         const char* username,
         const char* password,
         FrontAPI& front,
@@ -126,15 +128,15 @@ public:
           layout, locks, server_is_apple, send_alt_ksym, cursor_pseudo_encoding_supported,
           rail_client_execute, vnc_verbose, metrics, session_log)
     , ini(ini)
+    , err_msg_ctx(err_msg_ctx)
     {}
 
     ~ModVNCWithSocketAndMetrics()
     {
-        log_proxy::target_disconnection(
-            this->ini.template get<cfg::context::auth_error_message>().c_str(),
-            this->ini.template get<cfg::context::session_id>().c_str());
+         log_proxy::target_disconnection(
+             err_msg_ctx.get_msg(),
+             this->ini.get<cfg::context::session_id>().c_str());
     }
-
 };
 
 } // anonymous namespace
@@ -148,14 +150,15 @@ ModPack create_mod_vnc(
     Ref<Font const> glyphs,
     Theme & theme,
     EventContainer& events,
-    SessionLogApi& session_log
+    SessionLogApi& session_log,
+    ErrorMessageCtx& err_msg_ctx
     )
 {
     LOG(LOG_INFO, "ModuleManager::Creation of new mod 'VNC'");
 
     unique_fd client_sck = ini.get<cfg::context::tunneling_target_host>().empty()
         ? connect_to_target_host(
-            ini, session_log, trkeys::authentification_vnc_fail,
+            ini, session_log, err_msg_ctx, trkeys::authentification_vnc_fail,
             ini.get<cfg::mod_vnc::enable_ipv6>(),
             ini.get<cfg::all_target_mod::connection_establishment_timeout>(),
             ini.get<cfg::all_target_mod::tcp_user_timeout>())
@@ -194,6 +197,7 @@ ModPack create_mod_vnc(
         safe_cast<SocketTransport::Verbose>(ini.get<cfg::debug::sck_mod>()),
         events,
         session_log,
+        err_msg_ctx,
         ini.get<cfg::globals::target_user>().c_str(),
         ini.get<cfg::context::target_password>().c_str(),
         front,

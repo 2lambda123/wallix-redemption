@@ -46,6 +46,8 @@
 #include "utils/local_err_msg.hpp"
 #include "utils/monotonic_clock.hpp"
 #include "utils/to_timeval.hpp"
+#include "utils/error_message_ctx.hpp"
+#include "utils/trkeys.hpp"
 
 #include <cassert>
 #include <cerrno>
@@ -432,6 +434,7 @@ private:
 
     void next_backend_module(
         ModuleName next_state, SecondarySession& secondary_session,
+        ErrorMessageCtx& err_msg_ctx,
         ModFactory & mod_factory, ModWrapper& mod_wrapper,
         Inactivity& inactivity, KeepAlive& keepalive,
         Front& front, ClientExecute& rail_client_execute,
@@ -502,7 +505,7 @@ private:
                             secondary_session.open_secondary_session("VNC"));
                         break;
                 }
-                this->ini.set<cfg::context::auth_error_message>("");
+                err_msg_ctx.clear();
                 set_inactivity_timeout(inactivity, ini);
                 return;
             }
@@ -654,7 +657,7 @@ private:
     }
 
     bool retry_rdp(
-        SecondarySession & secondary_session, ModFactory & mod_factory,
+        SecondarySession & secondary_session, ErrorMessageCtx & err_msg_ctx, ModFactory & mod_factory,
         ModWrapper & mod_wrapper, Front & front, EventManager& event_manager,
         ClientExecute & rail_client_execute,
         PerformAutomaticReconnection perform_automatic_reconnection)
@@ -686,7 +689,7 @@ private:
         try {
             this->target_connection_start_time = MonotonicTimePoint::clock::now();
             mod_wrapper.set_mod(next_state, mod_factory.create_rdp_mod(session_log, perform_automatic_reconnection));
-            this->ini.set<cfg::context::auth_error_message>("");
+            err_msg_ctx.clear();
             return true;
         }
         catch (Error const& /*error*/) {
@@ -813,7 +816,7 @@ private:
     };
 
     inline EndLoopState main_loop(
-        int auth_sck, EventManager& event_manager,
+        int auth_sck, EventManager& event_manager, ErrorMessageCtx& err_msg_ctx,
         CryptoContext& cctx, UdevRandom& rnd,
         TpduBuffer& rbuf, SocketTransport& front_trans, Front& front,
         RedirectionInfo& redir_info, ClientExecute& rail_client_execute,
@@ -1032,14 +1035,12 @@ private:
                     if (has_field(cfg::context::rejected())) {
                         LOG(LOG_ERR, "Connection is rejected by Authentifier! Reason: %s",
                             this->ini.get<cfg::context::rejected>().c_str());
-                        this->ini.set<cfg::context::auth_error_message>(
-                            this->ini.get<cfg::context::rejected>());
+                        err_msg_ctx.set_msg(this->ini.get<cfg::context::rejected>());
                         next_module = ModuleName::close;
                         back_event = BACK_EVENT_NEXT;
                     }
                     else if (has_field(cfg::context::disconnect_reason())) {
-                        this->ini.set<cfg::context::auth_error_message>(
-                            this->ini.get<cfg::context::disconnect_reason>());
+                        err_msg_ctx.set_msg(this->ini.get<cfg::context::disconnect_reason>());
                         this->ini.set_acl<cfg::context::disconnect_reason_ack>(true);
                         back_event = std::max(BACK_EVENT_NEXT, mod_wrapper.get_mod_signal());
                     }
@@ -1114,7 +1115,7 @@ private:
 
                     this->next_backend_module(
                         std::exchange(next_module, ModuleName::UNKNOWN),
-                        secondary_session, mod_factory, mod_wrapper,
+                        secondary_session, err_msg_ctx, mod_factory, mod_wrapper,
                         inactivity, keepalive, front, rail_client_execute,
                         event_manager);
                 }
@@ -1151,15 +1152,13 @@ private:
                 {
                 case LoopState::AclSend:
                     LOG(LOG_ERR, "ACL SERIALIZER: %s", e.errmsg());
-                    ini.set<cfg::context::auth_error_message>(
-                        TR(trkeys::acl_fail, language(ini)));
+                    err_msg_ctx.set_msg(trkeys::acl_fail);
                     auth_trans.disconnect();
                     break;
 
                 case LoopState::AclReceive:
                     LOG(LOG_INFO, "acl_serial.incoming() Session lost");
-                    ini.set<cfg::context::auth_error_message>(
-                        TR(trkeys::manager_close_cnx, language(ini)));
+                    err_msg_ctx.set_msg(trkeys::manager_close_cnx);
                     auth_trans.disconnect();
                     break;
 
@@ -1185,7 +1184,7 @@ private:
                             );
 
                             run_session = this->retry_rdp(
-                                secondary_session, mod_factory, mod_wrapper,
+                                secondary_session, err_msg_ctx, mod_factory, mod_wrapper,
                                 front, event_manager, rail_client_execute,
                                 PerformAutomaticReconnection::Yes);
                         }
@@ -1197,7 +1196,7 @@ private:
                             LOG(LOG_INFO, "Session::Session: Automatic reconnection required. ERR_AUTOMATIC_RECONNECTION_REQUIRED");
 
                             run_session = this->retry_rdp(
-                                secondary_session, mod_factory, mod_wrapper,
+                                secondary_session, err_msg_ctx, mod_factory, mod_wrapper,
                                 front, event_manager, rail_client_execute,
                                 PerformAutomaticReconnection::Yes);
                         }
@@ -1235,8 +1234,12 @@ private:
                     switch (end_session_exception(e, ini, mod_wrapper))
                     {
                     case EndSessionResult::close_box:
-                        this->ini.set<cfg::context::auth_error_message>(
-                            local_err_msg(e, language(ini)));
+                        if (TrKey const* k = local_err_msg(e)) {
+                            err_msg_ctx.set_msg(*k);
+                        }
+                        else {
+                            err_msg_ctx.set_msg(e.errmsg());
+                        }
 
                         if (ini.get<cfg::globals::enable_close_box>()) {
                             if (!is_close_module(mod_wrapper.current_mod)) {
@@ -1245,7 +1248,7 @@ private:
                                 }
 
                                 this->next_backend_module(
-                                    ModuleName::close, secondary_session, mod_factory,
+                                    ModuleName::close, secondary_session, err_msg_ctx, mod_factory,
                                     mod_wrapper, inactivity, keepalive, front,
                                     rail_client_execute, event_manager);
                                 run_session = true;
@@ -1284,7 +1287,7 @@ private:
                     // TODO: should we put some counter to avoid retrying indefinitely?
                     case EndSessionResult::retry:
                         run_session = this->retry_rdp(
-                            secondary_session, mod_factory, mod_wrapper,
+                            secondary_session, err_msg_ctx, mod_factory, mod_wrapper,
                             front, event_manager, rail_client_execute,
                             PerformAutomaticReconnection::No);
                         break;
@@ -1292,7 +1295,7 @@ private:
                     // TODO: should we put some counter to avoid retrying indefinitely?
                     case EndSessionResult::reconnection:
                         run_session = this->retry_rdp(
-                            secondary_session, mod_factory, mod_wrapper,
+                            secondary_session, err_msg_ctx, mod_factory, mod_wrapper,
                             front, event_manager, rail_client_execute,
                             PerformAutomaticReconnection::Yes);
                         break;
@@ -1311,15 +1314,13 @@ private:
                 {
                     case LoopState::AclSend:
                         LOG(LOG_ERR, "ACL SERIALIZER: unknown error");
-                        ini.set<cfg::context::auth_error_message>(
-                            TR(trkeys::acl_fail, language(ini)));
+                        err_msg_ctx.set_msg(trkeys::acl_fail);
                         auth_trans.disconnect();
                         break;
 
                     case LoopState::AclReceive:
                         LOG(LOG_INFO, "acl_serial.incoming() Session lost");
-                        ini.set<cfg::context::auth_error_message>(
-                            TR(trkeys::manager_close_cnx, language(ini)));
+                        err_msg_ctx.set_msg(trkeys::manager_close_cnx);
                         auth_trans.disconnect();
                         break;
 
@@ -1405,6 +1406,8 @@ public:
         front.target_connection_start_time_ptr = &this->target_connection_start_time;
 
         TpduBuffer rbuf;
+        ErrorMessageCtx err_msg_ctx;
+
         int auth_sck = INVALID_SOCKET;
 
         LOG_IF(bool(this->verbose() & SessionVerbose::Trace),
@@ -1431,7 +1434,7 @@ public:
                             MonotonicTimePoint::clock::now() - sck_start_time));
                 }
                 else {
-                    this->ini.set<cfg::context::auth_error_message>("No authentifier available");
+                    err_msg_ctx.set_msg(trkeys::err_sesman_unavailable);
                 }
             }
         }
@@ -1463,7 +1466,7 @@ public:
         ) {
             // silent message for localhost or probe IPs for watchdog
             if (!prevent_early_log) {
-                log_proxy::disconnection(this->ini.get<cfg::context::auth_error_message>().c_str());
+                log_proxy::disconnection(err_msg_ctx.get_msg());
             }
 
             return ;
@@ -1486,13 +1489,13 @@ public:
             ModFactory mod_factory(
                 mod_wrapper, event_manager.get_events(), front.get_client_info(),
                 front, front, redir_info, ini, font, theme,
-                rail_client_execute, front.keymap, rnd, cctx);
+                rail_client_execute, front.keymap, rnd, cctx, err_msg_ctx);
 
             auto end_loop = EndLoopState::ShowCloseBox;
 
             if (auth_sck != INVALID_SOCKET) {
                 end_loop = this->main_loop(
-                    auth_sck, event_manager, cctx, rnd, rbuf, front_trans,
+                    auth_sck, event_manager, err_msg_ctx, cctx, rnd, rbuf, front_trans,
                     front, redir_info, rail_client_execute, mod_wrapper, mod_factory);
             }
 
@@ -1536,7 +1539,7 @@ public:
         if (!ini.is_asked<cfg::globals::host>()) {
             LOG(LOG_INFO, "Client Session Disconnected");
         }
-        log_proxy::disconnection(this->ini.get<cfg::context::auth_error_message>().c_str());
+        log_proxy::disconnection(err_msg_ctx.get_msg());
 
         front.must_be_stop_capture();
     }

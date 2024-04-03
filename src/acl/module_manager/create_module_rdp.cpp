@@ -27,6 +27,7 @@
 #include "utils/sugar/scope_exit.hpp"
 #include "utils/sugar/unique_fd.hpp"
 #include "utils/sugar/bytes_view.hpp"
+#include "utils/error_message_ctx.hpp"
 #include "utils/netutils.hpp"
 #include "utils/parse_primary_drawing_orders.hpp"
 #include "mod/file_validator_service.hpp"
@@ -243,9 +244,9 @@ private:
 
 class ModRDPWithSocketAndMetrics final : public RdpData, public mod_rdp
 {
-    Inifile & ini;
-
     std::unique_ptr<FdxCapture> fdx_capture;
+    Inifile& ini;
+    ErrorMessageCtx& err_msg_ctx;
 
 public:
     FdxCapture* get_fdx_capture(Random & gen, Inifile & ini, CryptoContext & cctx)
@@ -282,6 +283,7 @@ public:
       , SocketTransport::Verbose verbose
       , EventContainer & events
       , SessionLogApi& session_log
+      , ErrorMessageCtx& err_msg_ctx
       , gdi::GraphicApi & gd
       , FrontAPI & front
       , const ClientInfo & info
@@ -298,18 +300,19 @@ public:
     )
     : RdpData(events, ini, name, std::move(sck), verbose, use_failure_simulation_socket_transport)
     , mod_rdp(this->get_transport(), gd
-        , osd , events, session_log, front, info, redir_info, gen
+        , osd , events, session_log, err_msg_ctx, front, info, redir_info, gen
         , channels_authorizations, mod_rdp_params, tls_client_params
         , license_store
         , vars, metrics, file_validator_service, this->get_rdp_factory())
     , ini(ini)
+    , err_msg_ctx(err_msg_ctx)
     {}
 
     ~ModRDPWithSocketAndMetrics()
     {
-        log_proxy::target_disconnection(
-            this->ini.template get<cfg::context::auth_error_message>().c_str(),
-            this->ini.template get<cfg::context::session_id>().c_str());
+         log_proxy::target_disconnection(
+             err_msg_ctx.get_msg(),
+             this->ini.get<cfg::context::session_id>().c_str());
     }
 };
 
@@ -435,6 +438,7 @@ ModPack create_mod_rdp(
     Theme & theme,
     EventContainer& events,
     SessionLogApi& session_log,
+    ErrorMessageCtx& err_msg_ctx,
     LicenseApi & file_system_license_store,
     Random & gen,
     CryptoContext & cctx,
@@ -500,7 +504,6 @@ ModPack create_mod_rdp(
     mod_rdp_params.application_params = get_rdp_application_params(ini);
 
     mod_rdp_params.rdp_compression = ini.get<cfg::mod_rdp::rdp_compression>();
-    mod_rdp_params.error_message = &ini.get_mutable_ref<cfg::context::auth_error_message>();
     mod_rdp_params.disconnect_on_logon_user_change = ini.get<cfg::mod_rdp::disconnect_on_logon_user_change>();
     mod_rdp_params.open_session_timeout = ini.get<cfg::mod_rdp::open_session_timeout>();
     mod_rdp_params.server_cert_store = ini.get<cfg::server_cert::server_cert_store>();
@@ -807,7 +810,8 @@ ModPack create_mod_rdp(
     mod_rdp_params.krb_armoring_password = ini.get<cfg::mod_rdp::effective_krb_armoring_password>().c_str();
 
     unique_fd client_sck = connect_to_target_host(
-        ini, session_log, trkeys::authentification_rdp_fail, ini.get<cfg::mod_rdp::enable_ipv6>(),
+        ini, session_log, err_msg_ctx,
+        trkeys::authentification_rdp_fail, ini.get<cfg::mod_rdp::enable_ipv6>(),
         ini.get<cfg::all_target_mod::connection_establishment_timeout>(),
         ini.get<cfg::all_target_mod::tcp_user_timeout>());
     IpAddress local_ip_address;
@@ -862,6 +866,7 @@ ModPack create_mod_rdp(
         safe_cast<SocketTransport::Verbose>(ini.get<cfg::debug::sck_mod>()),
         events,
         session_log,
+        err_msg_ctx,
         host_mod ? host_mod->proxy_gd() : drawable,
         front,
         client_info,
