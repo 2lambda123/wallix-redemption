@@ -28,6 +28,7 @@ std::unique_ptr<mod_api> new_mod_rdp(
     gdi::OsdApi & osd,
     EventContainer & events,
     SessionLogApi& session_log,
+    ErrorMessageCtx & err_msg_ctx,
     FrontAPI& front,
     const ClientInfo& info,
     RedirectionInfo& redir_info,
@@ -43,7 +44,7 @@ std::unique_ptr<mod_api> new_mod_rdp(
 )
 {
     return std::make_unique<mod_rdp>(
-        trans, gd, osd, events, session_log, front, info, redir_info,
+        trans, gd, osd, events, session_log, err_msg_ctx, front, info, redir_info,
         gen, channels_authorizations, mod_rdp_params, tls_client_params,
         license_store, vars, metrics, file_validator_service, mod_rdp_factory);
 }

@@ -30,6 +30,7 @@
 #include "configs/config.hpp"
 #include "RAIL/client_execute.hpp"
 #include "utils/strutils.hpp"
+#include "utils/error_message_ctx.hpp"
 
 // Modules
 #include "mod/internal/bouncer2_mod.hpp"
@@ -67,6 +68,7 @@ class ModFactory
     FileSystemLicenseStore file_system_license_store{ app_path(AppPath::License).to_string() };
     Random & gen;
     CryptoContext & cctx;
+    ErrorMessageCtx & err_msg_ctx;
     std::array<uint8_t, 28> server_auto_reconnect_packet {};
 
 public:
@@ -90,7 +92,8 @@ public:
                ClientExecute & rail_client_execute,
                Keymap & keymap,
                Random & gen,
-               CryptoContext & cctx
+               CryptoContext & cctx,
+               ErrorMessageCtx & err_msg_ctx
         )
         : mod_wrapper(mod_wrapper)
         , events(events)
@@ -105,6 +108,7 @@ public:
         , keymap(keymap)
         , gen(gen)
         , cctx(cctx)
+        , err_msg_ctx(err_msg_ctx)
     {
     }
 
@@ -131,7 +135,7 @@ public:
             ),
             // this->client_info.screen_info.width,
             // this->client_info.screen_info.height,
-            this->ini.get_mutable_ref<cfg::context::auth_error_message>(),
+            this->err_msg_ctx,
             !this->ini.get<cfg::mod_replay::on_end_of_data>(),
             this->ini.get<cfg::mod_replay::replay_on_loop>(),
             this->ini.get<cfg::video::play_video_with_corrupted_bitmap>(),
@@ -201,13 +205,16 @@ public:
 private:
     auto _create_close_mod(bool back_to_selector) -> ModPack
     {
-        zstring_view auth_error_message = this->ini.get<cfg::context::auth_error_message>();
-        if (auth_error_message.empty()) {
-            auth_error_message = TR(trkeys::connection_ended, language(this->ini));
+        zstring_view message = this->err_msg_ctx.get_msg();
+        if (message.empty()) {
+            message = TR(trkeys::connection_ended, language(this->ini));
+        }
+        else if (!this->err_msg_ctx.is_translated()) {
+            message = TR(TrKey{message}, language(this->ini));
         }
 
         auto new_mod = new CloseMod(
-            auth_error_message.c_str(),
+            message.c_str(),
             this->ini,
             this->events,
             this->graphics,
@@ -388,6 +395,7 @@ public:
             this->glyphs, this->theme,
             this->events,
             session_log,
+            this->err_msg_ctx,
             this->file_system_license_store,
             this->gen,
             this->cctx,
@@ -410,7 +418,8 @@ public:
             this->keymap.locks(),
             this->glyphs, this->theme,
             this->events,
-            session_log);
+            session_log,
+            this->err_msg_ctx);
         this->mod_wrapper.target_info_is_shown = false;
         mod_pack.enable_osd = true;
         mod_pack.connected = true;

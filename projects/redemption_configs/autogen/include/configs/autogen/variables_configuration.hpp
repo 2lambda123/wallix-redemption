@@ -3993,15 +3993,6 @@ namespace cfg
         using mapped_type = sesman_and_spec_type;
         type value { 800 };
     };
-    /// type: std::string <br/>
-    /// default: {} <br/>
-    struct context::auth_error_message {
-        static constexpr bool is_sesman_to_proxy = false;
-        static constexpr bool is_proxy_to_sesman = false;
-        using type = std::string;
-        using mapped_type = type;
-        type value {  };
-    };
     /// type: bool <br/>
     /// sesman ⇒ proxy <br/>
     /// default: false <br/>
@@ -5739,7 +5730,6 @@ struct internal_mod
 
 struct context
 : cfg::context::psid
-, cfg::context::auth_error_message
 , cfg::context::selector_device_filter
 , cfg::context::selector_group_filter
 , cfg::context::selector_proto_filter

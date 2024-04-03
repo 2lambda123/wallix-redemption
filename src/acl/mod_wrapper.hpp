@@ -33,6 +33,7 @@
 #include "gdi/subrect4.hpp"
 #include "mod/null/null.hpp"
 #include "utils/translation.hpp"
+#include "utils/trkeys.hpp"
 #include "utils/timebase.hpp"
 #include "utils/ref.hpp"
 #include "core/callback.hpp"

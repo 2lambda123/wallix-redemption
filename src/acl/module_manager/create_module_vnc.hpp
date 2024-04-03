@@ -35,6 +35,7 @@ class Font;
 class Theme;
 class EventContainer;
 class SessionLogApi;
+class ErrorMessageCtx;
 class KeyLayout;
 
 namespace kbdtypes
@@ -58,4 +59,5 @@ ModPack create_mod_vnc(
     Ref<Font const> glyphs,
     Theme & theme,
     EventContainer& events,
-    SessionLogApi& session_log);
+    SessionLogApi& session_log,
+    ErrorMessageCtx& err_msg_ctx);

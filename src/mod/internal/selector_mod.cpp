@@ -23,6 +23,8 @@
 #include "gdi/text_metrics.hpp"
 #include "keyboard/keymap.hpp"
 #include "utils/sugar/int_to_chars.hpp"
+#include "utils/translation.hpp"
+#include "utils/trkeys.hpp"
 
 
 namespace

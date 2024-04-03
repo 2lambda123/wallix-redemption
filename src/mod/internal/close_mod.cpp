@@ -22,13 +22,14 @@
 #include "configs/config.hpp"
 #include "mod/internal/close_mod.hpp"
 #include "utils/timebase.hpp"
+#include "utils/trkeys.hpp"
 
 static WidgetWabClose build_close_widget(
     gdi::GraphicApi & drawable,
     Rect const widget_rect,
     CloseMod & mod,
     WidgetScreen & screen,
-    char const* auth_error_message,
+    char const* message,
     CloseModVariables vars,
     Font const& font, Theme const& theme, bool back_selector)
 {
@@ -65,7 +66,7 @@ static WidgetWabClose build_close_widget(
 
     return WidgetWabClose(
         drawable, widget_rect.x, widget_rect.y, widget_rect.cx, widget_rect.cy,
-        screen, &mod, auth_error_message,
+        screen, &mod, message,
         is_asked ? nullptr : vars.get<cfg::globals::auth_user>().c_str(),
         is_asked ? nullptr : temporary_text(vars).text,
         true,
@@ -74,7 +75,7 @@ static WidgetWabClose build_close_widget(
 }
 
 CloseMod::CloseMod(
-    char const* auth_error_message,
+    char const* message,
     CloseModVariables vars,
     EventContainer& events,
     gdi::GraphicApi & gd,
@@ -83,7 +84,7 @@ CloseMod::CloseMod(
     Font const& font, Theme const& theme, bool back_selector)
     : RailModBase(gd, front, width, height, rail_client_execute, font, theme)
     , close_widget(
-        build_close_widget(gd, widget_rect, *this, this->screen, auth_error_message, vars, font, theme, back_selector))
+        build_close_widget(gd, widget_rect, *this, this->screen, message, vars, font, theme, back_selector))
     , vars(vars)
     , events_guard(events)
 {

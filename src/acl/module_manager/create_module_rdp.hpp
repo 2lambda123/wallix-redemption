@@ -40,6 +40,10 @@ class EventContainer;
 class LicenseApi;
 class Random;
 class CryptoContext;
+class SessionLogApi;
+class ErrorMessageCtx;
+class ClientInfo;
+class Transport;
 
 namespace gdi
 {
@@ -62,6 +66,7 @@ ModPack create_mod_rdp(
     Theme & theme,
     EventContainer& events,
     SessionLogApi& session_log,
+    ErrorMessageCtx& err_msg_ctx,
     LicenseApi & file_system_license_store,
     Random & gen,
     CryptoContext & cctx,

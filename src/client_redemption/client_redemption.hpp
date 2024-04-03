@@ -26,6 +26,7 @@
 #include "utils/netutils.hpp"
 #include "utils/monotonic_clock.hpp"
 #include "utils/strutils.hpp"
+#include "utils/error_message_ctx.hpp"
 
 #include "acl/auth_api.hpp"
 #include "acl/license_api.hpp"
@@ -105,11 +106,11 @@ public:
 private:
     // RDP
     CHANNELS::ChannelDefArray cl;
-    std::string _error;
     std::unique_ptr<Random> gen;
     std::array<uint8_t, 28> server_auto_reconnect_packet_ref;
     Inifile ini;
     NullSessionLog session_log;
+    ErrorMessageCtx error_msg_ctx;
     Theme theme;
     Font font;
     RedirectionInfo redir_info;
@@ -424,6 +425,7 @@ public:
                   , this->osd
                   , this->event_manager.get_events()
                   , this->session_log
+                  , this->error_msg_ctx
                   , *this
                   , this->config.info
                   , this->redir_info
@@ -726,7 +728,7 @@ public:
             , this->config._movie_full_path.c_str()
             // , 0             //this->config.info.width
             // , 0             //this->config.info.height
-            , this->_error
+            , error_msg_ctx
             , true
             // , begin_read
             // , end_read

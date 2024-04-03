@@ -26,6 +26,7 @@
 #include "core/RDP/slowpath.hpp"
 #include "RAIL/client_execute.hpp"
 #include "utils/strutils.hpp"
+#include "utils/trkeys.hpp"
 
 #include <string>
 #include <utility>

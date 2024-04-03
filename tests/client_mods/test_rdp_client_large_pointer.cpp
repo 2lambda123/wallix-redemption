@@ -29,6 +29,7 @@
 
 #include "acl/auth_api.hpp"
 #include "acl/license_api.hpp"
+#include "core/events.hpp"
 #include "core/client_info.hpp"
 #include "utils/timebase.hpp"
 #include "acl/auth_api.hpp"
@@ -38,6 +39,7 @@
 #include "mod/rdp/mod_rdp_factory.hpp"
 #include "utils/theme.hpp"
 #include "utils/redirection_info.hpp"
+#include "utils/error_message_ctx.hpp"
 #include "configs/config.hpp"
 #include "gdi/osd_api.hpp"
 
@@ -158,7 +160,7 @@ RED_AUTO_TEST_CASE(TestRdpClientLargePointerDisabled)
     Inifile ini;
     NullSessionLog session_log;
     RedirectionInfo redir_info;
-
+    ErrorMessageCtx err_msg_ctx;
 
     const ChannelsAuthorizations channels_authorizations{"rdpsnd_audio_output", ""};
     ModRdpFactory mod_rdp_factory;
@@ -166,7 +168,7 @@ RED_AUTO_TEST_CASE(TestRdpClientLargePointerDisabled)
     TLSClientParams tls_client_params;
 
     auto mod = new_mod_rdp(
-        t, front.gd(), osd, events, session_log,
+        t, front.gd(), osd, events, session_log, err_msg_ctx,
         front, info, redir_info, gen, channels_authorizations, mod_rdp_params,
         tls_client_params, license_store, ini, nullptr, nullptr, mod_rdp_factory);
 
@@ -292,6 +294,7 @@ RED_AUTO_TEST_CASE(TestRdpClientLargePointerEnabled)
     Inifile ini;
     NullSessionLog session_log;
     RedirectionInfo redir_info;
+    ErrorMessageCtx err_msg_ctx;
 
     const ChannelsAuthorizations channels_authorizations{"rdpsnd_audio_output", ""};
     ModRdpFactory mod_rdp_factory;
@@ -299,7 +302,7 @@ RED_AUTO_TEST_CASE(TestRdpClientLargePointerEnabled)
     TLSClientParams tls_client_params;
 
     auto mod = new_mod_rdp(
-        t, front.gd(), osd, events, session_log,
+        t, front.gd(), osd, events, session_log, err_msg_ctx,
         front, info, redir_info, gen, channels_authorizations, mod_rdp_params,
         tls_client_params, license_store, ini, nullptr, nullptr, mod_rdp_factory);
 

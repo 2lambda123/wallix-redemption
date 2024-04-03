@@ -42,6 +42,7 @@
 #include "utils/theme.hpp"
 #include "utils/cli.hpp"
 #include "utils/cli_chrono.hpp"
+#include "utils/error_message_ctx.hpp"
 #include "system/scoped_ssl_init.hpp"
 #include "core/events.hpp"
 #include "gdi/osd_api.hpp"
@@ -240,6 +241,7 @@ int main(int argc, char** argv)
     }
 
     NullSessionLog session_log;
+    ErrorMessageCtx error_msg_ctx;
 
     UdevRandom system_gen;
     FixedRandom lcg_gen;
@@ -324,7 +326,7 @@ int main(int argc, char** argv)
                 gdi::null_gd(),
                 osd,
                 event_manager.get_events(),
-                session_log,
+                session_log, error_msg_ctx,
                 front, client_info, redir_info,
                 use_system_obj ? RandomRef(system_gen) : lcg_gen,
                 channels_authorizations, mod_rdp_params, tls_client_params, licensestore,

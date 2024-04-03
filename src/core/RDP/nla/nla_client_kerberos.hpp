@@ -25,6 +25,8 @@
 
 #include "core/RDP/nla/credssp.hpp"
 #include "utils/hexdump.hpp"
+#include "utils/trkeys.hpp"
+#include "utils/translation.hpp"
 #include "system/ssl_sha256.hpp"
 
 #include "core/RDP/nla/kerberos.hpp"

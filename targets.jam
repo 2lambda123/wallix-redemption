@@ -5913,6 +5913,10 @@ test-run tests/utils/test_ellipse :
 :
   <covfile>src/utils/ellipse.hpp
 ;
+test-run tests/utils/test_error_message_ctx :
+  $(REDEMPTION_TEST_PATH)/utils/test_error_message_ctx.cpp
+:
+;
 test-run tests/utils/test_file_permissions :
   $(REDEMPTION_TEST_PATH)/utils/test_file_permissions.cpp
 :
@@ -6684,6 +6688,7 @@ alias test_diffiehellman : tests/utils/test_diffiehellman ;
 alias test_drawable : tests/utils/test_drawable ;
 alias test_drawable_pointer : tests/utils/test_drawable_pointer ;
 alias test_ellipse : tests/utils/test_ellipse ;
+alias test_error_message_ctx : tests/utils/test_error_message_ctx ;
 alias test_file_permissions : tests/utils/test_file_permissions ;
 alias test_fileutils : tests/utils/test_fileutils ;
 alias test_genrandom : tests/utils/test_genrandom ;
@@ -7464,6 +7469,7 @@ alias tests/utils.norec :
   tests/utils/test_drawable
   tests/utils/test_drawable_pointer
   tests/utils/test_ellipse
+  tests/utils/test_error_message_ctx
   tests/utils/test_file_permissions
   tests/utils/test_fileutils
   tests/utils/test_genrandom
