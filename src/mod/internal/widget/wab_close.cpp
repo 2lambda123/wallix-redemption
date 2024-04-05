@@ -60,12 +60,6 @@ WidgetWabClose::WidgetWabClose(
 , cancel(drawable, *this, this, TR(trkeys::close, lang), -14,
          theme.global.fgcolor, theme.global.bgcolor,
          theme.global.focus_color, 2, font, 6, 2)
-, back(back_selector ? new WidgetButton(drawable, *this, this,
-                                            TR(trkeys::back_selector, lang), -14,
-                                            theme.global.fgcolor,
-                                            theme.global.bgcolor,
-                                            theme.global.focus_color, 2, font,
-                                            6, 2) : nullptr)
 , img(drawable,
       theme.global.enable_theme ? theme.global.logo_path.c_str() :
       app_path(AppPath::LoginWabBlue),
@@ -79,6 +73,12 @@ WidgetWabClose::WidgetWabClose(
 , showtimer(showtimer)
 , font(font)
 , diagnostic_text(diagnostic_text)
+, back_to_selector_ctx{
+    theme.global.fgcolor,
+    theme.global.bgcolor,
+    theme.global.focus_color,
+}
+, back(back_selector ? make_back_to_selector() : std::unique_ptr<WidgetButton>())
 {
     this->impl = &composite_array;
 
@@ -115,7 +115,7 @@ WidgetWabClose::WidgetWabClose(
     this->add_widget(&this->cancel);
 
     if (this->back) {
-        this->add_widget(this->back);
+        this->add_widget(this->back.get());
     }
 
     this->fixed_format_diagnostic_text =
@@ -132,8 +132,48 @@ WidgetWabClose::WidgetWabClose(
 
 WidgetWabClose::~WidgetWabClose()
 {
-    delete this->back;
     this->clear();
+}
+
+std::unique_ptr<WidgetButton> WidgetWabClose::make_back_to_selector()
+{
+    return std::make_unique<WidgetButton>(
+        drawable, *this, this,
+        TR(trkeys::back_selector, lang), -14,
+        back_to_selector_ctx.fgcolor,
+        back_to_selector_ctx.bgcolor,
+        back_to_selector_ctx.focus_color, 2, font,
+        6, 2
+    );
+}
+
+Rect WidgetWabClose::set_back_to_selector(bool back_to_selector)
+{
+    if (back_to_selector != bool(this->back)) {
+        Rect updated_rect = this->cancel.get_rect();
+        if (this->back) {
+            updated_rect = updated_rect.disjunct(this->back->get_rect());
+            this->remove_widget(this->back.get());
+            this->back.reset();
+        }
+        else {
+            this->back = make_back_to_selector();
+            this->add_widget(this->back.get());
+        }
+
+        this->move_size_widget(this->x(), this->y(), this->cx(), this->cy());
+
+        if (this->img.y() == this->y()) {
+            return this->get_rect();
+        }
+
+        if (this->back) {
+            updated_rect = updated_rect.disjunct(this->back->get_rect());
+        }
+        return updated_rect.disjunct(this->cancel.get_rect());
+    }
+
+    return Rect();
 }
 
 void WidgetWabClose::move_size_widget(int16_t left, int16_t top, uint16_t width, uint16_t height)
@@ -324,7 +364,7 @@ void WidgetWabClose::notify(Widget & widget, NotifyApi::notify_event_t event)
     if (&widget == &this->cancel && event == NOTIFY_SUBMIT) {
         this->send_notify(NOTIFY_CANCEL);
     }
-    else if (this->back && &widget == this->back && event == NOTIFY_SUBMIT) {
+    else if (bool(this->back) && &widget == this->back.get() && event == NOTIFY_SUBMIT) {
         this->send_notify(NOTIFY_SUBMIT);
     }
     else {

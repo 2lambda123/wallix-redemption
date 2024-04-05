@@ -36,6 +36,15 @@ class Theme;
 
 class WidgetWabClose : public WidgetParent
 {
+    std::unique_ptr<WidgetButton> make_back_to_selector();
+
+    struct BackToSelectorCtx
+    {
+        BGRColor fgcolor;
+        BGRColor bgcolor;
+        BGRColor focus_color;
+    };
+
     CompositeArray composite_array;
 
     WidgetLabel        connection_closed_label;
@@ -53,8 +62,6 @@ class WidgetWabClose : public WidgetParent
 public:
     WidgetButton   cancel;
 private:
-    WidgetButton * back;
-
     WidgetImage        img;
 
     Color bg_color;
@@ -70,6 +77,9 @@ private:
     std::string  diagnostic_text;
     bool         fixed_format_diagnostic_text;
 
+    BackToSelectorCtx back_to_selector_ctx;
+    std::unique_ptr<WidgetButton> back;
+
 public:
     WidgetWabClose(gdi::GraphicApi & drawable,
                  int16_t left, int16_t top, int16_t width, int16_t height, Widget& parent,
@@ -79,6 +89,9 @@ public:
                  Language lang, bool back_selector = false); /*NOLINT*/
 
     ~WidgetWabClose();
+
+    /// \return updated area
+    Rect set_back_to_selector(bool back_to_selector);
 
     void move_size_widget(int16_t left, int16_t top, uint16_t width, uint16_t height);
 
