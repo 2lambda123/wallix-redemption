@@ -116,8 +116,12 @@ namespace trkeys
     TR_KV(err_transport_tls_certificate_missed, "TLS certificate missed!");
     TR_KV(err_transport_tls_certificate_corrupted, "TLS certificate corrupted!");
     TR_KV(err_transport_tls_certificate_inaccessible, "TLS certificate  is inaccessible!");
-    TR_KV(err_vnc_connection_error, "VNC connection error!");
-    TR_KV(err_rdp_unsupported_monitor_layout, "Unsupported client display monitor layout!");
+    TR_KV(err_transport_tls_certificate_changed_extra_message, "The certificate presented by the target doesn't match the certificate fingerprint stored in the Bastion for this target. Contact your Bastion administrator to delete the existing fingerprint or to change the default behavior of the Bastion when this happens.");
+    TR_KV(err_transport_tls_certificate_missed_extra_message, "The certificate presented by the target is not stored in the Bastion for this target. Contact your Bastion administrator to add it or to change the behavior of the Bastion when this happens.");
+    TR_KV(err_transport_tls_certificate_corrupted_extra_message, "The certificate stored in the Bastion for this target is corrupted.");
+    TR_KV(err_transport_tls_certificate_inaccessible_extra_message, "The certificate stored in the Bastion for this target is inaccessible.");
+    TR_KV(err_vnc_connection_error, "VNC connection error.");
+    TR_KV(err_rdp_unsupported_monitor_layout, "Unsupported client display monitor layout.");
     TR_KV(err_rdp_negotiation, "RDP negotiation phase failure.");
     TR_KV(err_lic, "An error occurred during the licensing protocol!");
     TR_KV(err_rail_client_execute, "The RemoteApp program did not start on the remote computer!");
