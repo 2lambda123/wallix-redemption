@@ -42,9 +42,6 @@ using CloseModVariables = vcfg::variables<
 
 class CloseMod : public RailModBase, public NotifyApi
 {
-    WidgetWabClose close_widget;
-    CloseModVariables vars;
-
 public:
     CloseMod(
         char const* message,
@@ -53,11 +50,17 @@ public:
         gdi::GraphicApi & gd,
         FrontAPI & front, uint16_t width, uint16_t height,
         Rect const widget_rect, ClientExecute & rail_client_execute, Font const& font,
-        Theme const& theme, bool back_selector);
+        Theme const& theme, bool back_to_selector);
 
     ~CloseMod() override;
 
     void notify(Widget& sender, notify_event_t event) override;
+
+    /// \return updated area
+    Rect set_back_to_selector(bool back_to_selector)
+    {
+        return this->close_widget.set_back_to_selector(back_to_selector);
+    }
 
     void move_size_widget(int16_t left, int16_t top, uint16_t width, uint16_t height) override
     {
@@ -67,5 +70,7 @@ public:
     void acl_update(AclFieldMask const&/* acl_fields*/) override {}
 
 private:
+    WidgetWabClose close_widget;
+    CloseModVariables vars;
     EventsGuard events_guard;
 };

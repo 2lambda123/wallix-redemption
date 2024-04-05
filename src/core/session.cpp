@@ -433,7 +433,7 @@ private:
     std::string session_type;
 
     void next_backend_module(
-        ModuleName next_state, SecondarySession& secondary_session,
+        ModuleName next_mod, SecondarySession& secondary_session,
         ErrorMessageCtx& err_msg_ctx,
         ModFactory & mod_factory, ModWrapper& mod_wrapper,
         Inactivity& inactivity, KeepAlive& keepalive,
@@ -441,9 +441,9 @@ private:
         EventManager& event_manager)
     {
         LOG_IF(bool(this->verbose() & SessionVerbose::Trace),
-            LOG_INFO, "Current Mod is %s Previous %s",
+            LOG_INFO, "Current Mod is %s ; Next is %s",
             get_module_name(mod_wrapper.current_mod),
-            get_module_name(next_state)
+            get_module_name(next_mod)
         );
 
         if (mod_wrapper.is_connected()) {
@@ -457,11 +457,14 @@ private:
                 LOG(LOG_INFO, "Keep existing capture & session log.");
             }
         }
+        else if (mod_wrapper.update_close_mod(next_mod)) {
+            return;
+        }
         else {
             mod_wrapper.disconnect();
         }
 
-        if (is_target_module(next_state)) {
+        if (is_target_module(next_mod)) {
             keepalive.start();
             event_manager.set_time_base(current_time_base());
             this->target_connection_start_time = event_manager.get_monotonic_time();
@@ -471,13 +474,13 @@ private:
             this->target_connection_start_time = MonotonicTimePoint();
         }
 
-        if (next_state == ModuleName::INTERNAL) {
-            next_state = get_internal_module_id_from_target(
+        if (next_mod == ModuleName::INTERNAL) {
+            next_mod = get_internal_module_id_from_target(
                 this->ini.get<cfg::context::target_host>()
             );
         }
 
-        LOG(LOG_INFO, "New Module: %s", get_module_name(next_state));
+        LOG(LOG_INFO, "New Module: %s", get_module_name(next_mod));
 
         null_mod mod;
         ModPack mod_pack {&mod, nullptr, nullptr, false, false, nullptr};
@@ -521,7 +524,7 @@ private:
 
         rail_client_execute.enable_remote_program(front.get_client_info().remote_program);
 
-        switch (next_state)
+        switch (next_mod)
         {
         case ModuleName::RDP:
             open_secondary_session(SecondarySessionType::RDP);
@@ -637,11 +640,11 @@ private:
 
         case ModuleName::INTERNAL:
         case ModuleName::UNKNOWN:
-            LOG(LOG_INFO, "ModuleManager::Unknown backend exception %u", unsigned(next_state));
+            LOG(LOG_INFO, "ModuleManager::Unknown backend exception %u", unsigned(next_mod));
             throw Error(ERR_SESSION_UNKNOWN_BACKEND);
         }
 
-        mod_wrapper.set_mod(next_state, mod_pack);
+        mod_wrapper.set_mod(next_mod, mod_pack);
     }
 
     void secondary_session_creation_failed(SecondarySession & secondary_session, bool has_other_target_to_try)

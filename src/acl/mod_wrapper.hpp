@@ -41,6 +41,7 @@
 #include "core/RDP/bitmapupdate.hpp"
 #include "core/RDP/orders/RDPOrdersPrimaryLineTo.hpp"
 #include "core/RDP/orders/RDPOrdersPrimaryOpaqueRect.hpp"
+#include "mod/internal/close_mod.hpp"
 
 
 class SocketTransport;
@@ -221,6 +222,27 @@ public:
     bool is_up_and_running() const
     {
         return (this->modi != &this->no_mod) && this->get_mod().is_up_and_running();
+    }
+
+    [[nodiscard]]
+    bool update_close_mod(ModuleName name)
+    {
+        if (name != ModuleName::close && name != ModuleName::close_back) {
+            return false;
+        }
+
+        if (current_mod != ModuleName::close && current_mod != ModuleName::close_back) {
+            return false;
+        }
+
+        if (current_mod != name) {
+            current_mod = name;
+            auto* close_box = static_cast<CloseMod*>(modi.get());
+            auto updated_rect = close_box->set_back_to_selector(name == ModuleName::close_back);
+            close_box->rdp_input_invalidate(updated_rect);
+        }
+
+        return true;
     }
 
     void set_mod(ModuleName next_state, ModPack mod_pack)
