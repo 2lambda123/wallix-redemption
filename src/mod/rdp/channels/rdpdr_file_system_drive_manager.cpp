@@ -1835,6 +1835,7 @@ void FileSystemDriveManager::process_device_IO_request(
     }
     auto drive_iter = this->find_drive_by_id(DeviceId);
     if (drive_iter == this->managed_drives.end()) {
+/*
         LOG(LOG_WARNING,
             "FileSystemDriveManager::process_device_IO_request: "
                 "Unknown device? Send unsuccessful response. DeviceId=%u "
@@ -1848,6 +1849,13 @@ void FileSystemDriveManager::process_device_IO_request(
             to_server_sender,
             this->async_task_container,
             verbose);
+*/
+        LOG(LOG_WARNING,
+            "FileSystemDriveManager::process_device_IO_request: "
+                "Unknown device? Ignore this I/O request. DeviceId=%u "
+                "MajorFunction=%u MinorFunction=%u",
+            DeviceId, device_io_request.MajorFunction(),
+            device_io_request.MinorFunction());
 
         return;
     }
