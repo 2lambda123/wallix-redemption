@@ -99,9 +99,9 @@ auto no_reset_back_to_selector = ResetBackToSelector::No;
 Indicates how to display values when debug logging is enabled.
 
 ```cpp
-auto L = Loggable::Yes;
-auto NL = Loggable::No;
-auto VNL = Loggable::OnlyWhenContainsPasswordString;
+auto loggable = Loggable::Yes;
+auto non_loggable = Loggable::No;
+auto loggable_when_contains_password_string = Loggable::OnlyWhenContainsPasswordString;
 ```
 
 ### Ini only
