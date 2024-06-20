@@ -933,7 +933,7 @@ _.section(names{.all="mod_rdp", .connpolicy="rdp"}, [&]
 
     _.member(MemberInfo{
         .name = "tls_min_level",
-        .value = value<types::u32>(),
+        .value = value<types::u32>(2),
         .spec = connpolicy(rdp, loggable),
         .desc = "Minimal incoming TLS level 0=TLSv1, 1=TLSv1.1, 2=TLSv1.2, 3=TLSv1.3",
     });
@@ -950,7 +950,7 @@ _.section(names{.all="mod_rdp", .connpolicy="rdp"}, [&]
     // "DEFAULT@SECLEVEL=2" (>= 2)
     _.member(MemberInfo{
         .name = "cipher_string",
-        .value = value<std::string>("ALL"),
+        .value = value<std::string>("ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES128-GCM-SHA256"),
         .spec = connpolicy(rdp, loggable),
         .desc =
             "TLSv1.2 and below additional ciphers supported.\n"
@@ -970,7 +970,7 @@ _.section(names{.all="mod_rdp", .connpolicy="rdp"}, [&]
 
     _.member(MemberInfo{
         .name = "tls_key_exchange_groups",
-        .value = value<std::string>(""),
+        .value = value<std::string>("P-256:P-384:P-521:ffdhe3072:ffdhe4096:ffdhe6144:ffdhe8192"),
         .spec = connpolicy(rdp, loggable),
         .desc = tls_key_exchange_groups,
     });

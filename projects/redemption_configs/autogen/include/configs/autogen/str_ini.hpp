@@ -413,7 +413,7 @@ R"gen_config_ini(## Config file for RDP proxy.
 # (min = 0)
 #_display_name=TLS min level
 # (acl config: proxy ⇐ mod_rdp:tls_min_level)
-#tls_min_level = 0
+#tls_min_level = 2
 
 # Maximal incoming TLS level 0=no restriction, 1=TLSv1.1, 2=TLSv1.2, 3=TLSv1.3
 # (min = 0)
@@ -425,7 +425,7 @@ R"gen_config_ini(## Config file for RDP proxy.
 # Empty to apply system-wide configuration (SSL security level 2), ALL for support of all ciphers to ensure highest compatibility with target servers.
 # The format used is described on this page: https://www.openssl.org/docs/man3.1/man1/openssl-ciphers.html#CIPHER-LIST-FORMAT
 # (acl config: proxy ⇐ mod_rdp:cipher_string)
-#cipher_string = ALL
+#cipher_string = ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES128-GCM-SHA256
 
 # Configure the available TLSv1.3 ciphersuites.
 # Empty to apply system-wide configuration.
@@ -439,7 +439,7 @@ R"gen_config_ini(## Config file for RDP proxy.
 # The format used is described in this page: https://www.openssl.org/docs/man3.2/man3/SSL_CONF_cmd.html#groups-groups
 #_display_name=TLS key exchange groups
 # (acl config: proxy ⇐ mod_rdp:tls_key_exchange_groups)
-#tls_key_exchange_groups = 
+#tls_key_exchange_groups = P-256:P-384:P-521:ffdhe3072:ffdhe4096:ffdhe6144:ffdhe8192
 
 # Show in the logs the common cipher list supported by client and server
 # ⚠ Only for debug purposes

@@ -82,7 +82,7 @@ allow_rdp_legacy_fallback = boolean(default=False)
 
 # Minimal incoming TLS level 0=TLSv1, 1=TLSv1.1, 2=TLSv1.2, 3=TLSv1.3
 #_display_name=TLS min level
-tls_min_level = integer(min=0, default=0)
+tls_min_level = integer(min=0, default=2)
 
 # Maximal incoming TLS level 0=no restriction, 1=TLSv1.1, 2=TLSv1.2, 3=TLSv1.3
 #_display_name=TLS max level
@@ -91,7 +91,7 @@ tls_max_level = integer(min=0, default=0)
 # TLSv1.2 and below additional ciphers supported.
 # Empty to apply system-wide configuration (SSL security level 2), ALL for support of all ciphers to ensure highest compatibility with target servers.
 # The format used is described on this page: https://www.openssl.org/docs/man3.1/man1/openssl-ciphers.html#CIPHER-LIST-FORMAT
-cipher_string = string(default="ALL")
+cipher_string = string(default="ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES128-GCM-SHA256")
 
 # Configure the available TLSv1.3 ciphersuites.
 # Empty to apply system-wide configuration.
@@ -103,7 +103,7 @@ tls_1_3_ciphersuites = string(default="")
 # Empty to apply system-wide configuration.
 # The format used is described in this page: https://www.openssl.org/docs/man3.2/man3/SSL_CONF_cmd.html#groups-groups
 #_display_name=TLS key exchange groups
-tls_key_exchange_groups = string(default="")
+tls_key_exchange_groups = string(default="P-256:P-384:P-521:ffdhe3072:ffdhe4096:ffdhe6144:ffdhe8192")
 
 # Show in the logs the common cipher list supported by client and server
 # ⚠ Only for debug purposes

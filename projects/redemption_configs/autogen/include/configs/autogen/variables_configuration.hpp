@@ -973,7 +973,7 @@ namespace cfg
     /// connpolicy -> proxy <br/>
     /// aclName: mod_rdp:tls_min_level <br/>
     /// displayName: TLS min level <br/>
-    /// default: 0 <br/>
+    /// default: 2 <br/>
     struct mod_rdp::tls_min_level {
         static constexpr unsigned acl_proxy_communication_flags = 0b10;
         // for old cppcheck
@@ -981,7 +981,7 @@ namespace cfg
         static constexpr ::configs::authid_t index { ::configs::cfg_indexes::section5 + 6};
         using type = uint32_t;
         using mapped_type = uint32_t;
-        type value { 0 };
+        type value { 2 };
     };
     /// Maximal incoming TLS level 0=no restriction, 1=TLSv1.1, 2=TLSv1.2, 3=TLSv1.3 <br/>
     /// type: uint32_t <br/>
@@ -1004,7 +1004,7 @@ namespace cfg
     /// type: std::string <br/>
     /// connpolicy -> proxy <br/>
     /// aclName: mod_rdp:cipher_string <br/>
-    /// default: "ALL" <br/>
+    /// default: "ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES128-GCM-SHA256" <br/>
     struct mod_rdp::cipher_string {
         static constexpr unsigned acl_proxy_communication_flags = 0b10;
         // for old cppcheck
@@ -1012,7 +1012,7 @@ namespace cfg
         static constexpr ::configs::authid_t index { ::configs::cfg_indexes::section5 + 8};
         using type = std::string;
         using mapped_type = std::string;
-        type value { "ALL" };
+        type value { "ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES128-GCM-SHA256" };
     };
     /// Configure the available TLSv1.3 ciphersuites. <br/>
     /// Empty to apply system-wide configuration. <br/>
@@ -1038,7 +1038,7 @@ namespace cfg
     /// connpolicy -> proxy <br/>
     /// aclName: mod_rdp:tls_key_exchange_groups <br/>
     /// displayName: TLS key exchange groups <br/>
-    /// default: "" <br/>
+    /// default: "P-256:P-384:P-521:ffdhe3072:ffdhe4096:ffdhe6144:ffdhe8192" <br/>
     struct mod_rdp::tls_key_exchange_groups {
         static constexpr unsigned acl_proxy_communication_flags = 0b10;
         // for old cppcheck
@@ -1046,7 +1046,7 @@ namespace cfg
         static constexpr ::configs::authid_t index { ::configs::cfg_indexes::section5 + 10};
         using type = std::string;
         using mapped_type = std::string;
-        type value {  };
+        type value { "P-256:P-384:P-521:ffdhe3072:ffdhe4096:ffdhe6144:ffdhe8192" };
     };
     /// Show in the logs the common cipher list supported by client and server <br/>
     /// ⚠ Only for debug purposes <br/>
