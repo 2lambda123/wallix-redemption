@@ -64,14 +64,14 @@ def standalone():
     sw.bind(('127.0.0.1', 3351))
     sw.listen(100)
 
-    watchdog = False
-
     try:
-        while 1:
-            rfds, wfds, xfds = select([s, sw], [], [], 1)
+        while True:
+            rfds, wfds, xfds = select([s, sw], [], [], None)
             for sck in rfds:
-                if sck in [sw, s]:
-                    client_socket, client_addr = sck.accept()
+                client_socket, client_addr = sck.accept()
+
+                # rdpproxy
+                if sck == s:
                     child_pid = os.fork()
                     if child_pid == 0:
                         signal.signal(signal.SIGCHLD, signal.SIG_DFL)
@@ -83,29 +83,27 @@ def standalone():
 
                         server = Sesman(client_socket, client_addr)
 
-                        if sck == sw:
-                            watchdog = True
                         try:
                             server.start()
                         except AuthentifierSocketClosed as e:
-                            if not watchdog:
-                                Logger().info(
-                                    "WABRDPAuthentifier socket closed"
-                                )
+                            Logger().info("WABRDPAuthentifier socket closed")
                         sys.exit(0)
                     else:
                         client_socket.close()
                         # os.waitpid(child_pid, 0)
 
+                # watchdog
+                if sck == sw:
+                    client_socket.close()
+
     except KeyboardInterrupt:
         if client_socket:
             client_socket.close()
         sys.exit(1)
-    except socket.error as e:
+    except socket.error:
         pass
     except Exception as e:
-        if not watchdog:
-            Logger().exception("%s" % e)
+        Logger().exception(str(e))
 
 
 if __name__ == '__main__':
