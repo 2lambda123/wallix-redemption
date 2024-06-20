@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-06-07 16:36+0200\n"
+"POT-Creation-Date: 2024-06-20 15:39+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -39,10 +39,6 @@ msgstr ""
 
 #: src/utils/trkeys.hpp:34
 msgid "Close"
-msgstr ""
-
-#: src/utils/trkeys.hpp:35
-msgid "Refused"
 msgstr ""
 
 #: src/utils/trkeys.hpp:36
@@ -541,4 +537,12 @@ msgstr ""
 
 #: src/utils/trkeys.hpp:209
 msgid "No authentifier available."
+msgstr ""
+
+#: src/utils/trkeys.hpp:212
+msgid "I accept"
+msgstr ""
+
+#: src/utils/trkeys.hpp:213
+msgid "I decline"
 msgstr ""

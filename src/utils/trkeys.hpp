@@ -32,7 +32,7 @@ namespace trkeys
     TR_KV(connection_closed, "Connection closed");
     TR_KV(OK, "OK");
     TR_KV(close, "Close");
-    TR_KV(refused, "Refused");
+
     TR_KV(protocol, "Protocol");
     TR_KV(authorization, "Authorization");
     TR_KV(target, "Target");
@@ -207,6 +207,10 @@ namespace trkeys
 
     // sesman error
     TR_KV(err_sesman_unavailable, "No authentifier available.");
+
+    // ModuleName::valid
+    TR_KV(accepted, "I accept");
+    TR_KV(refused, "I decline");
 
 #undef TR_KV
 #undef TR_KV_FMT

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-06-07 16:36+0200\n"
+"POT-Creation-Date: 2024-06-20 15:39+0200\n"
 "PO-Revision-Date: 2021-03-01 15:52+0100\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -41,10 +41,6 @@ msgstr "OK"
 #: src/utils/trkeys.hpp:34
 msgid "Close"
 msgstr "Fermer"
-
-#: src/utils/trkeys.hpp:35
-msgid "Refused"
-msgstr "Refuser"
 
 #: src/utils/trkeys.hpp:36
 msgid "Protocol"
@@ -518,3 +514,11 @@ msgstr "Le fichier d'enregistrement est inaccessible ou corrompu."
 #: src/utils/trkeys.hpp:209
 msgid "No authentifier available."
 msgstr "Service d'authentification indisponible."
+
+#: src/utils/trkeys.hpp:212
+msgid "I accept"
+msgstr "J'accepte"
+
+#: src/utils/trkeys.hpp:213
+msgid "I decline"
+msgstr "Je refuse"

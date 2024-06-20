@@ -43,7 +43,8 @@ DialogMod::DialogMod(
     gdi::GraphicApi & drawable,
     uint16_t width, uint16_t height,
     Rect const widget_rect, chars_view caption, chars_view message,
-    chars_view cancel_text, ClientExecute & rail_client_execute,
+    chars_view ok_text, chars_view cancel_text,
+    ClientExecute & rail_client_execute,
     Font const& font, Theme const& theme
 )
     : RailInternalModBase(drawable, width, height, rail_client_execute, font, theme, nullptr)
@@ -71,7 +72,7 @@ DialogMod::DialogMod(
                 },
             },
         caption, message, theme, font,
-        TR(trkeys::OK, language(vars)),
+        ok_text,
         cancel_text)
     , vars(vars)
 {

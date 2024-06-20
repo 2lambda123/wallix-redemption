@@ -63,7 +63,7 @@ struct DialogModContextTest : DialogModContextTestBase
 
     DialogModContextTest(chars_view button_text)
     : d(ini, front.gd(), screen_info.width, screen_info.height,
-        Rect(0, 0, 799, 599), "Title"_av, "Hello, World"_av, button_text,
+        Rect(0, 0, 799, 599), "Title"_av, "Ok"_av, "Hello, World"_av, button_text,
         client_execute, global_font(), theme)
     {
         mod = &d;

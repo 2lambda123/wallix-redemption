@@ -31,8 +31,7 @@ class CopyPaste;
 
 using DialogModVariables = vcfg::variables<
     vcfg::var<cfg::context::accept_message,  vcfg::accessmode::set>,
-    vcfg::var<cfg::context::display_message, vcfg::accessmode::set>,
-    vcfg::var<cfg::translation::language,    vcfg::accessmode::get>
+    vcfg::var<cfg::context::display_message, vcfg::accessmode::set>
 >;
 
 
@@ -44,7 +43,8 @@ public:
         gdi::GraphicApi & drawable,
         uint16_t width, uint16_t height,
         Rect const widget_rect, chars_view caption, chars_view message,
-        chars_view cancel_text, ClientExecute & rail_client_execute,
+        chars_view ok_text, chars_view cancel_text,
+        ClientExecute & rail_client_execute,
         Font const& font, Theme const& theme);
 
     void move_size_widget(int16_t left, int16_t top, uint16_t width, uint16_t height) override

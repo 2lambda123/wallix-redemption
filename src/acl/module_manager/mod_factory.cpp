@@ -186,7 +186,7 @@ struct ModFactory::Impl
         return mod_pack_from_widget(new_mod);
     }
 
-    static ModPack create_dialog(ModFactory& self, chars_view cancel, chars_view caption)
+    static ModPack create_dialog(ModFactory& self, chars_view ok_text, chars_view cancel, chars_view caption)
     {
         auto new_mod = new DialogMod(
             self.ini,
@@ -196,6 +196,7 @@ struct ModFactory::Impl
             self.rail_client_execute.adjust_rect(self.client_info.get_widget_rect()),
             caption,
             self.ini.get<cfg::context::message>(),
+            ok_text,
             cancel,
             self.rail_client_execute,
             self.glyphs,
@@ -355,17 +356,19 @@ void ModFactory::create_interactive_target_mod()
 
 void ModFactory::create_valid_message_mod()
 {
+    chars_view ok_text = TR(trkeys::accepted, language(this->ini));
     chars_view cancel = TR(trkeys::refused, language(this->ini));
     chars_view caption = "Information"_av;
-    auto mod_pack = Impl::create_dialog(*this, cancel, caption);
+    auto mod_pack = Impl::create_dialog(*this, ok_text, cancel, caption);
     Impl::set_mod(*this, ModuleName::valid, mod_pack, false);
 }
 
 void ModFactory::create_display_message_mod()
 {
+    chars_view ok_text = TR(trkeys::OK, language(this->ini));
     chars_view cancel = nullptr;
     chars_view caption = "Information"_av;
-    auto mod_pack = Impl::create_dialog(*this, cancel, caption);
+    auto mod_pack = Impl::create_dialog(*this, ok_text, cancel, caption);
     Impl::set_mod(*this, ModuleName::confirm, mod_pack, false);
 }
 
