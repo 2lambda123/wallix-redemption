@@ -1278,11 +1278,11 @@ class Engine:
                     )
                     self.trace_hash = None
 
-                    if ret and is_cloud_configuration():
-                        from wallixcloudbastion.utils import (
-                            move_trace_immediately_as_process
-                        )
-                        move_trace_immediately_as_process(self.session_id)
+                if ret and is_cloud_configuration():
+                    from wallixcloudbastion.utils import (
+                        move_trace_immediately_as_process
+                    )
+                    move_trace_immediately_as_process(self.session_id)
         except SessionAlreadyStopped:
             pass
         except Exception:
