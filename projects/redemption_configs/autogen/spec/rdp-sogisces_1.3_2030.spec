@@ -63,7 +63,7 @@ enable_nla = boolean(default=True)
 # If enabled, NLA authentication will try Kerberos before NTLM.
 # (if "Enable NLA" option is disabled, this value is ignored).
 #_display_name=Enable Kerberos
-enable_kerberos = boolean(default=False)
+enable_kerberos = boolean(default=True)
 
 # Allow NTLM fallback if Kerberos authentication fail.
 # (if "Enable Kerberos" option is disabled, this value is ignored).

@@ -905,7 +905,7 @@ _.section(names{.all="mod_rdp", .connpolicy="rdp"}, [&]
 
     _.member(MemberInfo{
         .name = "enable_kerberos",
-        .value = value(true, rdp_sogisces_1_3_2030_policy_value(false)),
+        .value = value(true, rdp_sogisces_1_3_2030_policy_value(true)),
         .spec = connpolicy(rdp, loggable),
         .desc =
             "If enabled, NLA authentication will try Kerberos before NTLM.\n"
