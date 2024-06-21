@@ -1,5 +1,5 @@
 {
-"tags": ["perf","debug","workaround","compatibility"],
+"tags": ["perf","debug","workaround","compatibility","SOG-IS"],
 "sections": [
   {"name": "general"},
   {"name": "globals"},
@@ -773,6 +773,9 @@
       "type": "bool",
       "value": true,
       "description": "If enabled, NLA authentication will try Kerberos before NTLM.\n(if <code>\"Enable NLA\" option</code> is disabled, this value is ignored).",
+      "connpolicyValues": {
+        "rdp-sogisces_1.3_2030": true
+      },
       "displayName": "Enable Kerberos",
       "rdp": true,
       "rdp_sogisces_1_3_2030": true,
@@ -785,6 +788,9 @@
       "type": "bool",
       "value": false,
       "description": "Allow NTLM fallback if Kerberos authentication fail.\n(if <code>\"Enable Kerberos\" option</code> is disabled, this value is ignored).",
+      "connpolicyValues": {
+        "rdp-sogisces_1.3_2030": false
+      },
       "displayName": "Allow NLA NTLM fallback",
       "rdp": true,
       "rdp_sogisces_1_3_2030": true,
@@ -797,6 +803,9 @@
       "type": "bool",
       "value": false,
       "description": "Allow TLS only fallback if NLA authentication fail.\n(if <code>\"Enable NLA\" option</code> is disabled, this value is ignored).",
+      "connpolicyValues": {
+        "rdp-sogisces_1.3_2030": false
+      },
       "displayName": "Allow TLS only fallback",
       "rdp": true,
       "rdp_sogisces_1_3_2030": true,
@@ -809,6 +818,9 @@
       "type": "bool",
       "value": false,
       "description": "Allow Standard RDP Security (Legacy) fallback if TLS connection fail.",
+      "connpolicyValues": {
+        "rdp-sogisces_1.3_2030": false
+      },
       "displayName": "Allow RDP legacy fallback",
       "rdp": true,
       "rdp_sogisces_1_3_2030": true,
@@ -822,6 +834,9 @@
       "type": "u32",
       "value": 2,
       "description": "Minimal incoming TLS level 0=TLSv1, 1=TLSv1.1, 2=TLSv1.2, 3=TLSv1.3",
+      "connpolicyValues": {
+        "rdp-sogisces_1.3_2030": 2
+      },
       "displayName": "TLS min level",
       "rdp": true,
       "rdp_sogisces_1_3_2030": true,
@@ -834,6 +849,9 @@
       "type": "u32",
       "value": 0,
       "description": "Maximal incoming TLS level 0=no restriction, 1=TLSv1.1, 2=TLSv1.2, 3=TLSv1.3",
+      "connpolicyValues": {
+        "rdp-sogisces_1.3_2030": 0
+      },
       "displayName": "TLS max level",
       "rdp": true,
       "rdp_sogisces_1_3_2030": true,
@@ -846,6 +864,9 @@
       "type": "str",
       "value": "ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES128-GCM-SHA256",
       "description": "TLSv1.2 and below additional ciphers supported.\nEmpty to apply system-wide configuration (SSL security level 2), ALL for support of all ciphers to ensure highest compatibility with target servers.\nThe format used is described on this page: https://www.openssl.org/docs/man3.1/man1/openssl-ciphers.html#CIPHER-LIST-FORMAT",
+      "connpolicyValues": {
+        "rdp-sogisces_1.3_2030": "ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES128-GCM-SHA256"
+      },
       "rdp": true,
       "rdp_sogisces_1_3_2030": true,
       "aclToProxy": true,
@@ -857,6 +878,10 @@
       "type": "str",
       "value": "",
       "description": "Configure the available TLSv1.3 ciphersuites.\nEmpty to apply system-wide configuration.\nThe format used is described in the third paragraph of this page: https://www.openssl.org/docs/man1.1.1/man3/SSL_CTX_set_ciphersuites.html#DESCRIPTION",
+      "connpolicyValues": {
+        "rdp-sogisces_1.3_2030": "TLS_AES_256_GCM_SHA384:TLS_AES_128_GCM_SHA256"
+      },
+      "tags": ["SOG-IS"],
       "displayName": "TLS 1.3 cipher suites",
       "rdp": true,
       "rdp_sogisces_1_3_2030": true,
@@ -869,6 +894,9 @@
       "type": "str",
       "value": "P-256:P-384:P-521:ffdhe3072:ffdhe4096:ffdhe6144:ffdhe8192",
       "description": "Configure the supported key exchange groups.\nEmpty to apply system-wide configuration.\nThe format used is described in this page: https://www.openssl.org/docs/man3.2/man3/SSL_CONF_cmd.html#groups-groups",
+      "connpolicyValues": {
+        "rdp-sogisces_1.3_2030": "P-256:P-384:P-521:ffdhe3072:ffdhe4096:ffdhe6144:ffdhe8192"
+      },
       "displayName": "TLS key exchange groups",
       "rdp": true,
       "rdp_sogisces_1_3_2030": true,
@@ -1529,6 +1557,10 @@
       "type": "bool",
       "value": false,
       "description": "",
+      "connpolicyValues": {
+        "rdp": true,
+        "rdp-sogisces_1.3_2030": true
+      },
       "displayName": "Enable Session Probe",
       "rdp": true,
       "rdp_sogisces_1_3_2030": true,

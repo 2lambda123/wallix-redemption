@@ -92,6 +92,15 @@ h2 > a, h3 > a {
 .type-info {
   color: #5f5f5f;
 }
+.type-info-sep {
+  color: #000;
+}
+.type-info-default {
+  color: #5faf5f;
+}
+.type-info-connpolicy-special {
+  color: #5f5faf;
+}
 
 .hist-old-name, .hist-new-name {
   font-family: monospace;
@@ -521,6 +530,53 @@ const makeTagList = (tags) => {
   return s;
 };
 
+const makeInfoSpec = (enumDatas, option, value) => {
+  let extraDescription = '';
+  let type = option.type;
+  let description = option.description;
+  let preferHex = option.hex;
+  let humanValue = '';
+  if (type === 'enumStr') {
+    type = option.subtype;
+    const e = enumDatas[type];
+    extraDescription = e.strValues;
+    description ??= e.description;
+  }
+  else if (type === 'enum') {
+    type = option.subtype;
+    const e = enumDatas[type];
+    extraDescription = e.intValues;
+    description ??= e.description;
+    preferHex = (e.category === 'flags');
+    if (e.category !== 'set') {
+      const flags = [];
+      for (const info of e.values) {
+        if (info.value && (info.value & value) === info.value) {
+          flags.push(`<code>0x${info.value.toString(16)}</code>`);
+        }
+      }
+      if (flags.length > 1) {
+        humanValue = flags.join(' + ');
+      }
+    }
+  }
+  else if (type === 'list') {
+    type = `list of ${mappingDisplayType[option.subtype] || option.subtype}`;
+  }
+  else {
+    const fn = mappingDisplayFn[type];
+    if (fn) {
+      humanValue = fn(value);
+    }
+    type = mappingDisplayType[type] || type;
+  }
+
+  const defaultValue = preferHex ? `0x${value.toString(16)}` : value;
+  humanValue = humanValue && ` (= ${humanValue})`;
+
+  return [type, description, extraDescription, humanValue, defaultValue];
+}
+
 const makeHtmlSpec = (enumDatas, sections, spec, prefix, isConnpolicy, prefixPrefix) => {
   const menuPrefix = prefixPrefix ? `<span class="menu-group-spec">(${titleMapping[prefix]})</span> ` : '';
   const sectionPrefix = prefixPrefix ? `<span class="section-spec">(${titleMapping[prefix]})</span> ` : '';
@@ -563,6 +619,23 @@ const makeHtmlSpec = (enumDatas, sections, spec, prefix, isConnpolicy, prefixPre
     }
 
     for (const option of sectionData.options) {
+      let value = option.value;
+      let rdp_sogisces = '';
+      if (isConnpolicy && option.connpolicyValues) {
+        if (prefix in option.connpolicyValues) {
+          value = option.connpolicyValues[prefix];
+        }
+
+        if (prefix === 'rdp' && 'rdp-sogisces_1.3_2030' in option.connpolicyValues) {
+          const connValue = option.connpolicyValues['rdp-sogisces_1.3_2030'];
+          if (connValue !== value) {
+            const [type, description, extraDescription, humanValue, defaultValue]
+              = makeInfoSpec(enumDatas, option, connValue);
+            rdp_sogisces = ` ${optSep} <span class="type-info-connpolicy-special">RDP-sogisces_1.3_2030</span>: <code>${defaultValue}</code>${humanValue}`;
+          }
+        }
+      }
+
       const optId = `${sectionId}-${option.name}`;
       const classes = `page-${prefixPrefix} ${option.advancedClass} ${option.tagClasses}`;
       const tags = makeTagList(option.tags);
@@ -571,52 +644,13 @@ const makeHtmlSpec = (enumDatas, sections, spec, prefix, isConnpolicy, prefixPre
         `<a class="menu-item ${classes}" href="#${optId}">${listChar} ${option.displayName}${tags}</a>`
       );
 
-      let extraDescription = '';
-      let type = option.type;
-      let description = option.description;
-      let preferHex = option.hex;
-      let humanValue = '';
-      if (type === 'enumStr') {
-        type = option.subtype;
-        const e = enumDatas[type];
-        extraDescription = e.strValues;
-        description ??= e.description;
-      }
-      else if (type === 'enum') {
-        type = option.subtype;
-        const e = enumDatas[type];
-        extraDescription = e.intValues;
-        description ??= e.description;
-        preferHex = (e.category === 'flags');
-        if (e.category !== 'set') {
-          const flags = [];
-          for (const info of e.values) {
-            if (info.value && (info.value & option.value) === info.value) {
-              flags.push(`<code>0x${info.value.toString(16)}</code>`);
-            }
-          }
-          if (flags.length > 1) {
-            humanValue = flags.join(' + ');
-          }
-        }
-      }
-      else if (type === 'list') {
-        type = `list of ${mappingDisplayType[option.subtype] || option.subtype}`;
-      }
-      else {
-        const fn = mappingDisplayFn[type];
-        if (fn) {
-          humanValue = fn(option.value);
-        }
-        type = mappingDisplayType[type] || type;
-      }
+
+      let [type, description, extraDescription, humanValue, defaultValue]
+        = makeInfoSpec(enumDatas, option, value);
 
       description = description
         ? refOptionFormatting(htmlEscape(description))
         : '<i>No description</i>';
-
-      const defaultValue = preferHex ? `0x${option.value.toString(16)}` : option.value;
-      humanValue = humanValue && ` (= ${humanValue})`;
 
       let history = '';
       if (option.history.length) {
@@ -626,7 +660,7 @@ const makeHtmlSpec = (enumDatas, sections, spec, prefix, isConnpolicy, prefixPre
       htmlBodyFragments.push(`
         <article class="option ${classes}" id="${optId}">
           <h3><a href="#${optId}">${sectionPrefix}<span class="section-prefix">[${realSectionName}]</span> ${option.displayName}</a>${tags}</h3>
-          <p class="type-info">type: ${type} | ${option.advanced ? 'advanced | ' : ''}default: <code>${defaultValue}</code>${humanValue}</p>
+          <p class="type-info">type: ${type} ${optSep} ${option.advanced ? `advanced ${optSep} ` : ''}<span class="type-info-default">default</span>: <code>${defaultValue}</code>${humanValue}${rdp_sogisces}</p>
           <p class="description">${description.replaceAll('\n', '</p><p class="description">')}</p>
           ${extraDescription}
           ${history}
@@ -745,6 +779,8 @@ const toHumanTime = (t, millisecondFactor) => {
 const toHumanColor = (color) => {
   return `<span class="visual-color" style="background: ${color}">&nbsp;</span>`
 }
+
+const optSep = ' <span class="type-info-sep">|</span> ';
 
 const mappingDisplayType = {
   u8: 'number',
@@ -922,7 +958,7 @@ const mappingDisplayFn = {
     const checked = (elem) => {
       if (elem) {
         elem.checked = true;
-        elem.onclick();
+        elem.onchange();
       }
     };
     const params = new URLSearchParams(location.search);

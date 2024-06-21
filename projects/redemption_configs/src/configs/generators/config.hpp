@@ -1972,6 +1972,8 @@ public:
     , policy{std::move(directory_spec), std::move(acl_remap_filename)}
     , cpp(std::move(filenames))
     {
+        json_values.reserve(1024 * 64);
+
         acl_map.out << python_comment(do_not_edit, 0) << "\n";
 
         acl_diag.buffer += do_not_edit;
@@ -2029,16 +2031,10 @@ public:
 
 
         json.out << "{\n\"tags\": [";
-        std::string tag_list;
-        tag_list.reserve(128);
         for (std::size_t i = 0; i < Tags::max; ++i) {
-            tag_list += '"';
-            tag_list += tag_to_sv(Tag(i));
-            tag_list += '"';
-            tag_list += ',';
+            json.out << '"' << tag_to_sv(Tag(i)) << "\","sv;
         }
-        tag_list.back() = ']';
-        json.out << tag_list << ",\n\"sections\": [\n";
+        json.out << "\"SOG-IS\"],\n\"sections\": [\n";
         std::string_view json_sep = {};
         for (std::string_view section_name : ordered_section_names) {
             auto& section = sections.find(section_name)->second;
@@ -2443,7 +2439,34 @@ public:
                 }
             ).sv());
             json_values += '"';
-            if (bool(mem_info.tags)) {
+
+            std::string const* rdp_value = &mem_info.value.values.json;
+            std::string const* rdp_sogis_value = nullptr;
+
+            if (!mem_info.value.values.connection_policies.empty()) {
+                json_values += ",\n      \"connpolicyValues\": "sv;
+                char c = '{';
+                for (auto& connpolicy : mem_info.value.values.connection_policies) {
+                    for (auto dest_file : conn_policies) {
+                        if (!bool(dest_file & connpolicy.dest_file)) {
+                            continue;
+                        }
+                        if (bool(dest_file & DestSpecFile::rdp)) {
+                            rdp_value = &connpolicy.json;
+                        }
+                        if (bool(dest_file & DestSpecFile::rdp_sogisces_1_3_2030)) {
+                            rdp_sogis_value = &connpolicy.json;
+                        }
+                        str_append(json_values, c, "\n        \""sv, dest_file_to_filename(dest_file), "\": ", connpolicy.json);
+                        c = ',';
+                    }
+                }
+                json_values += "\n      }"sv;
+            }
+
+            const bool has_rdp_sogis = rdp_sogis_value && *rdp_sogis_value != *rdp_value;
+
+            if (bool(mem_info.tags) || has_rdp_sogis) {
                 json_values += ",\n      \"tags\": ["sv;
                 for (std::size_t i = 0; i < mem_info.tags.max; ++i) {
                     if (mem_info.tags.test(Tag(i))) {
@@ -2453,8 +2476,12 @@ public:
                         json_values += ',';
                     }
                 }
+                if (has_rdp_sogis) {
+                    json_values += "\"SOG-IS\","sv;
+                }
                 json_values.back() = ']';
             }
+
             auto append_if_not_empty = [&](std::string_view json_key, std::string_view str) {
                 if (str.empty()) {
                     return;
