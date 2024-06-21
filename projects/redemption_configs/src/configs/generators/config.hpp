@@ -72,7 +72,13 @@ constexpr auto path_max_as_str = "4096"_av;
 constexpr inline std::array conn_policies {
     DestSpecFile::rdp,
     DestSpecFile::vnc,
+    DestSpecFile::rdp_sogisces_1_3_2030,
 };
+
+constexpr inline auto conn_policies_acl_map_mask
+  = DestSpecFile::rdp
+  | DestSpecFile::vnc
+;
 
 constexpr std::string_view dest_file_to_filename(DestSpecFile dest)
 {
@@ -81,6 +87,7 @@ constexpr std::string_view dest_file_to_filename(DestSpecFile dest)
         case DestSpecFile::ini_only: return ""sv;
         case DestSpecFile::global_spec: return ""sv;
         case DestSpecFile::rdp: return "rdp"sv;
+        case DestSpecFile::rdp_sogisces_1_3_2030: return "rdp-sogisces_1.3_2030"sv;
         case DestSpecFile::vnc: return "vnc"sv;
     }
     return ""sv;
@@ -1576,9 +1583,24 @@ template<class T> using minify_type_t = typename minify_type<T, std::decay_t<T>>
 
 
 template<class T>
-ConnectionPolicyValue<minify_type_t<T>> rdp_policy_value(T&& value)
+ConnectionPolicyValue<minify_type_t<T>> rdp_general_policy_value(T&& value)
 {
     return {DestSpecFile::rdp, static_cast<T&&>(value), false};
+}
+
+template<class T>
+ConnectionPolicyValue<minify_type_t<T>> rdp_sogisces_1_3_2030_policy_value(T&& value)
+{
+    return {DestSpecFile::rdp_sogisces_1_3_2030, static_cast<T&&>(value), false};
+}
+
+template<class T>
+ConnectionPolicyValue<minify_type_t<T>> rdp_all_policy_value(T&& value)
+{
+    return {
+        DestSpecFile::rdp | DestSpecFile::rdp_sogisces_1_3_2030,
+        static_cast<T&&>(value), false
+    };
 }
 
 template<class T>
@@ -1596,13 +1618,10 @@ inline void check_policy(std::initializer_list<DestSpecFile> dest_files)
         }
         if (bool(policy_type & dest_file)) {
             std::string_view dest_name;
-            switch (policy_type & dest_file) {
-                case DestSpecFile::none: break;
-                case DestSpecFile::ini_only: break;
-                case DestSpecFile::global_spec: break;
-                case DestSpecFile::rdp: dest_name = " (rdp)"; break;
-                case DestSpecFile::vnc: dest_name = " (vnc)"; break;
-            }
+            const auto mask = (policy_type & dest_file);
+            if (bool(mask & DestSpecFile::vnc)) dest_name = " (vnc)";
+            if (bool(mask & DestSpecFile::rdp)) dest_name = " (rdp)";
+            if (bool(mask & DestSpecFile::rdp_sogisces_1_3_2030)) dest_name = " (rdp_sogisces_1_3_2030)";
             throw std::runtime_error(
                 str_concat("duplicate connection policy value"sv, dest_name)
             );
@@ -2060,6 +2079,9 @@ public:
         ;
 
         for (auto dest_file : conn_policies) {
+            if (!bool(dest_file & conn_policies_acl_map_mask)) {
+                continue;
+            }
             auto const& sections_by_file = *policy.acl_map.find(dest_file);
             auto const& sections = sections_by_file.second.sections;
             out << "'" << dest_file_to_filename(sections_by_file.first) << "': ({\n";
@@ -2361,8 +2383,7 @@ public:
         //
         // acl default value
         //
-        if (mem_info.spec.reset_back_to_selector == ResetBackToSelector::Yes)
-        {
+        if (mem_info.spec.reset_back_to_selector == ResetBackToSelector::Yes) {
             auto& values = (SesmanIO::proxy_to_acl == acl_io)
                 ? acl_map.values_reinit
                 : acl_map.values_sent;
@@ -2454,6 +2475,7 @@ public:
             append_if_true("globalSpec", bool(mem_info.spec.dest & DestSpecFile::global_spec));
             append_if_true("iniOnly", bool(mem_info.spec.dest & DestSpecFile::ini_only));
             append_if_true("rdp", bool(mem_info.spec.dest & DestSpecFile::rdp));
+            append_if_true("rdp_sogisces_1_3_2030", bool(mem_info.spec.dest & DestSpecFile::rdp_sogisces_1_3_2030));
             append_if_true("vnc", bool(mem_info.spec.dest & DestSpecFile::vnc));
             append_if_true("aclToProxy", bool(mem_info.spec.acl_io & SesmanIO::acl_to_proxy));
             append_if_true("ProxyToAcl", bool(mem_info.spec.acl_io & SesmanIO::proxy_to_acl));
@@ -2518,7 +2540,7 @@ public:
                         if (!bool(connpolicy.dest_file)) {
                             all_value = &connpolicy.py;
                         }
-                        else if (!connpolicy.forced && connpolicy.dest_file == dest_file) {
+                        else if (!connpolicy.forced && bool(connpolicy.dest_file & dest_file)) {
                             py_value = &connpolicy.py;
                             break;
                         }
@@ -2538,8 +2560,9 @@ public:
                     );
 
                     for (auto& connpolicy : mem_info.value.values.connection_policies) {
-                        if (connpolicy.forced) {
-                            str_append(policy.acl_map[connpolicy.dest_file].hidden_values,
+                        auto const dest_map = (conn_policies_acl_map_mask & connpolicy.dest_file);
+                        if (bool(dest_file & connpolicy.dest_file) && connpolicy.forced) {
+                            str_append(policy.acl_map[dest_map].hidden_values,
                                 "    '"sv, acl_name, "': "sv, connpolicy.py, ",\n"sv);
                         }
                     }

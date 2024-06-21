@@ -91,8 +91,19 @@ enum class DestSpecFile : uint8_t
     none         = 0,
     ini_only     = 1 << 0,
     global_spec  = 1 << 1,
-    rdp          = 1 << 2,
-    vnc          = 1 << 3,
+    vnc          = 1 << 2,
+    rdp          = 1 << 3,
+    // References:
+    // * SOG-IS Crypto Evaluation Scheme – Agreed Cryptographic Mechanisms, Version 1.3 (February 2023)
+    //   https://www.sogis.eu/documents/cc/crypto/SOGIS-Agreed-Cryptographic-Mechanisms-1.3.pdf
+    // * BSI document TR-02102-2: "Cryptographic Mechanisms: Recommandations and Key Lengths: Use of Transport Layer Security (TLS)", Version 2023-1
+    //   https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/TechGuidelines/TG02102/BSI-TR-02102-2.html
+    // * OpenSSL Ciphers:
+    //   https://www.openssl.org/docs/manmaster/man1/openssl-ciphers.html
+    // Some algos are excluded from this list because they are not used by the
+    // proxy (DHE-PSK-*, DHE-DSS-*, ...) or where not included in documentation
+    // submited by WALLIX for BSZ certification (*-CCM)
+    rdp_sogisces_1_3_2030 = 1 << 4,
 };
 MK_ENUM_OP(DestSpecFile)
 

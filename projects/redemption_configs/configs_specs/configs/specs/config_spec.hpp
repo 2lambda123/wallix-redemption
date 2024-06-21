@@ -103,7 +103,9 @@ _.set_sections({
 cfg_generators::EnumAsString enum_as_string{tenums};
 cfg_generators::ValueFromEnum from_enum{tenums};
 using cfg_generators::value;
-using cfg_generators::rdp_policy_value;
+using cfg_generators::rdp_all_policy_value;
+using cfg_generators::rdp_general_policy_value;
+using cfg_generators::rdp_sogisces_1_3_2030_policy_value;
 using cfg_generators::vnc_policy_value;
 using cfg_generators::MemberInfo;
 using spec::proxy_to_acl;
@@ -123,7 +125,9 @@ auto reset_back_to_selector = ResetBackToSelector::Yes;
 auto no_reset_back_to_selector = ResetBackToSelector::No;
 
 auto vnc = DestSpecFile::vnc;
-auto rdp = DestSpecFile::rdp;
+auto rdp_general = DestSpecFile::rdp;
+auto rdp_sogisces_1_3_2030 = DestSpecFile::rdp_sogisces_1_3_2030;
+auto rdp = rdp_general | rdp_sogisces_1_3_2030;
 
 
 // updated by acl
@@ -901,7 +905,7 @@ _.section(names{.all="mod_rdp", .connpolicy="rdp"}, [&]
 
     _.member(MemberInfo{
         .name = "enable_kerberos",
-        .value = value(true),
+        .value = value(true, rdp_sogisces_1_3_2030_policy_value(false)),
         .spec = connpolicy(rdp, loggable),
         .desc =
             "If enabled, NLA authentication will try Kerberos before NTLM.\n"
@@ -910,7 +914,7 @@ _.section(names{.all="mod_rdp", .connpolicy="rdp"}, [&]
 
     _.member(MemberInfo{
         .name = "allow_nla_ntlm_fallback",
-        .value = value<bool>(false),
+        .value = value<bool>(false, rdp_sogisces_1_3_2030_policy_value(false)),
         .spec = connpolicy(rdp, loggable),
         .desc = "Allow NTLM fallback if Kerberos authentication fail.\n"
         "(if :REF:[mod_rdp]:enable_kerberos is disabled, this value is ignored).",
@@ -918,7 +922,7 @@ _.section(names{.all="mod_rdp", .connpolicy="rdp"}, [&]
 
     _.member(MemberInfo{
         .name = "allow_tls_only_fallback",
-        .value = value<bool>(false),
+        .value = value<bool>(false, rdp_sogisces_1_3_2030_policy_value(false)),
         .spec = connpolicy(rdp, loggable),
         .desc = "Allow TLS only fallback if NLA authentication fail.\n"
         "(if :REF:[mod_rdp]:enable_nla is disabled, this value is ignored).",
@@ -926,21 +930,21 @@ _.section(names{.all="mod_rdp", .connpolicy="rdp"}, [&]
 
     _.member(MemberInfo{
         .name = "allow_rdp_legacy_fallback",
-        .value = value<bool>(false),
+        .value = value<bool>(false, rdp_sogisces_1_3_2030_policy_value(false)),
         .spec = connpolicy(rdp, loggable, spec::advanced),
         .desc = "Allow Standard RDP Security (Legacy) fallback if TLS connection fail.",
     });
 
     _.member(MemberInfo{
         .name = "tls_min_level",
-        .value = value<types::u32>(2),
+        .value = value<types::u32>(2, rdp_sogisces_1_3_2030_policy_value(2)),
         .spec = connpolicy(rdp, loggable),
         .desc = "Minimal incoming TLS level 0=TLSv1, 1=TLSv1.1, 2=TLSv1.2, 3=TLSv1.3",
     });
 
     _.member(MemberInfo{
         .name = "tls_max_level",
-        .value = value<types::u32>(),
+        .value = value<types::u32>(0, rdp_sogisces_1_3_2030_policy_value(0)),
         .spec = connpolicy(rdp, loggable),
         .desc = "Maximal incoming TLS level 0=no restriction, 1=TLSv1.1, 2=TLSv1.2, 3=TLSv1.3",
     });
@@ -950,7 +954,21 @@ _.section(names{.all="mod_rdp", .connpolicy="rdp"}, [&]
     // "DEFAULT@SECLEVEL=2" (>= 2)
     _.member(MemberInfo{
         .name = "cipher_string",
-        .value = value<std::string>("ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES128-GCM-SHA256"),
+        .value = value<std::string>(
+            "ECDHE-ECDSA-AES256-GCM-SHA384"
+            ":ECDHE-RSA-AES256-GCM-SHA384"
+            ":DHE-RSA-AES256-GCM-SHA384"
+            ":ECDHE-ECDSA-AES128-GCM-SHA256"
+            ":ECDHE-RSA-AES128-GCM-SHA256"
+            ":DHE-RSA-AES128-GCM-SHA256",
+            rdp_sogisces_1_3_2030_policy_value(
+                "ECDHE-ECDSA-AES256-GCM-SHA384"
+                ":ECDHE-RSA-AES256-GCM-SHA384"
+                ":DHE-RSA-AES256-GCM-SHA384"
+                ":ECDHE-ECDSA-AES128-GCM-SHA256"
+                ":ECDHE-RSA-AES128-GCM-SHA256"
+                ":DHE-RSA-AES128-GCM-SHA256"
+            )),
         .spec = connpolicy(rdp, loggable),
         .desc =
             "TLSv1.2 and below additional ciphers supported.\n"
@@ -963,14 +981,35 @@ _.section(names{.all="mod_rdp", .connpolicy="rdp"}, [&]
             .all = "tls_1_3_ciphersuites",
             .display = "TLS 1.3 cipher suites",
         },
-        .value = value<std::string>(""),
+        .value = value<std::string>("",
+            rdp_sogisces_1_3_2030_policy_value(
+                "TLS_AES_256_GCM_SHA384"
+                ":TLS_AES_128_GCM_SHA256")
+          ),
         .spec = connpolicy(rdp, loggable),
         .desc = tls_1_3_ciphersuites_desc,
     });
 
     _.member(MemberInfo{
         .name = "tls_key_exchange_groups",
-        .value = value<std::string>("P-256:P-384:P-521:ffdhe3072:ffdhe4096:ffdhe6144:ffdhe8192"),
+        .value = value<std::string>(
+            "P-256"
+            ":P-384"
+            ":P-521"
+            ":ffdhe3072"
+            ":ffdhe4096"
+            ":ffdhe6144"
+            ":ffdhe8192",
+            rdp_sogisces_1_3_2030_policy_value(
+                "P-256"
+                ":P-384"
+                ":P-521"
+                ":ffdhe3072"
+                ":ffdhe4096"
+                ":ffdhe6144"
+                ":ffdhe8192"
+            )
+        ),
         .spec = connpolicy(rdp, loggable),
         .desc = tls_key_exchange_groups,
     });
@@ -1463,7 +1502,7 @@ _.section("session_probe", [&]
     _.member(MemberInfo{
         .name = "enable_session_probe",
         .value = value<bool>(false,
-            rdp_policy_value(true)),
+            rdp_all_policy_value(true)),
         .spec = connpolicy(rdp, loggable),
     });
 
