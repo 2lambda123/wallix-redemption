@@ -27,7 +27,7 @@ from wallixconst.authentication import (  # noqa: F401
 from wallixconst.account import AM_IL_DOMAIN
 from wallixconst.trace import LOCAL_TRACE_PATH_RDP
 from wallixredis import redis
-from wallixutils import is_cloud_configuration
+from wallixconst.configuration import IS_CLOUD_CONFIGURATION
 from typing import Optional, Union, Tuple, Dict, List, Any, Iterable, NamedTuple
 
 from .logtime import logtime_function_pause
@@ -1278,7 +1278,7 @@ class Engine:
                     )
                     self.trace_hash = None
 
-                if ret and is_cloud_configuration():
+                if ret and IS_CLOUD_CONFIGURATION:
                     from wallixcloudbastion.utils import (
                         move_trace_immediately_as_process
                     )
