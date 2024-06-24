@@ -1617,14 +1617,13 @@ inline void check_policy(std::initializer_list<DestSpecFile> dest_files)
             throw std::runtime_error("connection policy value without name");
         }
         if (bool(policy_type & dest_file)) {
-            std::string_view dest_name;
             const auto mask = (policy_type & dest_file);
-            if (bool(mask & DestSpecFile::vnc)) dest_name = " (vnc)";
-            if (bool(mask & DestSpecFile::rdp)) dest_name = " (rdp)";
-            if (bool(mask & DestSpecFile::rdp_sogisces_1_3_2030)) dest_name = " (rdp_sogisces_1_3_2030)";
+#define DECL(name) bool(mask & DestSpecFile::name) ? " (" #name ")"sv : ""sv
             throw std::runtime_error(
-                str_concat("duplicate connection policy value"sv, dest_name)
+                str_concat("duplicate connection policy value"sv,
+                           DECL(vnc), DECL(rdp), DECL(rdp_sogisces_1_3_2030))
             );
+#undef DECL
         }
         policy_type |= dest_file;
     }
