@@ -13,6 +13,7 @@ REDEMPTION_CXXFLAGS +=
     <cxx-switch-warnings-default>exhaustive-enum
     <cxx-windows-abi-compatibility-warnings-default>off
     <cxx-conversion-warnings-default>off
+    <cxx-unsafe-buffer-usage-warnings>off
     <variant>debug:<cxx-stl-debug-default>allow-broken-abi
 
     <toolset>clang:<cxxflags>-Wno-overlength-strings
@@ -51,9 +52,9 @@ else
   REDEMPTION_CXXFLAGS += <conditional>@flags ;
 }
 
-# ./compiler-options.lua -f -stl_fix,analyzer,analyzer_too_complex_warning,analyzer_verbosity,diagnostics_format,msvc_conformance,msvc_crt_secure_no_warnings,msvc_diagnostics_format,msvc_isystem,msvc_isystem_with_template_from_non_external,windows-bigobj,exceptions,other_sanitizers,pie,rtti,coverage generators/bjam.lua cxx- >> cxxflags.jam
+# ./compiler-options.lua -f -stl_fix,analyzer,analyzer_too_complex_warning,analyzer_verbosity,diagnostics_format,msvc_conformance,msvc_crt_secure_no_warnings,msvc_diagnostics_format,msvc_isystem,msvc_isystem_with_template_from_non_external,windows_bigobj,exceptions,other_sanitizers,pie,rtti,coverage generators/bjam.lua cxx- >> cxxflags.jam
 # remove:
-#   reference to msvc, window intel and clang-cl
+#   reference to msvc, window intel, clang-cl and MINGW
 # replace:
 #   jln_flags by flags
 #
@@ -124,7 +125,7 @@ feature <cxx-suggestions> : _ default off on : propagated ;
 # Warnings concerning the switch keyword
 feature <cxx-switch-warnings> : _ on default off exhaustive-enum mandatory-default exhaustive-enum-and-mandatory-default : propagated ;
 # Enable -Wunsafe-buffer-usage with clang
-feature <cxx-unsafe-buffer-usage-warnings> : _ off default on : propagated ;
+feature <cxx-unsafe-buffer-usage-warnings> : _ default on off : propagated ;
 # Initialize all stack variables implicitly, including padding
 #  - uninitialized: Doesn't initialize any automatic variables (default behavior of Gcc and Clang)
 #  - pattern: Initialize automatic variables with byte-repeatable pattern (0xFE for Gcc, 0xAA for Clang)
@@ -181,7 +182,7 @@ feature <cxx-stack-protector-default> : default off on strong all : incidental ;
 feature <cxx-stl-debug-default> : default off on allow-broken-abi allow-broken-abi-and-bugs assert-as-exception : incidental ;
 feature <cxx-suggestions-default> : default off on : incidental ;
 feature <cxx-switch-warnings-default> : on default off exhaustive-enum mandatory-default exhaustive-enum-and-mandatory-default : incidental ;
-feature <cxx-unsafe-buffer-usage-warnings-default> : off default on : incidental ;
+feature <cxx-unsafe-buffer-usage-warnings-default> : default on off : incidental ;
 feature <cxx-var-init-default> : default uninitialized pattern zero : incidental ;
 feature <cxx-warnings-default> : on default off strict very-strict : incidental ;
 feature <cxx-warnings-as-error-default> : default off on basic : incidental ;
@@ -234,7 +235,7 @@ constant jln_env_stack_protector : [ jln-get-env cxx_stack_protector : default o
 constant jln_env_stl_debug : [ jln-get-env cxx_stl_debug : default off on allow-broken-abi allow-broken-abi-and-bugs assert-as-exception ] ;
 constant jln_env_suggestions : [ jln-get-env cxx_suggestions : default off on ] ;
 constant jln_env_switch_warnings : [ jln-get-env cxx_switch_warnings : on default off exhaustive-enum mandatory-default exhaustive-enum-and-mandatory-default ] ;
-constant jln_env_unsafe_buffer_usage_warnings : [ jln-get-env cxx_unsafe_buffer_usage_warnings : off default on ] ;
+constant jln_env_unsafe_buffer_usage_warnings : [ jln-get-env cxx_unsafe_buffer_usage_warnings : default on off ] ;
 constant jln_env_var_init : [ jln-get-env cxx_var_init : default uninitialized pattern zero ] ;
 constant jln_env_warnings : [ jln-get-env cxx_warnings : on default off strict very-strict ] ;
 constant jln_env_warnings_as_error : [ jln-get-env cxx_warnings_as_error : default off on basic ] ;
@@ -276,11 +277,12 @@ if $(JLN_BJAM_YEAR_VERSION) < 2016.00
   toolset.flags cxx-warnings-as-error-incidental CXX_WARNINGS_AS_ERROR_INCIDENTAL : <cxx-warnings-as-error-incidental> ;
   toolset.flags cxx-whole-program CXX_WHOLE_PROGRAM : <cxx-whole-program> ;
   toolset.flags cxx-whole-program-incidental CXX_WHOLE_PROGRAM_INCIDENTAL : <cxx-whole-program-incidental> ;
+
 }
 
-local JLN_ORIGINAL_CXX_TOOLSET = "" ;
-local JLN_NORMALIZED_CXX_COMP = "" ;
-local JLN_NORMALIZED_CXX_COMP_VERSION = 100000 ;
+JLN_ORIGINAL_CXX_TOOLSET = "" ;
+JLN_NORMALIZED_CXX_COMP = "" ;
+JLN_NORMALIZED_CXX_COMP_VERSION = 100000 ;
 
 rule jln-update-normalized-compiler ( toolset : version )
 {
@@ -687,27 +689,51 @@ rule flags ( properties * )
     {
       if $(x_switch_warnings) != "default"
       {
-        if ( $(x_switch_warnings) = "on" || $(x_switch_warnings) = "mandatory-default" )
+        if $(x_switch_warnings) = "on"
         {
           flags +=
             <cxxflags>"-Wswitch"
+            <cxxflags>"-Wno-switch-default"
           ;
         }
         else
         {
-          if ( $(x_switch_warnings) = "exhaustive-enum" || $(x_switch_warnings) = "exhaustive-enum-and-mandatory-default" )
+          if $(x_switch_warnings) = "mandatory-default"
           {
             flags +=
               <cxxflags>"-Wswitch"
-              <cxxflags>"-Wswitch-enum"
+              <cxxflags>"-Wswitch-default"
             ;
           }
           else
           {
-            flags +=
-              <cxxflags>"-Wno-switch"
-              <cxxflags>"-Wno-switch-enum"
-            ;
+            if $(x_switch_warnings) = "exhaustive-enum"
+            {
+              flags +=
+                <cxxflags>"-Wswitch"
+                <cxxflags>"-Wswitch-enum"
+                <cxxflags>"-Wno-switch-default"
+              ;
+            }
+            else
+            {
+              if $(x_switch_warnings) = "exhaustive-enum-and-mandatory-default"
+              {
+                flags +=
+                  <cxxflags>"-Wswitch"
+                  <cxxflags>"-Wswitch-enum"
+                  <cxxflags>"-Wswitch-default"
+                ;
+              }
+              else
+              {
+                flags +=
+                  <cxxflags>"-Wno-switch"
+                  <cxxflags>"-Wno-switch-enum"
+                  <cxxflags>"-Wno-switch-default"
+                ;
+              }
+            }
           }
         }
       }
@@ -729,7 +755,7 @@ rule flags ( properties * )
     }
     if $(x_unsafe_buffer_usage_warnings) != "default"
     {
-      if ! [ numbers.less $(JLN_NORMALIZED_CXX_COMP_VERSION) 1600000 ]
+      if ( $(JLN_NORMALIZED_CXX_COMP) = "clang" && ! [ numbers.less $(JLN_NORMALIZED_CXX_COMP_VERSION) 1600000 ] )
       {
         if $(x_unsafe_buffer_usage_warnings) = "off"
         {
@@ -2429,13 +2455,11 @@ rule flags ( properties * )
         ;
         if $(x_lto) = "fat"
         {
-          if [ os.name ] = LINUX
-          {
-            flags +=
-              <cxxflags>"-ffat-lto-objects"
-              <linkflags>"-ffat-lto-objects"
-            ;
-          }
+          # if [ os.name ] = LINUX
+          flags +=
+            <cxxflags>"-ffat-lto-objects"
+            <linkflags>"-ffat-lto-objects"
+          ;
         }
       }
     }
@@ -2487,6 +2511,5 @@ rule flags ( properties * )
       }
     }
   }
-
   return $(flags) ;
 }
