@@ -894,7 +894,7 @@ bool mod_vnc::draw_event_impl()
             int serverProtocol = major * 1000 + minor;
             this->spokenProtocol = std::min(maxSpokenVncProcotol, serverProtocol);
 
-            char handshakeAnswer[13];
+            char handshakeAnswer[20];
             snprintf(handshakeAnswer, sizeof(handshakeAnswer), "RFB %.3d.%.3d\n",
                     this->spokenProtocol / 1000, this->spokenProtocol % 1000);
             this->t.send(handshakeAnswer, 12);

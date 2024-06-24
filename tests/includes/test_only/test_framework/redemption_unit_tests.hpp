@@ -169,23 +169,23 @@ namespace redemption_unit_test_
     constexpr fn_caller<F> fn_invoker(char const* /*name*/, F f);
 } // namespace redemption_unit_test_
 
-template<class T, class U>  bool operator==(array_view<T>, array_view<U>) { return true; }
-template<class T> bool operator==(array_view<T>, bytes_view) { return true; }
-template<class U> bool operator==(bytes_view, array_view<U>) { return true; }
-bool operator==(bytes_view, bytes_view);
-template<class T> bool operator==(array_view<T>, ut::flagged_bytes_view) { return true; }
-template<class U> bool operator==(ut::flagged_bytes_view, array_view<U>) { return true; }
-bool operator==(ut::flagged_bytes_view, bytes_view);
-bool operator==(bytes_view, ut::flagged_bytes_view);
+template<class T, class U>  bool operator==(array_view<T> const&, array_view<U> const&) { return true; }
+template<class T> bool operator==(array_view<T> const&, bytes_view const&) { return true; }
+template<class U> bool operator==(bytes_view const&, array_view<U> const&) { return true; }
+bool operator==(bytes_view const&, bytes_view const&);
+template<class T> bool operator==(array_view<T> const&, ut::flagged_bytes_view const&) { return true; }
+template<class U> bool operator==(ut::flagged_bytes_view const&, array_view<U> const&) { return true; }
+bool operator==(ut::flagged_bytes_view const&, bytes_view const&);
+bool operator==(bytes_view const&, ut::flagged_bytes_view const&);
 
-template<class T, class U>  bool operator!=(array_view<T>, array_view<U>) { return true; }
-template<class T> bool operator!=(array_view<T>, bytes_view) { return true; }
-template<class U> bool operator!=(bytes_view, array_view<U>) { return true; }
-bool operator!=(bytes_view, bytes_view);
-template<class T> bool operator!=(array_view<T>, ut::flagged_bytes_view) { return true; }
-template<class U> bool operator!=(ut::flagged_bytes_view, array_view<U>) { return true; }
-bool operator!=(ut::flagged_bytes_view, bytes_view);
-bool operator!=(bytes_view, ut::flagged_bytes_view);
+template<class T, class U>  bool operator!=(array_view<T> const&, array_view<U> const&) { return true; }
+template<class T> bool operator!=(array_view<T> const&, bytes_view const&) { return true; }
+template<class U> bool operator!=(bytes_view const&, array_view<U> const&) { return true; }
+bool operator!=(bytes_view const&, bytes_view const&);
+template<class T> bool operator!=(array_view<T> const&, ut::flagged_bytes_view const&) { return true; }
+template<class U> bool operator!=(ut::flagged_bytes_view const&, array_view<U> const&) { return true; }
+bool operator!=(ut::flagged_bytes_view const&, bytes_view const&);
+bool operator!=(bytes_view const&, ut::flagged_bytes_view const&);
 
 # define FIXTURES_PATH "./tests/fixtures"
 # define CFG_PATH "./sys/etc/rdpproxy"

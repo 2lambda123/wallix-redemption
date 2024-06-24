@@ -264,20 +264,6 @@ struct TaggedString
     }
 
     template<class U>
-    friend constexpr detail::enable_if_same_tag_t<U, Tag, bool>
-    operator==(TaggedString const& a, U const& b) noexcept
-    {
-        return a.sv() == b.sv();
-    }
-
-    template<class U>
-    friend constexpr detail::enable_if_same_tag_t<U, Tag, bool>
-    operator!=(TaggedString const& a, U const& b) noexcept
-    {
-        return a.sv() != b.sv();
-    }
-
-    template<class U>
     constexpr detail::enable_if_same_tag_t<U, Tag, bool>
     starts_with(U const& prefix) noexcept
     {
@@ -293,6 +279,16 @@ struct TaggedString
             && std::string_view(data() + size() - suffix.size(), suffix.size()) == suffix.sv();
     }
 };
+
+template<class T, class U>
+constexpr std::enable_if_t<std::is_same<
+    typename detail::extract_string_tag<T>::type,
+    typename detail::extract_string_tag<U>::type
+>::value, bool>
+operator==(T const& a, U const& b) noexcept
+{
+    return a.sv() == b.sv();
+}
 
 template<class Tag>
 using TaggedStringView = TaggedString<Tag, std::string_view>;
