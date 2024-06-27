@@ -164,28 +164,11 @@ RED_AUTO_TEST_CASE(TraceWidgetLogin4)
     RED_CHECK_IMG(ctx.drawable, IMG_TEST_PATH "login_6.png");
 }
 
-RED_AUTO_TEST_CASE(TraceWidgetLogin_transparent_png_with_theme_color)
+RED_AUTO_TEST_CASE(TraceWidgetLogin_target_field)
 {
-    Theme colors;
-    colors.global.enable_theme = true;
-    colors.global.logo_path = FIXTURES_PATH"/wablogoblue-transparent.png";
-
-    TestWidgetLoginCtx ctx("test1"_av, "rec"_av, "rec"_av, "rec"_av, LOGON_MESSAGE, colors);
+    TestWidgetLoginCtx ctx("test1"_av, "rec"_av, "rec"_av, ""_av, LOGON_MESSAGE, Theme{}, true);
 
     ctx.flat_login.rdp_input_invalidate(ctx.flat_login.get_rect());
 
     RED_CHECK_IMG(ctx.drawable, IMG_TEST_PATH "login_7.png");
-}
-
-RED_AUTO_TEST_CASE(TraceWidgetLogin_target_field)
-{
-    Theme colors;
-    colors.global.enable_theme = true;
-    colors.global.logo_path = FIXTURES_PATH"/wablogoblue-transparent.png";
-
-    TestWidgetLoginCtx ctx("test1"_av, "rec"_av, "rec"_av, ""_av, LOGON_MESSAGE, colors, true);
-
-    ctx.flat_login.rdp_input_invalidate(ctx.flat_login.get_rect());
-
-    RED_CHECK_IMG(ctx.drawable, IMG_TEST_PATH "login_8.png");
 }

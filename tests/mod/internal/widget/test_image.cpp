@@ -205,7 +205,7 @@ RED_AUTO_TEST_CASE(TraceWidgetImage_transparent_png)
         Png
         {
             FIXTURES_PATH"/checkers-half-transparent.png",
-            NamedBGRColor::DARK_BLUE_BIS,
+            NamedBGRColor::BG_BLUE,
             IMG_TEST_PATH "image_transparent_half_transparent_2.png",
         },
     })

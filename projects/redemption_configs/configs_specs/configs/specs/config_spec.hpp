@@ -31,6 +31,7 @@
 #include "include/debug_verbose_description.hpp"
 
 #include "keyboard/keylayouts.hpp"
+#include "utils/theme.hpp"
 #include "utils/colors.hpp"
 #include "utils/file_permissions.hpp"
 
@@ -3538,153 +3539,153 @@ _.section("theme", [&]
         .desc = "Logo displayed when theme is enabled",
     });
 
-    auto rgb = [](NamedBGRColor color) {
+    auto rgb = [](BGRColor color) {
         return value<types::rgb>(BGRColor(BGRasRGBColor(color)).as_u32());
     };
 
     _.member(MemberInfo{
         .name = "bgcolor",
-        .value = rgb(NamedBGRColor::DARK_BLUE_BIS),
+        .value = rgb(Theme::Global().bgcolor),
         .spec = global_spec(no_acl),
         .desc = "Background color for window, label and button",
     });
 
     _.member(MemberInfo{
         .name = "fgcolor",
-        .value = rgb(NamedBGRColor::WHITE),
+        .value = rgb(Theme::Global().fgcolor),
         .spec = global_spec(no_acl),
         .desc = "Foreground color for window, label and button",
     });
 
     _.member(MemberInfo{
         .name = "separator_color",
-        .value = rgb(NamedBGRColor::LIGHT_BLUE),
+        .value = rgb(Theme::Global().separator_color),
         .spec = global_spec(no_acl),
         .desc = "Separator line color used with some widgets",
     });
 
     _.member(MemberInfo{
         .name = "focus_color",
-        .value = rgb(NamedBGRColor::WINBLUE),
+        .value = rgb(Theme::Global().focus_color),
         .spec = global_spec(no_acl),
         .desc = "Background color used by buttons when they have focus",
     });
 
     _.member(MemberInfo{
         .name = "error_color",
-        .value = rgb(NamedBGRColor::YELLOW),
+        .value = rgb(Theme::Global().error_color),
         .spec = global_spec(no_acl),
         .desc = "Text color for error messages. For example, an authentication error in the login",
     });
 
     _.member(MemberInfo{
         .name = "edit_bgcolor",
-        .value = rgb(NamedBGRColor::WHITE),
+        .value = rgb(Theme::Edit().bgcolor),
         .spec = global_spec(no_acl),
         .desc = "Background color for editing field",
     });
 
     _.member(MemberInfo{
         .name = "edit_fgcolor",
-        .value = rgb(NamedBGRColor::BLACK),
+        .value = rgb(Theme::Edit().fgcolor),
         .spec = global_spec(no_acl),
         .desc = "Foreground color for editing field",
     });
 
     _.member(MemberInfo{
         .name = "edit_focus_color",
-        .value = rgb(NamedBGRColor::WINBLUE),
+        .value = rgb(Theme::Edit().focus_color),
         .spec = global_spec(no_acl),
         .desc = "Outline color for editing field that has focus",
     });
 
     _.member(MemberInfo{
         .name = "tooltip_bgcolor",
-        .value = rgb(NamedBGRColor::LIGHT_YELLOW),
+        .value = rgb(Theme::Tooltip().bgcolor),
         .spec = global_spec(no_acl),
         .desc = "Background color for tooltip",
     });
 
     _.member(MemberInfo{
         .name = "tooltip_fgcolor",
-        .value = rgb(NamedBGRColor::BLACK),
+        .value = rgb(Theme::Tooltip().fgcolor),
         .spec = global_spec(no_acl),
         .desc = "Foreground color for tooltip",
     });
 
     _.member(MemberInfo{
         .name = "tooltip_border_color",
-        .value = rgb(NamedBGRColor::BLACK),
+        .value = rgb(Theme::Tooltip().border_color),
         .spec = global_spec(no_acl),
         .desc = "Border color for tooltip",
     });
 
     _.member(MemberInfo{
         .name = "selector_line1_bgcolor",
-        .value = rgb(NamedBGRColor::PALE_BLUE),
+        .value = rgb(Theme::SelectorLine1().bgcolor),
         .spec = global_spec(no_acl),
         .desc = "Background color for even rows in the selector widget",
     });
 
     _.member(MemberInfo{
         .name = "selector_line1_fgcolor",
-        .value = rgb(NamedBGRColor::BLACK),
+        .value = rgb(Theme::SelectorLine1().fgcolor),
         .spec = global_spec(no_acl),
         .desc = "Foreground color for even rows in the selector widget",
     });
 
     _.member(MemberInfo{
         .name = "selector_line2_bgcolor",
-        .value = rgb(NamedBGRColor::LIGHT_BLUE),
+        .value = rgb(Theme::SelectorLine2().bgcolor),
         .spec = global_spec(no_acl),
         .desc = "Background color for odd rows in the selector widget",
     });
 
     _.member(MemberInfo{
         .name = "selector_line2_fgcolor",
-        .value = rgb(NamedBGRColor::BLACK),
+        .value = rgb(Theme::SelectorLine2().fgcolor),
         .spec = global_spec(no_acl),
         .desc = "Foreground color for odd rows in the selector widget",
     });
 
     _.member(MemberInfo{
         .name = "selector_focus_bgcolor",
-        .value = rgb(NamedBGRColor::WINBLUE),
+        .value = rgb(Theme::SelectorFocus().bgcolor),
         .spec = global_spec(no_acl),
         .desc = "Background color for the row that has focus in the selector widget",
     });
 
     _.member(MemberInfo{
         .name = "selector_focus_fgcolor",
-        .value = rgb(NamedBGRColor::WHITE),
+        .value = rgb(Theme::SelectorFocus().fgcolor),
         .spec = global_spec(no_acl),
         .desc = "Foreground color for the row that has focus in the selector widget",
     });
 
     _.member(MemberInfo{
         .name = "selector_selected_bgcolor",
-        .value = rgb(NamedBGRColor::MEDIUM_BLUE),
+        .value = rgb(Theme::SelectorSelected().bgcolor),
         .spec = global_spec(no_acl),
         .desc = "Background color for the row that is selected in the selector widget but does not have focus",
     });
 
     _.member(MemberInfo{
         .name = "selector_selected_fgcolor",
-        .value = rgb(NamedBGRColor::WHITE),
+        .value = rgb(Theme::SelectorSelected().fgcolor),
         .spec = global_spec(no_acl),
         .desc = "Foreground color for the row that is selected in the selector widget but does not have focus",
     });
 
     _.member(MemberInfo{
         .name = "selector_label_bgcolor",
-        .value = rgb(NamedBGRColor::MEDIUM_BLUE),
+        .value = rgb(Theme::SelectorLabel().bgcolor),
         .spec = global_spec(no_acl),
         .desc = "Background color for name of filter fields in the selector widget",
     });
 
     _.member(MemberInfo{
         .name = "selector_label_fgcolor",
-        .value = rgb(NamedBGRColor::WHITE),
+        .value = rgb(Theme::SelectorLabel().fgcolor),
         .spec = global_spec(no_acl),
         .desc = "Foreground color for name of filter fields in the selector widget",
     });

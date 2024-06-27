@@ -24,8 +24,8 @@ Author(s): Proxies Team
 
 void load_theme(Theme& theme, Inifile& ini) noexcept
 {
-    theme.global.enable_theme = ini.get<cfg::theme::enable_theme>();
-    if (!theme.global.enable_theme) {
+    theme.enable_theme = ini.get<cfg::theme::enable_theme>();
+    if (!theme.enable_theme) {
         return;
     }
 
@@ -39,7 +39,7 @@ void load_theme(Theme& theme, Inifile& ini) noexcept
     theme.global.separator_color = to_bgr(cfg::theme::separator_color());
     theme.global.focus_color = to_bgr(cfg::theme::focus_color());
     theme.global.error_color = to_bgr(cfg::theme::error_color());
-    theme.global.logo_path = ini.get<cfg::theme::logo_path>();
+    theme.logo_path = ini.get<cfg::theme::logo_path>();
 
     theme.edit.bgcolor = to_bgr(cfg::theme::edit_bgcolor());
     theme.edit.fgcolor = to_bgr(cfg::theme::edit_fgcolor());

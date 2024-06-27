@@ -120,7 +120,7 @@ RED_AUTO_TEST_CASE(TraceWidgetButtonEvent)
     int16_t y = 0;
 
     WidgetButton wbutton(drawable, ""_av, notifier, NamedBGRColor::WHITE,
-                         NamedBGRColor::DARK_BLUE_BIS, NamedBGRColor::WINBLUE, 2,
+                         NamedBGRColor::BG_BLUE, NamedBGRColor::WINBLUE, 2,
                          global_font_deja_vu_14());
     Dimension dim = wbutton.get_optimal_dim();
     wbutton.set_wh(dim);

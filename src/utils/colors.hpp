@@ -48,11 +48,14 @@ enum class NamedBGRColor : uint32_t {
     BLUE                      = 0xff0000,
     DARK_BLUE                 = 0x7f0000,
     CYAN                      = 0xffff00,
-    DARK_BLUE_BIS             = 0x601f08,
     MEDIUM_BLUE               = 0xC47244,
     PALE_BLUE                 = 0xf6ece9,
     LIGHT_BLUE                = 0xebd5cf,
     WINBLUE                   = 0x9C4D00,
+
+    // used for theme
+    BG_BLUE                   = 0x601F08,
+    FOCUS_BLUE                = WINBLUE,
 
     RED                       = 0x0000ff,
     DARK_RED                  = 0x221CAD,

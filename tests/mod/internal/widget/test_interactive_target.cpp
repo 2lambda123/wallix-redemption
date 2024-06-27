@@ -49,7 +49,7 @@ struct TestWidgetInteractivePasswordCtx
         {WidgetEventNotifier(), WidgetEventNotifier(), WidgetEventNotifier()},
         ask_device, ask_login, ask_password, []{
             Theme colors;
-            colors.global.bgcolor = NamedBGRColor::DARK_BLUE_BIS;
+            colors.global.bgcolor = NamedBGRColor::BG_BLUE;
             colors.global.fgcolor = NamedBGRColor::WHITE;
             return colors;
         }(),

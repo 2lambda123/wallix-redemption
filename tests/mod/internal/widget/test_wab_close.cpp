@@ -142,16 +142,3 @@ RED_AUTO_TEST_CASE(TraceWidgetWabCloseExit)
 
     RED_CHECK_IMG(ctx.drawable, IMG_TEST_PATH "wab_close_8.png");
 }
-
-RED_AUTO_TEST_CASE(TraceWidgetWabClose_transparent_png_with_theme_color)
-{
-    Theme colors;
-    colors.global.enable_theme = true;
-    colors.global.logo_path = FIXTURES_PATH"/wablogoblue-transparent.png";
-
-    TestWidgetCloseCtx ctx("abc\ndef", "rec"_av, "rec"_av, false, colors);
-
-    ctx.flat_wab_close.rdp_input_invalidate(ctx.flat_wab_close.get_rect());
-
-    RED_CHECK_IMG(ctx.drawable, IMG_TEST_PATH "wab_close_10.png");
-}

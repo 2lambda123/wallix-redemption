@@ -27,45 +27,46 @@
 
 struct Theme
 {
-    struct {
-        bool enable_theme = false;
-        BGRColor bgcolor = NamedBGRColor::DARK_BLUE_BIS;
+    bool enable_theme = false;
+    std::string logo_path;
+
+    struct Global {
+        BGRColor bgcolor = NamedBGRColor::BG_BLUE;
         BGRColor fgcolor = NamedBGRColor::WHITE;
         BGRColor separator_color = NamedBGRColor::LIGHT_BLUE;
-        BGRColor focus_color = NamedBGRColor::WINBLUE;
+        BGRColor focus_color = NamedBGRColor::FOCUS_BLUE;
         BGRColor error_color = NamedBGRColor::YELLOW;
-        std::string logo_path;
     } global;
 
-    struct {
+    struct Edit {
         BGRColor bgcolor = NamedBGRColor::WHITE;
         BGRColor fgcolor = NamedBGRColor::BLACK;
-        BGRColor focus_color = NamedBGRColor::WINBLUE;
+        BGRColor focus_color = NamedBGRColor::FOCUS_BLUE;
     } edit;
 
-    struct {
+    struct Tooltip {
         BGRColor bgcolor = NamedBGRColor::LIGHT_YELLOW;
         BGRColor fgcolor = NamedBGRColor::BLACK;
         BGRColor border_color = NamedBGRColor::BLACK;
     } tooltip;
 
-    struct {
+    struct SelectorLine1 {
         BGRColor bgcolor = NamedBGRColor::PALE_BLUE;
         BGRColor fgcolor = NamedBGRColor::BLACK;
     } selector_line1;
-    struct {
+    struct SelectorLine2 {
         BGRColor bgcolor = NamedBGRColor::LIGHT_BLUE;
         BGRColor fgcolor = NamedBGRColor::BLACK;
     } selector_line2;
-    struct {
+    struct SelectorSelected {
         BGRColor bgcolor = NamedBGRColor::MEDIUM_BLUE;
         BGRColor fgcolor = NamedBGRColor::WHITE;
     } selector_selected;
-    struct {
-        BGRColor bgcolor = NamedBGRColor::WINBLUE;
+    struct SelectorFocus {
+        BGRColor bgcolor = NamedBGRColor::FOCUS_BLUE;
         BGRColor fgcolor = NamedBGRColor::WHITE;
     } selector_focus;
-    struct {
+    struct SelectorLabel {
         BGRColor bgcolor = NamedBGRColor::MEDIUM_BLUE;
         BGRColor fgcolor = NamedBGRColor::WHITE;
     } selector_label;

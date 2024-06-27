@@ -38,17 +38,18 @@ RED_AUTO_TEST_CASE(TestLoadTheme_load_hardcoded_default_values)
 {
     Theme colors;
 
-    RED_CHECK(!colors.global.enable_theme);
-    RED_CHECK_EQUAL(colors.global.bgcolor, NamedBGRColor::DARK_BLUE_BIS);
+    RED_CHECK(!colors.enable_theme);
+    RED_CHECK_EQUAL(colors.logo_path, "");
+
+    RED_CHECK_EQUAL(colors.global.bgcolor, NamedBGRColor::BG_BLUE);
     RED_CHECK_EQUAL(colors.global.fgcolor, NamedBGRColor::WHITE);
     RED_CHECK_EQUAL(colors.global.separator_color, NamedBGRColor::LIGHT_BLUE);
-    RED_CHECK_EQUAL(colors.global.focus_color, NamedBGRColor::WINBLUE);
+    RED_CHECK_EQUAL(colors.global.focus_color, NamedBGRColor::FOCUS_BLUE);
     RED_CHECK_EQUAL(colors.global.error_color, NamedBGRColor::YELLOW);
-    RED_CHECK_EQUAL(colors.global.logo_path, "");
 
     RED_CHECK_EQUAL(colors.edit.bgcolor, NamedBGRColor::WHITE);
     RED_CHECK_EQUAL(colors.edit.fgcolor, NamedBGRColor::BLACK);
-    RED_CHECK_EQUAL(colors.edit.focus_color, NamedBGRColor::WINBLUE);
+    RED_CHECK_EQUAL(colors.edit.focus_color, NamedBGRColor::FOCUS_BLUE);
 
     RED_CHECK_EQUAL(colors.tooltip.bgcolor, NamedBGRColor::LIGHT_YELLOW);
     RED_CHECK_EQUAL(colors.tooltip.fgcolor, NamedBGRColor::BLACK);
@@ -63,7 +64,7 @@ RED_AUTO_TEST_CASE(TestLoadTheme_load_hardcoded_default_values)
     RED_CHECK_EQUAL(colors.selector_selected.bgcolor, NamedBGRColor::MEDIUM_BLUE);
     RED_CHECK_EQUAL(colors.selector_selected.fgcolor, NamedBGRColor::WHITE);
 
-    RED_CHECK_EQUAL(colors.selector_focus.bgcolor, NamedBGRColor::WINBLUE);
+    RED_CHECK_EQUAL(colors.selector_focus.bgcolor, NamedBGRColor::FOCUS_BLUE);
     RED_CHECK_EQUAL(colors.selector_focus.fgcolor, NamedBGRColor::WHITE);
 
     RED_CHECK_EQUAL(colors.selector_label.bgcolor, NamedBGRColor::MEDIUM_BLUE);
@@ -110,17 +111,18 @@ RED_AUTO_TEST_CASE(TestLoadTheme_load_hardcoded_default_values_even_if_inifile_i
 
     load_theme(colors, ini);
 
-    RED_CHECK(!colors.global.enable_theme);
-    RED_CHECK_EQUAL(colors.global.bgcolor, NamedBGRColor::DARK_BLUE_BIS);
+    RED_CHECK(!colors.enable_theme);
+    RED_CHECK_EQUAL(colors.logo_path, "");
+
+    RED_CHECK_EQUAL(colors.global.bgcolor, NamedBGRColor::BG_BLUE);
     RED_CHECK_EQUAL(colors.global.fgcolor, NamedBGRColor::WHITE);
     RED_CHECK_EQUAL(colors.global.separator_color, NamedBGRColor::LIGHT_BLUE);
-    RED_CHECK_EQUAL(colors.global.focus_color, NamedBGRColor::WINBLUE);
+    RED_CHECK_EQUAL(colors.global.focus_color, NamedBGRColor::FOCUS_BLUE);
     RED_CHECK_EQUAL(colors.global.error_color, NamedBGRColor::YELLOW);
-    RED_CHECK_EQUAL(colors.global.logo_path, "");
 
     RED_CHECK_EQUAL(colors.edit.bgcolor, NamedBGRColor::WHITE);
     RED_CHECK_EQUAL(colors.edit.fgcolor, NamedBGRColor::BLACK);
-    RED_CHECK_EQUAL(colors.edit.focus_color, NamedBGRColor::WINBLUE);
+    RED_CHECK_EQUAL(colors.edit.focus_color, NamedBGRColor::FOCUS_BLUE);
 
     RED_CHECK_EQUAL(colors.tooltip.bgcolor, NamedBGRColor::LIGHT_YELLOW);
     RED_CHECK_EQUAL(colors.tooltip.fgcolor, NamedBGRColor::BLACK);
@@ -135,7 +137,7 @@ RED_AUTO_TEST_CASE(TestLoadTheme_load_hardcoded_default_values_even_if_inifile_i
     RED_CHECK_EQUAL(colors.selector_selected.bgcolor, NamedBGRColor::MEDIUM_BLUE);
     RED_CHECK_EQUAL(colors.selector_selected.fgcolor, NamedBGRColor::WHITE);
 
-    RED_CHECK_EQUAL(colors.selector_focus.bgcolor, NamedBGRColor::WINBLUE);
+    RED_CHECK_EQUAL(colors.selector_focus.bgcolor, NamedBGRColor::FOCUS_BLUE);
     RED_CHECK_EQUAL(colors.selector_focus.fgcolor, NamedBGRColor::WHITE);
 
     RED_CHECK_EQUAL(colors.selector_label.bgcolor, NamedBGRColor::MEDIUM_BLUE);
@@ -182,15 +184,15 @@ RED_AUTO_TEST_CASE(TestLoadTheme_load_from_inifile)
 
     load_theme(colors, ini);
 
-    RED_CHECK(colors.global.enable_theme);
+    RED_CHECK(colors.enable_theme);
+    RED_CHECK_EQUAL(colors.logo_path,
+                    str_concat(app_path(AppPath::Cfg), "/themes/test_theme/logo.png"));
+
     RED_CHECK_EQUAL(colors.global.bgcolor, NamedBGRColor::ORANGE);
     RED_CHECK_EQUAL(colors.global.fgcolor, NamedBGRColor::WHITE);
     RED_CHECK_EQUAL(colors.global.separator_color, NamedBGRColor::BROWN);
     RED_CHECK_EQUAL(colors.global.focus_color, NamedBGRColor::DARK_RED);
     RED_CHECK_EQUAL(colors.global.error_color, NamedBGRColor::RED);
-    RED_CHECK_EQUAL(colors.global.logo_path,
-                    str_concat(app_path(AppPath::Cfg),
-                               "/themes/test_theme/logo.png"));
 
     RED_CHECK_EQUAL(colors.edit.bgcolor, NamedBGRColor::WHITE);
     RED_CHECK_EQUAL(colors.edit.fgcolor, NamedBGRColor::BLACK);

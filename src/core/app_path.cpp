@@ -45,7 +45,7 @@
 #endif
 
 // TODO move these into configuration
-#define LOGIN_WAB_BLUE "wablogoblue.png"
+#define LOGIN_WAB_BLUE "wablogo.png"
 #define REDEMPTION_LOGO24 "xrdp24b-redemption.png"
 #define LOCKFILE "rdpproxy.pid"
 #define RDPPROXY_INI "rdpproxy.ini"

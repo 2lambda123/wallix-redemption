@@ -59,7 +59,7 @@ WidgetWabClose::WidgetWabClose(
          theme.global.fgcolor, theme.global.bgcolor,
          theme.global.focus_color, 2, font, 6, 2)
 , img(drawable,
-      theme.global.enable_theme ? theme.global.logo_path.c_str() :
+      theme.enable_theme ? theme.logo_path.c_str() :
       app_path(AppPath::LoginWabBlue),
       theme.global.bgcolor)
 , prev_time(0)

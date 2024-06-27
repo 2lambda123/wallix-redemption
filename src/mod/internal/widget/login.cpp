@@ -75,7 +75,7 @@ WidgetLogin::WidgetLogin(
         theme.global.fgcolor, theme.global.bgcolor, theme.global.focus_color,
         font, WIDGET_MULTILINE_BORDER_X, WIDGET_MULTILINE_BORDER_Y)
     , img(drawable,
-          theme.global.enable_theme ? theme.global.logo_path.c_str() :
+          theme.enable_theme ? theme.logo_path.c_str() :
           app_path(AppPath::LoginWabBlue),
           theme.global.bgcolor)
     , version_label(drawable, caption,

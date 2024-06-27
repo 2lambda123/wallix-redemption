@@ -54,7 +54,7 @@ WidgetDialogBase::WidgetDialogBase(
         theme.global.focus_color, 2, font, 6, 2)
     , cancel(std::move(cancel_))
     , img(drawable,
-          theme.global.enable_theme ? theme.global.logo_path.c_str() :
+          theme.enable_theme ? theme.logo_path.c_str() :
           app_path(AppPath::LoginWabBlue),
           theme.global.bgcolor)
     , extra_button(extra_button)
