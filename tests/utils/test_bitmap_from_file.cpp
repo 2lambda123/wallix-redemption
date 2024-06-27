@@ -31,22 +31,22 @@ RED_AUTO_TEST_CASE(TestBitmapOpenFiles)
 {
     {
         const char * filename = FIXTURES_PATH "/jhlhjsdlkfhlkasd.png";
-        Bitmap bmp = bitmap_from_file_impl(filename, BLACK);
+        Bitmap bmp = bitmap_from_file_impl(filename, NamedBGRColor::BLACK);
         RED_REQUIRE(!bmp.is_valid());
     }
     {
         const char * filename = FIXTURES_PATH "/replay.wrm";
-        Bitmap bmp = bitmap_from_file_impl(filename, BLACK);
+        Bitmap bmp = bitmap_from_file_impl(filename, NamedBGRColor::BLACK);
         RED_REQUIRE(!bmp.is_valid());
     }
     {
         const char * filename = FIXTURES_PATH "/xrdp24b.jpg";
-        Bitmap bmp = bitmap_from_file_impl(filename, BLACK);
+        Bitmap bmp = bitmap_from_file_impl(filename, NamedBGRColor::BLACK);
         RED_REQUIRE(!bmp.is_valid());
     }
     {
         const char * filename = FIXTURES_PATH "/xrdp24b.bmp";
-        Bitmap bmp = bitmap_from_file_impl(filename, BLACK);
+        Bitmap bmp = bitmap_from_file_impl(filename, NamedBGRColor::BLACK);
         RED_REQUIRE(bmp.is_valid());
         RED_CHECK_EQUAL(bmp.cx(), 256);
         RED_CHECK_EQUAL(bmp.cy(), 150);
@@ -54,7 +54,7 @@ RED_AUTO_TEST_CASE(TestBitmapOpenFiles)
     }
     {
         const char * filename = FIXTURES_PATH "/xrdp24b.png";
-        Bitmap bmp = bitmap_from_file_impl(filename, BLACK);
+        Bitmap bmp = bitmap_from_file_impl(filename, NamedBGRColor::BLACK);
         RED_REQUIRE(bmp.is_valid());
         RED_CHECK_EQUAL(bmp.cx(), 256);
         RED_CHECK_EQUAL(bmp.cy(), 150);
@@ -62,7 +62,7 @@ RED_AUTO_TEST_CASE(TestBitmapOpenFiles)
     }
     {
         const char * filename = FIXTURES_PATH "/xrdp24b-transparent.png";
-        Bitmap bmp = bitmap_from_file_impl(filename, BLACK);
+        Bitmap bmp = bitmap_from_file_impl(filename, NamedBGRColor::BLACK);
         RED_REQUIRE(bmp.is_valid());
         RED_CHECK_EQUAL(bmp.cx(), 256);
         RED_CHECK_EQUAL(bmp.cy(), 150);

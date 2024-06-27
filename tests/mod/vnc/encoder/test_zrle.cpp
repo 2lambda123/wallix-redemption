@@ -6720,7 +6720,7 @@ RED_AUTO_TEST_CASE(TestZrleSolid)
 
     TestGraphic drawable(128, 128);
     auto const color_context= gdi::ColorCtx::depth24();
-    auto pixel_color = RDPColor::from(PINK);
+    auto pixel_color = RDPColor::from(static_cast<uint32_t>(NamedBGRColor::PINK));
     const RDPOpaqueRect cmd(Rect(0,0,75,66), pixel_color);
     drawable->draw(cmd, Rect(0,0,75,66), color_context);
 
@@ -6752,7 +6752,7 @@ RED_AUTO_TEST_CASE(TestZrlePalette2)
 
     TestGraphic drawable(128, 9);
     auto const color_context= gdi::ColorCtx::depth24();
-    auto pixel_color = RDPColor::from(PINK);
+    auto pixel_color = RDPColor::from(static_cast<uint32_t>(NamedBGRColor::PINK));
     const RDPOpaqueRect cmd(Rect(0,0,68,9), pixel_color);
     drawable->draw(cmd, Rect(0, 0, 68, 9), color_context);
 
@@ -6805,7 +6805,7 @@ RED_AUTO_TEST_CASE(TestZrlePalette13)
 
     TestGraphic drawable(128, 9);
     auto const color_context= gdi::ColorCtx::depth24();
-    auto pixel_color = RDPColor::from(PINK);
+    auto pixel_color = RDPColor::from(static_cast<uint32_t>(NamedBGRColor::PINK));
     const RDPOpaqueRect cmd(Rect(0,0,68,9), pixel_color);
     drawable->draw(cmd, Rect(0, 0, 68, 9), color_context);
 
@@ -6833,7 +6833,7 @@ RED_AUTO_TEST_CASE(TestZrlePlainRLE)
 
     TestGraphic drawable(128, 9);
     auto const color_context= gdi::ColorCtx::depth24();
-    auto pixel_color = RDPColor::from(PINK);
+    auto pixel_color = RDPColor::from(static_cast<uint32_t>(NamedBGRColor::PINK));
     const RDPOpaqueRect cmd(Rect(0,0,68,9), pixel_color);
     drawable->draw(cmd, Rect(0, 0, 68, 9), color_context);
 
@@ -6875,7 +6875,7 @@ RED_AUTO_TEST_CASE(TestZrlePaletteRLE)
 
     TestGraphic drawable(128, 9);
     auto const color_context= gdi::ColorCtx::depth24();
-    auto pixel_color = RDPColor::from(PINK);
+    auto pixel_color = RDPColor::from(static_cast<uint32_t>(NamedBGRColor::PINK));
     const RDPOpaqueRect cmd(Rect(0,0,68,9), pixel_color);
     drawable->draw(cmd, Rect(0, 0, 68, 9), color_context);
 
@@ -6906,7 +6906,7 @@ RED_AUTO_TEST_CASE(TestZrlePackedPalette5)
 
     TestGraphic drawable(128, 9);
     auto const color_context= gdi::ColorCtx::depth24();
-    auto pixel_color = RDPColor::from(PINK);
+    auto pixel_color = RDPColor::from(static_cast<uint32_t>(NamedBGRColor::PINK));
     const RDPOpaqueRect cmd(Rect(0,0,68,9), pixel_color);
     drawable->draw(cmd, Rect(0, 0, 68, 9), color_context);
 

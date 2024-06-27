@@ -1567,7 +1567,7 @@ void Capture::resize(uint16_t width, uint16_t height)
             for (Rect const & rect : subrect4) {
                 if (!rect.isempty()) {
                     this->gd_drawable.draw(
-                        RDPOpaqueRect(rect, encode_color24()(BLACK)),
+                        RDPOpaqueRect(rect, encode_color24()(NamedBGRColor::BLACK)),
                         rect, gdi::ColorCtx::depth24()
                     );
                 }

@@ -69,17 +69,17 @@ void TestCardMod::draw_event()
 
     auto const color_ctx = gdi::ColorCtx::depth24();
 
-    gd.draw(RDPOpaqueRect(this->get_screen_rect(), encode_color24()(WHITE)), clip, color_ctx);
-    gd.draw(RDPOpaqueRect(this->get_screen_rect().shrink(5), encode_color24()(RED)), clip, color_ctx);
-    gd.draw(RDPOpaqueRect(this->get_screen_rect().shrink(10), encode_color24()(GREEN)), clip, color_ctx);
-    gd.draw(RDPOpaqueRect(this->get_screen_rect().shrink(15), encode_color24()(BLUE)), clip, color_ctx);
-    gd.draw(RDPOpaqueRect(this->get_screen_rect().shrink(20), encode_color24()(BLACK)), clip, color_ctx);
+    gd.draw(RDPOpaqueRect(this->get_screen_rect(), encode_color24()(NamedBGRColor::WHITE)), clip, color_ctx);
+    gd.draw(RDPOpaqueRect(this->get_screen_rect().shrink(5), encode_color24()(NamedBGRColor::RED)), clip, color_ctx);
+    gd.draw(RDPOpaqueRect(this->get_screen_rect().shrink(10), encode_color24()(NamedBGRColor::GREEN)), clip, color_ctx);
+    gd.draw(RDPOpaqueRect(this->get_screen_rect().shrink(15), encode_color24()(NamedBGRColor::BLUE)), clip, color_ctx);
+    gd.draw(RDPOpaqueRect(this->get_screen_rect().shrink(20), encode_color24()(NamedBGRColor::BLACK)), clip, color_ctx);
 
     Rect winrect = this->get_screen_rect().shrink(30);
-    gd.draw(RDPOpaqueRect(winrect, encode_color24()(WINBLUE)), clip, color_ctx);
+    gd.draw(RDPOpaqueRect(winrect, encode_color24()(NamedBGRColor::WINBLUE)), clip, color_ctx);
 
 
-    Bitmap bitmap = bitmap_from_file(str_concat(app_path(AppPath::Share), "/" "Philips_PM5544_640.png").c_str(), BLACK);
+    Bitmap bitmap = bitmap_from_file(str_concat(app_path(AppPath::Share), "/" "Philips_PM5544_640.png").c_str(), NamedBGRColor::BLACK);
 
     gd.draw(RDPMemBlt(0,
         Rect(winrect.x + (winrect.cx - bitmap.cx())/2,
@@ -90,44 +90,44 @@ void TestCardMod::draw_event()
 
     //  lineTo mix_mode=1 startx=200 starty=1198 endx=200 endy=145 bg_color=0 rop2=13 clip=(200, 145, 1, 110)
     gd.draw(
-        RDPLineTo(1, 200, 1198, 200, 145, RDPColor{}, 13, RDPPen(0, 1, encode_color24()(RED))),
+        RDPLineTo(1, 200, 1198, 200, 145, RDPColor{}, 13, RDPPen(0, 1, encode_color24()(NamedBGRColor::RED))),
         Rect(200, 145, 1, 110), color_ctx);
 
     gd.draw(
-        RDPLineTo(1, 200, 145, 200, 1198, RDPColor{}, 13, RDPPen(0, 1, encode_color24()(RED))),
+        RDPLineTo(1, 200, 145, 200, 1198, RDPColor{}, 13, RDPPen(0, 1, encode_color24()(NamedBGRColor::RED))),
         Rect(200, 145, 1, 110), color_ctx);
 
     gd.draw(
-        RDPLineTo(1, 201, 1198, 200, 145, RDPColor{}, 13, RDPPen(0, 1, encode_color24()(RED))),
+        RDPLineTo(1, 201, 1198, 200, 145, RDPColor{}, 13, RDPPen(0, 1, encode_color24()(NamedBGRColor::RED))),
         Rect(200, 145, 1, 110), color_ctx);
 
     gd.draw(
-        RDPLineTo(1, 200, 145, 201, 1198, RDPColor{}, 13, RDPPen(0, 1, encode_color24()(RED))),
+        RDPLineTo(1, 200, 145, 201, 1198, RDPColor{}, 13, RDPPen(0, 1, encode_color24()(NamedBGRColor::RED))),
         Rect(200, 145, 1, 110), color_ctx);
 
     gd.draw(
-        RDPLineTo(1, 1198, 200, 145, 200, RDPColor{}, 13, RDPPen(0, 1, encode_color24()(RED))),
+        RDPLineTo(1, 1198, 200, 145, 200, RDPColor{}, 13, RDPPen(0, 1, encode_color24()(NamedBGRColor::RED))),
         Rect(145, 200, 110, 1), color_ctx);
 
     gd.draw(
-        RDPLineTo(1, 145, 200, 1198, 200, RDPColor{}, 13, RDPPen(0, 1, encode_color24()(RED))),
+        RDPLineTo(1, 145, 200, 1198, 200, RDPColor{}, 13, RDPPen(0, 1, encode_color24()(NamedBGRColor::RED))),
         Rect(145, 200, 110, 1), color_ctx);
 
     gd.draw(
-        RDPLineTo(1, 1198, 201, 145, 200, RDPColor{}, 13, RDPPen(0, 1, encode_color24()(RED))),
+        RDPLineTo(1, 1198, 201, 145, 200, RDPColor{}, 13, RDPPen(0, 1, encode_color24()(NamedBGRColor::RED))),
         Rect(145, 200, 110, 1), color_ctx);
 
     gd.draw(
-        RDPLineTo(1, 145, 200, 1198, 201, RDPColor{}, 13, RDPPen(0, 1, encode_color24()(RED))),
+        RDPLineTo(1, 145, 200, 1198, 201, RDPColor{}, 13, RDPPen(0, 1, encode_color24()(NamedBGRColor::RED))),
         Rect(145, 200, 110, 1), color_ctx);
 
-    gdi::server_draw_text(gd, this->font, 30, 30, "White"_av, encode_color24()(WHITE), encode_color24()(BLACK), color_ctx, clip);
-    gdi::server_draw_text(gd, this->font, 30, 50, "Red  "_av, encode_color24()(RED), encode_color24()(BLACK), color_ctx, clip);
-    gdi::server_draw_text(gd, this->font, 30, 70, "Green"_av, encode_color24()(GREEN), encode_color24()(BLACK), color_ctx, clip);
-    gdi::server_draw_text(gd, this->font, 30, 90, "Blue "_av, encode_color24()(BLUE), encode_color24()(BLACK), color_ctx, clip);
-    gdi::server_draw_text(gd, this->font, 30, 110, "Black"_av, encode_color24()(BLACK), encode_color24()(WHITE), color_ctx, clip);
+    gdi::server_draw_text(gd, this->font, 30, 30, "White"_av, encode_color24()(NamedBGRColor::WHITE), encode_color24()(NamedBGRColor::BLACK), color_ctx, clip);
+    gdi::server_draw_text(gd, this->font, 30, 50, "Red  "_av, encode_color24()(NamedBGRColor::RED), encode_color24()(NamedBGRColor::BLACK), color_ctx, clip);
+    gdi::server_draw_text(gd, this->font, 30, 70, "Green"_av, encode_color24()(NamedBGRColor::GREEN), encode_color24()(NamedBGRColor::BLACK), color_ctx, clip);
+    gdi::server_draw_text(gd, this->font, 30, 90, "Blue "_av, encode_color24()(NamedBGRColor::BLUE), encode_color24()(NamedBGRColor::BLACK), color_ctx, clip);
+    gdi::server_draw_text(gd, this->font, 30, 110, "Black"_av, encode_color24()(NamedBGRColor::BLACK), encode_color24()(NamedBGRColor::WHITE), color_ctx, clip);
 
-    Bitmap card = bitmap_from_file(app_path(AppPath::RedemptionLogo24), BLACK);
+    Bitmap card = bitmap_from_file(app_path(AppPath::RedemptionLogo24), NamedBGRColor::BLACK);
     gd.draw(RDPMemBlt(0,
         Rect(this->get_screen_rect().cx - card.cx() - 30,
                 this->get_screen_rect().cy - card.cy() - 30, card.cx(), card.cy()),
@@ -145,8 +145,8 @@ void TestCardMod::draw_event()
         Rect(0, this->get_screen_rect().cy - 64, bloc64x64.cx(), bloc64x64.cy()), 0xCC,
             32, 32, 0), clip, bloc64x64);
 
-    //gd.draw(RDPOpaqueRect(this->get_screen_rect(), RED), clip, depth);
-    Bitmap wab_logo_blue = bitmap_from_file(app_path(AppPath::LoginWabBlue), BLACK);
+    //gd.draw(RDPOpaqueRect(this->get_screen_rect(), NamedBGRColor::RED), clip, depth);
+    Bitmap wab_logo_blue = bitmap_from_file(app_path(AppPath::LoginWabBlue), NamedBGRColor::BLACK);
 
 
     const uint16_t startx = 5;

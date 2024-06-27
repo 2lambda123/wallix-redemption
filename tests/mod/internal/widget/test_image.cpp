@@ -36,7 +36,7 @@ struct TestWidgetimageCtx
     TestGraphic drawable{800, 600};
     WidgetImage wimage;
 
-    TestWidgetimageCtx(const char * filename, BGRColor bg_color = BLACK)
+    TestWidgetimageCtx(const char * filename, BGRColor bg_color = NamedBGRColor::BLACK)
     : wimage(drawable, filename, bg_color)
     {
         wimage.set_wh(wimage.get_optimal_dim());
@@ -139,73 +139,73 @@ RED_AUTO_TEST_CASE(TraceWidgetImage_transparent_png)
         Png
         {
             FIXTURES_PATH"/logo-redemption-transparent.png",
-            WHITE,
+            NamedBGRColor::WHITE,
             IMG_TEST_PATH "image_transparent_1.png",
         },
         Png
         {
             FIXTURES_PATH"/logo-redemption-transparent2.png",
-            WHITE,
+            NamedBGRColor::WHITE,
             IMG_TEST_PATH "image_transparent_2.png",
         },
         Png
         {
             FIXTURES_PATH"/alpha-channel-transparent.png",
-            WHITE,
+            NamedBGRColor::WHITE,
             IMG_TEST_PATH "image_transparent_alpha_channel_1.png",
         },
         Png
         {
             FIXTURES_PATH"/alpha-channel-transparent2.png",
-            WHITE,
+            NamedBGRColor::WHITE,
             IMG_TEST_PATH "image_transparent_alpha_channel_2.png",
         },
         Png
         {
             FIXTURES_PATH"/alpha-channel-transparent3.png",
-            WHITE,
+            NamedBGRColor::WHITE,
             IMG_TEST_PATH "image_transparent_alpha_channel_3.png",
         },
         Png
         {
             FIXTURES_PATH"/alpha-channel-transparent4.png",
-            WHITE,
+            NamedBGRColor::WHITE,
             IMG_TEST_PATH "image_transparent_alpha_channel_4.png",
         },
         Png
         {
             FIXTURES_PATH"/alpha-channel-without-background-transparent.png",
-            WHITE,
+            NamedBGRColor::WHITE,
             IMG_TEST_PATH "image_transparent_alpha_channel_1.png",
         },
         Png
         {
             FIXTURES_PATH"/alpha-channel-without-background-transparent2.png",
-            WHITE,
+            NamedBGRColor::WHITE,
             IMG_TEST_PATH "image_transparent_alpha_channel_2.png",
         },
         Png
         {
             FIXTURES_PATH"/alpha-channel-without-background-transparent3.png",
-            WHITE,
+            NamedBGRColor::WHITE,
             IMG_TEST_PATH "image_transparent_alpha_channel_3.png",
         },
         Png
         {
             FIXTURES_PATH"/alpha-channel-without-background-transparent4.png",
-            WHITE,
+            NamedBGRColor::WHITE,
             IMG_TEST_PATH "image_transparent_alpha_channel_4.png",
         },
         Png
         {
             FIXTURES_PATH"/logo-redemption-half-transparent.png",
-            WHITE,
+            NamedBGRColor::WHITE,
             IMG_TEST_PATH "image_transparent_half_transparent_1.png",
         },
         Png
         {
             FIXTURES_PATH"/checkers-half-transparent.png",
-            DARK_BLUE_BIS,
+            NamedBGRColor::DARK_BLUE_BIS,
             IMG_TEST_PATH "image_transparent_half_transparent_2.png",
         },
     })

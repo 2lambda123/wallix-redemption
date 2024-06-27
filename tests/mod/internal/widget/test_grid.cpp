@@ -37,8 +37,8 @@ RED_AUTO_TEST_CASE(TraceWidgetGrid)
 {
     TestGraphic drawable(800, 600);
 
-    BGRColor fg_color = RED;
-    BGRColor bg_color = YELLOW;
+    BGRColor fg_color = NamedBGRColor::RED;
+    BGRColor bg_color = NamedBGRColor::YELLOW;
     int16_t x = 10;
     int16_t y = 10;
 
@@ -51,7 +51,8 @@ RED_AUTO_TEST_CASE(TraceWidgetGrid)
      * ie: text may be centered, aligned left, aligned right, or even upside down, etc
      * these possibilities (and others) are supported in RDPGlyphIndex */
     WidgetGrid wgrid(drawable, WidgetEventNotifier(), line_number, column_number,
-        PALE_BLUE, BLACK, LIGHT_BLUE, BLACK, WINBLUE, WHITE, MEDIUM_BLUE, WHITE,
+        NamedBGRColor::PALE_BLUE, NamedBGRColor::BLACK, NamedBGRColor::LIGHT_BLUE, NamedBGRColor::BLACK, NamedBGRColor::WINBLUE, NamedBGRColor::WHITE,
+        NamedBGRColor::MEDIUM_BLUE, NamedBGRColor::WHITE,
         grid_border);
     wgrid.set_wh(640, 480);
     wgrid.set_xy(x, y);
@@ -65,8 +66,8 @@ RED_AUTO_TEST_CASE(TraceWidgetGrid)
             if ((line_index == 2) && (column_index == 3)) {
                 w = std::make_unique<WidgetButton>(
                     drawable, text, WidgetEventNotifier(),
-                    WHITE, MEDIUM_BLUE, LIGHT_BLUE, 2,
-                    global_font_deja_vu_14(), 2, 2);
+                    NamedBGRColor::WHITE, NamedBGRColor::MEDIUM_BLUE, NamedBGRColor::LIGHT_BLUE,
+                    2, global_font_deja_vu_14(), 2, 2);
             }
             else {
                 w = std::make_unique<WidgetLabel>(

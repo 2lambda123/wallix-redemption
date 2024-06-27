@@ -42,9 +42,9 @@ struct TestWidgetEditValid
 {
     struct Colors
     {
-        BGRColor fg = BLACK;
-        BGRColor bg = WHITE;
-        BGRColor focus = ANTHRACITE;
+        BGRColor fg = NamedBGRColor::BLACK;
+        BGRColor bg = NamedBGRColor::WHITE;
+        BGRColor focus = NamedBGRColor::ANTHRACITE;
     };
 
     TestGraphic drawable{800, 600};
@@ -137,14 +137,15 @@ RED_AUTO_TEST_CASE(TraceWidgetEdit2)
 
 RED_AUTO_TEST_CASE(TraceWidgetEdit3)
 {
-    TestWidgetEditValid ctx({RED, YELLOW, GREEN}, "dLorz"_av);
+    TestWidgetEditValid ctx({NamedBGRColor::RED, NamedBGRColor::YELLOW, NamedBGRColor::GREEN}, "dLorz"_av);
 
     Dimension dim = ctx.wedit.get_optimal_dim();
     ctx.wedit.set_wh(150, dim.h);
     ctx.wedit.set_xy(54, 105);
 
     WidgetEditValid wedit2(ctx.drawable, ctx.copy_paste, ""_av, WidgetEventNotifier(),
-                           WHITE, DARK_BLUE, RED, DARK_BLUE, global_font_deja_vu_14(),
+                           NamedBGRColor::WHITE, NamedBGRColor::DARK_BLUE, NamedBGRColor::RED,
+                           NamedBGRColor::DARK_BLUE, global_font_deja_vu_14(),
                            nullptr, false, 0);
     dim = wedit2.get_optimal_dim();
     wedit2.set_wh(200, dim.h);
@@ -174,14 +175,15 @@ RED_AUTO_TEST_CASE(TraceWidgetEdit3)
 
 RED_AUTO_TEST_CASE(TraceWidgetEditLabels)
 {
-    TestWidgetEditValid ctx({RED, YELLOW, GREEN}, "dLorz"_av, "edition1"_av);
+    TestWidgetEditValid ctx({NamedBGRColor::RED, NamedBGRColor::YELLOW, NamedBGRColor::GREEN}, "dLorz"_av, "edition1"_av);
 
     Dimension dim = ctx.wedit.get_optimal_dim();
     ctx.wedit.set_wh(150, dim.h);
     ctx.wedit.set_xy(54, 105);
 
     WidgetEditValid wedit2(ctx.drawable, ctx.copy_paste, ""_av, WidgetEventNotifier(),
-                           WHITE, DARK_BLUE, RED, DARK_BLUE, global_font_deja_vu_14(),
+                           NamedBGRColor::WHITE, NamedBGRColor::DARK_BLUE, NamedBGRColor::RED,
+                           NamedBGRColor::DARK_BLUE, global_font_deja_vu_14(),
                            "edition2"_av, true, 0, 0, false);
     dim = wedit2.get_optimal_dim();
     wedit2.set_wh(200, dim.h);
@@ -219,14 +221,15 @@ RED_AUTO_TEST_CASE(TraceWidgetEditLabels)
 
 RED_AUTO_TEST_CASE(TraceWidgetEditLabelsPassword)
 {
-    TestWidgetEditValid ctx({RED, YELLOW, GREEN}, "dLorz"_av, "edition1"_av, true);
+    TestWidgetEditValid ctx({NamedBGRColor::RED, NamedBGRColor::YELLOW, NamedBGRColor::GREEN}, "dLorz"_av, "edition1"_av, true);
 
     Dimension dim = ctx.wedit.get_optimal_dim();
     ctx.wedit.set_wh(150, dim.h);
     ctx.wedit.set_xy(54, 105);
 
     WidgetEditValid wedit2(ctx.drawable, ctx.copy_paste, ""_av, WidgetEventNotifier(),
-                           WHITE, DARK_BLUE, RED, DARK_BLUE, global_font_deja_vu_14(),
+                           NamedBGRColor::WHITE, NamedBGRColor::DARK_BLUE, NamedBGRColor::RED,
+                           NamedBGRColor::DARK_BLUE, global_font_deja_vu_14(),
                            "edition2"_av, true, 0, 0, true);
     dim = wedit2.get_optimal_dim();
     wedit2.set_wh(200, dim.h);
@@ -264,7 +267,7 @@ RED_AUTO_TEST_CASE(TraceWidgetEditLabelsPassword)
 
 RED_AUTO_TEST_CASE(EventWidgetEditEvents)
 {
-    TestWidgetEditValid ctx({BLACK, WHITE, DARK_BLUE}, "abcdef"_av);
+    TestWidgetEditValid ctx({NamedBGRColor::BLACK, NamedBGRColor::WHITE, NamedBGRColor::DARK_BLUE}, "abcdef"_av);
 
     Dimension dim = ctx.wedit.get_optimal_dim();
     ctx.wedit.set_wh(100, dim.h);

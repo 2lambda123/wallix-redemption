@@ -67,8 +67,8 @@ struct TestWidgetDialogCtx
         caption, text,
         [logo_path]{
             Theme colors;
-            colors.global.bgcolor = DARK_BLUE_BIS;
-            colors.global.fgcolor = WHITE;
+            colors.global.bgcolor = NamedBGRColor::DARK_BLUE_BIS;
+            colors.global.fgcolor = NamedBGRColor::WHITE;
             if (!logo_path.empty()) {
                 colors.global.enable_theme = true;
                 colors.global.logo_path = logo_path.as<std::string_view>();
@@ -101,8 +101,8 @@ struct TestWidgetDialogWithChallengeCtx
         global_font_deja_vu_14(),
         [logo_path]{
             Theme colors;
-            colors.global.bgcolor = DARK_BLUE_BIS;
-            colors.global.fgcolor = WHITE;
+            colors.global.bgcolor = NamedBGRColor::DARK_BLUE_BIS;
+            colors.global.fgcolor = NamedBGRColor::WHITE;
             if (!logo_path.empty()) {
                 colors.global.enable_theme = true;
                 colors.global.logo_path = logo_path.as<std::string_view>();
@@ -129,8 +129,8 @@ struct TestWidgetDialogWithCopyableLinkCtx
         caption, text, "value"_av, "name"_av, "Ok"_av, global_font_deja_vu_14(),
         []{
             Theme colors;
-            colors.global.bgcolor = DARK_BLUE_BIS;
-            colors.global.fgcolor = WHITE;
+            colors.global.bgcolor = NamedBGRColor::DARK_BLUE_BIS;
+            colors.global.fgcolor = NamedBGRColor::WHITE;
             return colors;
         }(), copy_paste)
     {

@@ -29,44 +29,44 @@ struct Theme
 {
     struct {
         bool enable_theme = false;
-        BGRColor bgcolor = DARK_BLUE_BIS;
-        BGRColor fgcolor = WHITE;
-        BGRColor separator_color = LIGHT_BLUE;
-        BGRColor focus_color = WINBLUE;
-        BGRColor error_color = YELLOW;
+        BGRColor bgcolor = NamedBGRColor::DARK_BLUE_BIS;
+        BGRColor fgcolor = NamedBGRColor::WHITE;
+        BGRColor separator_color = NamedBGRColor::LIGHT_BLUE;
+        BGRColor focus_color = NamedBGRColor::WINBLUE;
+        BGRColor error_color = NamedBGRColor::YELLOW;
         std::string logo_path;
     } global;
 
     struct {
-        BGRColor bgcolor = WHITE;
-        BGRColor fgcolor = BLACK;
-        BGRColor focus_color = WINBLUE;
+        BGRColor bgcolor = NamedBGRColor::WHITE;
+        BGRColor fgcolor = NamedBGRColor::BLACK;
+        BGRColor focus_color = NamedBGRColor::WINBLUE;
     } edit;
 
     struct {
-        BGRColor bgcolor = LIGHT_YELLOW;
-        BGRColor fgcolor = BLACK;
-        BGRColor border_color = BLACK;
+        BGRColor bgcolor = NamedBGRColor::LIGHT_YELLOW;
+        BGRColor fgcolor = NamedBGRColor::BLACK;
+        BGRColor border_color = NamedBGRColor::BLACK;
     } tooltip;
 
     struct {
-        BGRColor bgcolor = PALE_BLUE;
-        BGRColor fgcolor = BLACK;
+        BGRColor bgcolor = NamedBGRColor::PALE_BLUE;
+        BGRColor fgcolor = NamedBGRColor::BLACK;
     } selector_line1;
     struct {
-        BGRColor bgcolor = LIGHT_BLUE;
-        BGRColor fgcolor = BLACK;
+        BGRColor bgcolor = NamedBGRColor::LIGHT_BLUE;
+        BGRColor fgcolor = NamedBGRColor::BLACK;
     } selector_line2;
     struct {
-        BGRColor bgcolor = MEDIUM_BLUE;
-        BGRColor fgcolor = WHITE;
+        BGRColor bgcolor = NamedBGRColor::MEDIUM_BLUE;
+        BGRColor fgcolor = NamedBGRColor::WHITE;
     } selector_selected;
     struct {
-        BGRColor bgcolor = WINBLUE;
-        BGRColor fgcolor = WHITE;
+        BGRColor bgcolor = NamedBGRColor::WINBLUE;
+        BGRColor fgcolor = NamedBGRColor::WHITE;
     } selector_focus;
     struct {
-        BGRColor bgcolor = MEDIUM_BLUE;
-        BGRColor fgcolor = WHITE;
+        BGRColor bgcolor = NamedBGRColor::MEDIUM_BLUE;
+        BGRColor fgcolor = NamedBGRColor::WHITE;
     } selector_label;
 };

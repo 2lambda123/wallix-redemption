@@ -76,7 +76,7 @@ RED_AUTO_TEST_CASE(TestGraphicGlyphIndex)
 
     auto const color_cxt = gdi::ColorCtx::depth24();
 
-    gd.draw(RDPOpaqueRect(screen_rect, encode_color24()(BLACK)), screen_rect, color_cxt);
+    gd.draw(RDPOpaqueRect(screen_rect, encode_color24()(NamedBGRColor::BLACK)), screen_rect, color_cxt);
 
     GlyphCache gly_cache;
 
@@ -153,8 +153,8 @@ RED_AUTO_TEST_CASE(TestPolyline)
     Rect screen_rect(0, 0, width, height);
     RDPDrawable gd(width, height);
     auto const color_cxt = gdi::ColorCtx::depth24();
-    gd.draw(RDPOpaqueRect(screen_rect, encode_color24()(WHITE)), screen_rect, color_cxt);
-    gd.draw(RDPOpaqueRect(screen_rect.shrink(5), encode_color24()(BLACK)), screen_rect, color_cxt);
+    gd.draw(RDPOpaqueRect(screen_rect, encode_color24()(NamedBGRColor::WHITE)), screen_rect, color_cxt);
+    gd.draw(RDPOpaqueRect(screen_rect.shrink(5), encode_color24()(NamedBGRColor::BLACK)), screen_rect, color_cxt);
 
     StaticOutStream<1024> deltaPoints;
 
@@ -181,7 +181,7 @@ RED_AUTO_TEST_CASE(TestPolyline)
 
     InStream dp(deltaPoints.get_produced_bytes());
 
-    gd.draw(RDPPolyline(158, 230, 0x06, 0, encode_color24()(WHITE), 7, dp), screen_rect, color_cxt);
+    gd.draw(RDPPolyline(158, 230, 0x06, 0, encode_color24()(NamedBGRColor::WHITE), 7, dp), screen_rect, color_cxt);
 
     RED_CHECK_IMG(gd, IMG_TEST_PATH "rdp_drawable_2.png");
 }
@@ -205,8 +205,8 @@ RED_AUTO_TEST_CASE(TestMultiDstBlt)
     Rect screen_rect(0, 0, width, height);
     RDPDrawable gd(width, height);
     auto const color_cxt = gdi::ColorCtx::depth24();
-    gd.draw(RDPOpaqueRect(screen_rect, encode_color24()(WHITE)), screen_rect, color_cxt);
-    gd.draw(RDPOpaqueRect(screen_rect.shrink(5), encode_color24()(GREEN)), screen_rect, color_cxt);
+    gd.draw(RDPOpaqueRect(screen_rect, encode_color24()(NamedBGRColor::WHITE)), screen_rect, color_cxt);
+    gd.draw(RDPOpaqueRect(screen_rect.shrink(5), encode_color24()(NamedBGRColor::GREEN)), screen_rect, color_cxt);
 
     StaticOutStream<1024> deltaRectangles;
 
@@ -231,9 +231,9 @@ RED_AUTO_TEST_CASE(TestMultiScrBlt)
     Rect screen_rect(0, 0, width, height);
     RDPDrawable gd(width, height);
     auto const color_cxt = gdi::ColorCtx::depth24();
-    gd.draw(RDPOpaqueRect(screen_rect, encode_color24()(WHITE)), screen_rect, color_cxt);
-    gd.draw(RDPOpaqueRect(screen_rect.shrink(5), encode_color24()(GREEN)), screen_rect, color_cxt);
-    gd.draw(RDPOpaqueRect(screen_rect.shrink(50), encode_color24()(RED)), screen_rect, color_cxt);
+    gd.draw(RDPOpaqueRect(screen_rect, encode_color24()(NamedBGRColor::WHITE)), screen_rect, color_cxt);
+    gd.draw(RDPOpaqueRect(screen_rect.shrink(5), encode_color24()(NamedBGRColor::GREEN)), screen_rect, color_cxt);
+    gd.draw(RDPOpaqueRect(screen_rect.shrink(50), encode_color24()(NamedBGRColor::RED)), screen_rect, color_cxt);
 
     StaticOutStream<1024> deltaRectangles;
 
@@ -256,8 +256,8 @@ RED_AUTO_TEST_CASE(TestMultiOpaqueRect)
     Rect screen_rect(0, 0, width, height);
     RDPDrawable gd(width, height);
     auto const color_cxt = gdi::ColorCtx::depth24();
-    gd.draw(RDPOpaqueRect(screen_rect, encode_color24()(WHITE)), screen_rect, color_cxt);
-    gd.draw(RDPOpaqueRect(screen_rect.shrink(5), encode_color24()(GREEN)), screen_rect, color_cxt);
+    gd.draw(RDPOpaqueRect(screen_rect, encode_color24()(NamedBGRColor::WHITE)), screen_rect, color_cxt);
+    gd.draw(RDPOpaqueRect(screen_rect.shrink(5), encode_color24()(NamedBGRColor::GREEN)), screen_rect, color_cxt);
 
     StaticOutStream<1024> deltaRectangles;
 
@@ -269,7 +269,7 @@ RED_AUTO_TEST_CASE(TestMultiOpaqueRect)
 
     InStream deltaRectangles_in(deltaRectangles.get_produced_bytes());
 
-    gd.draw(RDPMultiOpaqueRect(100, 100, 200, 200, encode_color24()(BLACK), 20, deltaRectangles_in), screen_rect, color_cxt);
+    gd.draw(RDPMultiOpaqueRect(100, 100, 200, 200, encode_color24()(NamedBGRColor::BLACK), 20, deltaRectangles_in), screen_rect, color_cxt);
 
     RED_CHECK_IMG(gd, IMG_TEST_PATH "rdp_drawable_5.png");
 }
@@ -466,7 +466,7 @@ RED_AUTO_TEST_CASE(TestPngOneRedScreen)
     RDPDrawable d(800, 600);
     auto const color_cxt = gdi::ColorCtx::depth24();
     Rect screen_rect(0, 0, 800, 600);
-    RDPOpaqueRect cmd(Rect(0, 0, 800, 600), encode_color24()(RED));
+    RDPOpaqueRect cmd(Rect(0, 0, 800, 600), encode_color24()(NamedBGRColor::RED));
     d.draw(cmd, screen_rect, color_cxt);
     dump_png24(trans, d.impl(), true);
     RED_CHECK(expected_red == trans.buf);
@@ -478,14 +478,14 @@ RED_AUTO_TEST_CASE(TestImageCaptureToFilePngBlueOnRed)
     RDPDrawable drawable(800, 600);
     auto const color_cxt = gdi::ColorCtx::depth24();
     Rect screen_rect(0, 0, 800, 600);
-    RDPOpaqueRect cmd(Rect(0, 0, 800, 600), encode_color24()(RED));
+    RDPOpaqueRect cmd(Rect(0, 0, 800, 600), encode_color24()(NamedBGRColor::RED));
     drawable.draw(cmd, screen_rect, color_cxt);
 
     dump_png24(trans, drawable, true);
     RED_CHECK_EQUAL(2786, trans.buf.size());
     trans.buf.clear();
 
-    RDPOpaqueRect cmd2(Rect(50, 50, 100, 50), encode_color24()(BLUE));
+    RDPOpaqueRect cmd2(Rect(50, 50, 100, 50), encode_color24()(NamedBGRColor::BLUE));
     drawable.draw(cmd2, screen_rect, color_cxt);
 
     dump_png24(trans, drawable, true);
@@ -498,9 +498,9 @@ RED_AUTO_TEST_CASE(TestSmallImage)
     Rect scr(0, 0, 20, 10);
     RDPDrawable drawable(20, 10);
     auto const color_cxt = gdi::ColorCtx::depth24();
-    drawable.draw(RDPOpaqueRect(scr, encode_color24()(RED)), scr, color_cxt);
-    drawable.draw(RDPOpaqueRect(Rect(5, 5, 10, 3), encode_color24()(BLUE)), scr, color_cxt);
-    drawable.draw(RDPOpaqueRect(Rect(10, 0, 1, 10), encode_color24()(WHITE)), scr, color_cxt);
+    drawable.draw(RDPOpaqueRect(scr, encode_color24()(NamedBGRColor::RED)), scr, color_cxt);
+    drawable.draw(RDPOpaqueRect(Rect(5, 5, 10, 3), encode_color24()(NamedBGRColor::BLUE)), scr, color_cxt);
+    drawable.draw(RDPOpaqueRect(Rect(10, 0, 1, 10), encode_color24()(NamedBGRColor::WHITE)), scr, color_cxt);
     dump_png24(trans, drawable, true);
     RED_CHECK_EQUAL(107, trans.buf.size());
 }
@@ -510,7 +510,7 @@ RED_AUTO_TEST_CASE(TestBogusBitmap)
     Rect scr(0, 0, 800, 600);
     RDPDrawable drawable(800, 600);
     auto const color_cxt = gdi::ColorCtx::depth24();
-    drawable.draw(RDPOpaqueRect(scr, encode_color24()(GREEN)), scr, color_cxt);
+    drawable.draw(RDPOpaqueRect(scr, encode_color24()(NamedBGRColor::GREEN)), scr, color_cxt);
 
     uint8_t source64x64[] = {
 // MIX_SET 60 remaining=932 bytes pix=0
@@ -630,7 +630,7 @@ RED_AUTO_TEST_CASE(TestBogusBitmap2)
     Rect scr(0, 0, 800, 600);
     RDPDrawable drawable(800, 600);
     auto const color_cxt = gdi::ColorCtx::depth24();
-    drawable.draw(RDPOpaqueRect(scr, encode_color24()(GREEN)), scr, color_cxt);
+    drawable.draw(RDPOpaqueRect(scr, encode_color24()(NamedBGRColor::GREEN)), scr, color_cxt);
 
     uint8_t source32x1[] =
 //MemBlt Primary Drawing Order (0x0D)

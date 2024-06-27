@@ -124,8 +124,8 @@ void Bouncer2Mod::draw_event(gdi::GraphicApi & gd)
 {
     auto const color_ctx = gdi::ColorCtx::depth24();
 
-    auto const green = encode_color24()(GREEN);
-    auto const red = encode_color24()(RED);
+    auto const green = encode_color24()(NamedBGRColor::GREEN);
+    auto const red = encode_color24()(NamedBGRColor::RED);
 
     if (this->draw_green_carpet) {
         gd.draw(RDPOpaqueRect(this->get_screen_rect(), green), this->get_screen_rect(), color_ctx);

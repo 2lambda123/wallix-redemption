@@ -47,9 +47,11 @@ RED_AUTO_TEST_CASE(TraceLabelGrid)
 
     WidgetLabelGrid wgrid(drawable, tooltip_shower, WidgetEventNotifier(),
                           line_number, column_number,
-                          PALE_BLUE, BLACK, LIGHT_BLUE, BLACK,
-                          WINBLUE, WHITE, MEDIUM_BLUE, WHITE, global_font_deja_vu_14(),
-                          grid_border);
+                          NamedBGRColor::PALE_BLUE, NamedBGRColor::BLACK,
+                          NamedBGRColor::LIGHT_BLUE, NamedBGRColor::BLACK,
+                          NamedBGRColor::WINBLUE, NamedBGRColor::WHITE,
+                          NamedBGRColor::MEDIUM_BLUE, NamedBGRColor::WHITE,
+                          global_font_deja_vu_14(), grid_border);
     wgrid.set_wh(640, 480);
     wgrid.set_xy(x, y);
 

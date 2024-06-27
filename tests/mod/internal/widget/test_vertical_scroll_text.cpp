@@ -38,7 +38,9 @@ struct TestScrollCtx
     : drawable(1, 1)
     , scroll(
         this->drawable, std::move(text),
-        /*fg_color=*/RED, /*bg_color=*/YELLOW, /*focus_color=*/WINBLUE,
+        /*fg_color=*/NamedBGRColor::RED,
+        /*bg_color=*/NamedBGRColor::YELLOW,
+        /*focus_color=*/NamedBGRColor::WINBLUE,
         global_font_deja_vu_14(), /*xtext=*/4)
     {}
 

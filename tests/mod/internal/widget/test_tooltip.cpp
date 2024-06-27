@@ -36,9 +36,9 @@ RED_AUTO_TEST_CASE(TraceWidgetTooltip)
 {
     TestGraphic drawable(800, 600);
 
-    BGRColor fg_color = RED;
-    BGRColor bg_color = YELLOW;
-    BGRColor border_color = BLACK;
+    BGRColor fg_color = NamedBGRColor::RED;
+    BGRColor bg_color = NamedBGRColor::YELLOW;
+    BGRColor border_color = NamedBGRColor::BLACK;
     int16_t x = 10;
     int16_t y = 10;
 
@@ -63,13 +63,13 @@ RED_AUTO_TEST_CASE(TraceWidgetTooltipScreen)
     WidgetScreen parent(drawable, 800, 600, global_font_deja_vu_14(), Theme{});
 
     WidgetLabel label(drawable, "TOOLTIPTEST"_av,
-                      BLACK, WHITE, global_font_deja_vu_14());
+                      NamedBGRColor::BLACK, NamedBGRColor::WHITE, global_font_deja_vu_14());
     Dimension dim = label.get_optimal_dim();
     label.set_wh(dim);
     label.set_xy(x, y);
 
     WidgetLabel label2(drawable, "TOOLTIPTESTMULTI"_av,
-                       BLACK, WHITE, global_font_deja_vu_14());
+                       NamedBGRColor::BLACK, NamedBGRColor::WHITE, global_font_deja_vu_14());
     dim = label2.get_optimal_dim();
     label2.set_wh(dim);
     label2.set_xy(x + 50, y + 90);

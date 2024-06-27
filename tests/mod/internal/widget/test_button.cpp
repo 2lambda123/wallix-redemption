@@ -62,7 +62,9 @@ struct ButtonContextTest
     )
     : drawable(w, h)
     , wbutton{drawable, text, WidgetEventNotifier(),
-              /*fg_color=*/RED, /*bg_color=*/YELLOW, /*focus_color=*/WINBLUE,
+              /*fg_color=*/NamedBGRColor::RED,
+              /*bg_color=*/NamedBGRColor::YELLOW,
+              /*focus_color=*/NamedBGRColor::WINBLUE,
               border_width, global_font_deja_vu_14(), xtext, ytext}
     {
         Dimension dim = wbutton.get_optimal_dim();
@@ -117,8 +119,9 @@ RED_AUTO_TEST_CASE(TraceWidgetButtonEvent)
     int16_t x = 0;
     int16_t y = 0;
 
-    WidgetButton wbutton(drawable, ""_av, notifier, WHITE,
-                         DARK_BLUE_BIS, WINBLUE, 2, global_font_deja_vu_14());
+    WidgetButton wbutton(drawable, ""_av, notifier, NamedBGRColor::WHITE,
+                         NamedBGRColor::DARK_BLUE_BIS, NamedBGRColor::WINBLUE, 2,
+                         global_font_deja_vu_14());
     Dimension dim = wbutton.get_optimal_dim();
     wbutton.set_wh(dim);
     wbutton.set_xy(x, y);
@@ -162,44 +165,44 @@ RED_AUTO_TEST_CASE(TraceWidgetButtonAndComposite)
     wcomposite.set_wh(800, 600);
     wcomposite.set_xy(0, 0);
 
-    WidgetButton wbutton1(drawable, "abababab"_av,
-                          notifier2, YELLOW, BLACK, WINBLUE, 2,
-                          global_font_deja_vu_14());
+    WidgetButton wbutton1(drawable, "abababab"_av, notifier2,
+                          NamedBGRColor::YELLOW, NamedBGRColor::BLACK, NamedBGRColor::WINBLUE,
+                          2, global_font_deja_vu_14());
     Dimension dim = wbutton1.get_optimal_dim();
     wbutton1.set_wh(dim);
     wbutton1.set_xy(0, 0);
 
-    WidgetButton wbutton2(drawable, "ggghdgh"_av,
-                          notifier2, WHITE, RED, WINBLUE, 2,
-                          global_font_deja_vu_14());
+    WidgetButton wbutton2(drawable, "ggghdgh"_av, notifier2,
+                          NamedBGRColor::WHITE, NamedBGRColor::RED, NamedBGRColor::WINBLUE,
+                          2, global_font_deja_vu_14());
     dim = wbutton2.get_optimal_dim();
     wbutton2.set_wh(dim);
     wbutton2.set_xy(0, 100);
 
-    WidgetButton wbutton3(drawable, "lldlslql"_av,
-                          notifier2, BLUE, RED, WINBLUE, 2,
-                          global_font_deja_vu_14());
+    WidgetButton wbutton3(drawable, "lldlslql"_av, notifier2,
+                          NamedBGRColor::BLUE, NamedBGRColor::RED, NamedBGRColor::WINBLUE,
+                          2, global_font_deja_vu_14());
     dim = wbutton3.get_optimal_dim();
     wbutton3.set_wh(dim);
     wbutton3.set_xy(100, 100);
 
-    WidgetButton wbutton4(drawable, "LLLLMLLM"_av,
-                          notifier2, PINK, DARK_GREEN, WINBLUE, 2,
-                          global_font_deja_vu_14());
+    WidgetButton wbutton4(drawable, "LLLLMLLM"_av, notifier2,
+                          NamedBGRColor::PINK, NamedBGRColor::DARK_GREEN, NamedBGRColor::WINBLUE,
+                          2, global_font_deja_vu_14());
     dim = wbutton4.get_optimal_dim();
     wbutton4.set_wh(dim);
     wbutton4.set_xy(300, 300);
 
-    WidgetButton wbutton5(drawable, "dsdsdjdjs"_av,
-                          notifier2, LIGHT_GREEN, DARK_BLUE, WINBLUE, 2,
-                          global_font_deja_vu_14());
+    WidgetButton wbutton5(drawable, "dsdsdjdjs"_av, notifier2,
+                          NamedBGRColor::LIGHT_GREEN, NamedBGRColor::DARK_BLUE, NamedBGRColor::WINBLUE,
+                          2, global_font_deja_vu_14());
     dim = wbutton5.get_optimal_dim();
     wbutton5.set_wh(dim);
     wbutton5.set_xy(700, -10);
 
-    WidgetButton wbutton6(drawable, "xxwwp"_av,
-                          notifier2, ANTHRACITE, PALE_GREEN, WINBLUE, 2,
-                          global_font_deja_vu_14());
+    WidgetButton wbutton6(drawable, "xxwwp"_av, notifier2,
+                          NamedBGRColor::ANTHRACITE, NamedBGRColor::PALE_GREEN, NamedBGRColor::WINBLUE,
+                          2, global_font_deja_vu_14());
     dim = wbutton6.get_optimal_dim();
     wbutton6.set_wh(dim);
     wbutton6.set_xy(-10, 550);

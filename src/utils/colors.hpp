@@ -37,7 +37,7 @@
 
 
 // Those are in BGR
-enum NamedBGRColor {
+enum class NamedBGRColor : uint32_t {
     BLACK                     = 0x000000,
     GREY                      = 0xc0c0c0,
     MEDIUM_GREY               = 0xa0a0a0,
@@ -73,7 +73,7 @@ enum NamedBGRColor {
     ORANGE                    = 0x1580DD,
     LIGHT_ORANGE              = 0x64BFFF,
     PALE_ORANGE               = 0x9AD5FF,
-    BROWN                     = 0x006AC5
+    BROWN                     = 0x006AC5,
 };
 
 
@@ -82,7 +82,7 @@ struct BGRasRGBColor;
 struct BGRColor
 {
     constexpr BGRColor(NamedBGRColor color) noexcept
-    : color_(color)
+    : color_(static_cast<uint32_t>(color))
     {}
 
     constexpr BGRColor(BGRasRGBColor const & color) noexcept;
@@ -94,6 +94,15 @@ struct BGRColor
     constexpr explicit BGRColor(uint8_t blue, uint8_t green, uint8_t red) noexcept
     : color_((blue << 16) | (green << 8) | red)
     {}
+
+    constexpr static BGRColor from_rgb(uint32_t color) noexcept
+    {
+        return BGRColor{
+            static_cast<uint8_t>(color),
+            static_cast<uint8_t>(color >> 8),
+            static_cast<uint8_t>(color >> 16),
+        };
+    }
 
     [[nodiscard]] constexpr uint32_t as_u32() const noexcept { return this->color_; }
 
@@ -108,7 +117,7 @@ private:
 struct BGRasRGBColor
 {
     constexpr BGRasRGBColor(NamedBGRColor color) noexcept
-    : color_(color)
+    : color_(static_cast<uint32_t>(color))
     {}
 
     constexpr BGRasRGBColor(BGRColor color) noexcept

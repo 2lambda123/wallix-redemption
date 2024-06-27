@@ -42,8 +42,8 @@ struct TestWidgetPasswordCtx
 
     struct Colors
     {
-        BGRColor fg_color = BLUE;
-        BGRColor bg_color = YELLOW;
+        BGRColor fg_color = NamedBGRColor::BLUE;
+        BGRColor bg_color = NamedBGRColor::YELLOW;
         BGRColor focus_color = bg_color;
     };
 
@@ -167,7 +167,7 @@ RED_AUTO_TEST_CASE(TraceWidgetPasswordClip2)
 RED_AUTO_TEST_CASE(EventWidgetPassword)
 {
     NotifyTrace onsubmit;
-    TestWidgetPasswordCtx ctx("abcdef"_av, {YELLOW, RED}, 100, onsubmit);
+    TestWidgetPasswordCtx ctx("abcdef"_av, {NamedBGRColor::YELLOW, NamedBGRColor::RED}, 100, onsubmit);
 
     auto& wpassword = ctx.wpassword;
     auto& drawable = ctx.drawable;
@@ -234,38 +234,43 @@ RED_AUTO_TEST_CASE(TraceWidgetPasswordAndComposite)
     wcomposite.set_wh(800, 600);
     wcomposite.set_xy(0, 0);
 
-    WidgetPassword wpassword1(drawable, copy_paste, "abababab"_av,
-                              {WidgetEventNotifier()}, YELLOW, BLACK, BLACK, global_font_deja_vu_14());
+    WidgetPassword wpassword1(drawable, copy_paste, "abababab"_av, {WidgetEventNotifier()},
+                              NamedBGRColor::YELLOW, NamedBGRColor::BLACK, NamedBGRColor::BLACK,
+                              global_font_deja_vu_14());
     Dimension dim = wpassword1.get_optimal_dim();
     wpassword1.set_wh(50, dim.h);
     wpassword1.set_xy(0, 0);
 
-    WidgetPassword wpassword2(drawable, copy_paste, "ggghdgh"_av,
-                              {WidgetEventNotifier()}, WHITE, RED, RED, global_font_deja_vu_14());
+    WidgetPassword wpassword2(drawable, copy_paste, "ggghdgh"_av, {WidgetEventNotifier()},
+                              NamedBGRColor::WHITE, NamedBGRColor::RED, NamedBGRColor::RED,
+                              global_font_deja_vu_14());
     dim = wpassword2.get_optimal_dim();
     wpassword2.set_wh(50, dim.h);
     wpassword2.set_xy(0, 100);
 
-    WidgetPassword wpassword3(drawable, copy_paste, "lldlslql"_av,
-                              {WidgetEventNotifier()}, BLUE, RED, RED, global_font_deja_vu_14());
+    WidgetPassword wpassword3(drawable, copy_paste, "lldlslql"_av, {WidgetEventNotifier()},
+                              NamedBGRColor::BLUE, NamedBGRColor::RED, NamedBGRColor::RED,
+                              global_font_deja_vu_14());
     dim = wpassword3.get_optimal_dim();
     wpassword3.set_wh(50, dim.h);
     wpassword3.set_xy(100, 100);
 
-    WidgetPassword wpassword4(drawable, copy_paste, "LLLLMLLM"_av,
-                              {WidgetEventNotifier()}, PINK, DARK_GREEN, DARK_GREEN, global_font_deja_vu_14());
+    WidgetPassword wpassword4(drawable, copy_paste, "LLLLMLLM"_av, {WidgetEventNotifier()},
+                              NamedBGRColor::PINK, NamedBGRColor::DARK_GREEN,
+                              NamedBGRColor::DARK_GREEN, global_font_deja_vu_14());
     dim = wpassword4.get_optimal_dim();
     wpassword4.set_wh(50, dim.h);
     wpassword4.set_xy(300, 300);
 
-    WidgetPassword wpassword5(drawable, copy_paste, "dsdsdjdjs"_av,
-                              {WidgetEventNotifier()}, LIGHT_GREEN, DARK_BLUE, DARK_BLUE, global_font_deja_vu_14());
+    WidgetPassword wpassword5(drawable, copy_paste, "dsdsdjdjs"_av, {WidgetEventNotifier()},
+                              NamedBGRColor::LIGHT_GREEN, NamedBGRColor::DARK_BLUE,
+                              NamedBGRColor::DARK_BLUE, global_font_deja_vu_14());
     dim = wpassword5.get_optimal_dim();
     wpassword5.set_wh(50, dim.h);
     wpassword5.set_xy(700, -10);
 
-    WidgetPassword wpassword6(drawable, copy_paste, "xxwwp"_av,
-                              {WidgetEventNotifier()}, ANTHRACITE, PALE_GREEN, PALE_GREEN, global_font_deja_vu_14());
+    WidgetPassword wpassword6(drawable, copy_paste, "xxwwp"_av, {WidgetEventNotifier()},
+                              NamedBGRColor::ANTHRACITE, NamedBGRColor::PALE_GREEN, NamedBGRColor::PALE_GREEN, global_font_deja_vu_14());
     dim = wpassword6.get_optimal_dim();
     wpassword6.set_wh(50, dim.h);
     wpassword6.set_xy(-10, 550);
@@ -293,7 +298,7 @@ RED_AUTO_TEST_CASE(TraceWidgetPasswordAndComposite)
 RED_AUTO_TEST_CASE(DataWidgetPassword)
 {
     NotifyTrace notifier;
-    TestWidgetPasswordCtx ctx("aurélie"_av, {YELLOW, RED}, 100, notifier);
+    TestWidgetPasswordCtx ctx("aurélie"_av, {NamedBGRColor::YELLOW, NamedBGRColor::RED}, 100, notifier);
 
     auto& wpassword = ctx.wpassword;
     auto& drawable = ctx.drawable;
@@ -331,7 +336,7 @@ RED_AUTO_TEST_CASE(DataWidgetPassword)
 RED_AUTO_TEST_CASE(DataWidgetPassword2)
 {
     NotifyTrace onsubmit;
-    TestWidgetPasswordCtx ctx("aurélie"_av, {YELLOW, RED}, 100, onsubmit);
+    TestWidgetPasswordCtx ctx("aurélie"_av, {NamedBGRColor::YELLOW, NamedBGRColor::RED}, 100, onsubmit);
 
     auto& wpassword = ctx.wpassword;
     auto& drawable = ctx.drawable;
@@ -373,7 +378,7 @@ RED_AUTO_TEST_CASE(DataWidgetPassword2)
 RED_AUTO_TEST_CASE(DataWidgetPassword3)
 {
     NotifyTrace onsubmit;
-    TestWidgetPasswordCtx ctx("aurélie"_av, {YELLOW, RED}, 100, onsubmit);
+    TestWidgetPasswordCtx ctx("aurélie"_av, {NamedBGRColor::YELLOW, NamedBGRColor::RED}, 100, onsubmit);
 
     auto& wpassword = ctx.wpassword;
     auto& drawable = ctx.drawable;

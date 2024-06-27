@@ -50,17 +50,17 @@ void ModWrapper::display_osd_message(std::string_view message, gdi::OsdMsgUrgenc
             break;
 
         case gdi::OsdMsgUrgency::INFO:
-            this->color = color_encode(BLUE, bpp);
+            this->color = color_encode(NamedBGRColor::BLUE, bpp);
             prefix = "INFO: ";
             break;
 
         case gdi::OsdMsgUrgency::WARNING:
-            this->color = color_encode(ORANGE, bpp);
+            this->color = color_encode(NamedBGRColor::ORANGE, bpp);
             prefix = "WARNING: ";
             break;
 
         case gdi::OsdMsgUrgency::ALERT:
-            this->color = color_encode(RED, bpp);
+            this->color = color_encode(NamedBGRColor::RED, bpp);
             prefix = "ALERT: ";
             break;
         }
@@ -271,7 +271,7 @@ void ModWrapper::draw_osd_message(bool disable_by_input)
     auto const bpp = this->client_info.screen_info.bpp;
     auto const color_ctx = gdi::ColorCtx::from_bpp(bpp, this->palette);
     auto const black = RDPColor::from(0);
-    auto const background_color = color_encode(LIGHT_YELLOW, bpp);
+    auto const background_color = color_encode(NamedBGRColor::LIGHT_YELLOW, bpp);
 
     drawable.draw(RDPOpaqueRect(clip, background_color), clip, color_ctx);
 

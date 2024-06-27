@@ -34,7 +34,7 @@
 
 namespace {
     void draw_bitmap(Drawable & drawable, char const * bitmap_filename) {
-        Bitmap bmp = bitmap_from_file_impl(bitmap_filename, BLACK);
+        Bitmap bmp = bitmap_from_file_impl(bitmap_filename, NamedBGRColor::BLACK);
         RED_REQUIRE(bmp.is_valid());
         drawable.draw_bitmap({0, 0, drawable.width(), drawable.height()}, bmp);
     }

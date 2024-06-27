@@ -47,7 +47,7 @@ RED_AUTO_TEST_CASE(WidgetNumberEditEventPushChar)
 
     WidgetNumberEdit wnumber_edit(
         drawable, copy_paste, "123456"_av, onsubmit,
-        GREEN, RED, RED, global_font_deja_vu_14());
+        NamedBGRColor::GREEN, NamedBGRColor::RED, NamedBGRColor::RED, global_font_deja_vu_14());
     Dimension dim = wnumber_edit.get_optimal_dim();
     wnumber_edit.set_wh(cx, dim.h);
     wnumber_edit.set_xy(x, y);

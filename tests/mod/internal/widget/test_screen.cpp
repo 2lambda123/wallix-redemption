@@ -50,28 +50,32 @@ RED_AUTO_TEST_CASE(TestScreenEvent)
 
     WidgetButton wbutton1(
         drawable, "button 1"_av, notifier1,
-        WHITE, DARK_BLUE_BIS, WINBLUE, 2, global_font_deja_vu_14());
+        NamedBGRColor::WHITE, NamedBGRColor::DARK_BLUE_BIS, NamedBGRColor::WINBLUE,
+        2, global_font_deja_vu_14());
     Dimension dim = wbutton1.get_optimal_dim();
     wbutton1.set_wh(dim);
     wbutton1.set_xy(0, 0);
 
     WidgetButton wbutton2(
         drawable, "button 2"_av, notifier2,
-        WHITE, DARK_BLUE_BIS, WINBLUE, 2, global_font_deja_vu_14());
+        NamedBGRColor::WHITE, NamedBGRColor::DARK_BLUE_BIS, NamedBGRColor::WINBLUE,
+        2, global_font_deja_vu_14());
     dim = wbutton2.get_optimal_dim();
     wbutton2.set_wh(dim);
     wbutton2.set_xy(0, 30);
 
     WidgetButton wbutton3(
         drawable, "button 3"_av, notifier3,
-        WHITE, DARK_BLUE_BIS, WINBLUE, 2, global_font_deja_vu_14());
+        NamedBGRColor::WHITE, NamedBGRColor::DARK_BLUE_BIS, NamedBGRColor::WINBLUE,
+        2, global_font_deja_vu_14());
     dim = wbutton3.get_optimal_dim();
     wbutton3.set_wh(dim);
     wbutton3.set_xy(100, 0);
 
     WidgetButton wbutton4(
         drawable, "button 4"_av, notifier4,
-        WHITE, DARK_BLUE_BIS, WINBLUE, 2, global_font_deja_vu_14());
+        NamedBGRColor::WHITE, NamedBGRColor::DARK_BLUE_BIS, NamedBGRColor::WINBLUE,
+        2, global_font_deja_vu_14());
     dim = wbutton4.get_optimal_dim();
     wbutton4.set_wh(dim);
     wbutton4.set_xy(100, 30);

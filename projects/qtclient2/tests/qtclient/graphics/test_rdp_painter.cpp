@@ -47,9 +47,9 @@ RED_AUTO_TEST_CASE(TestRdpPainter)
     auto const color_cxt = gdi::ColorCtx::depth24();
     QImage img(width, height, QImage::Format_RGB16);
     qtclient::RdpPainter gd(&img);
-    gd.draw(RDPOpaqueRect(screen_rect, encode_color24()(YELLOW)), screen_rect, color_cxt);
-    gd.draw(RDPOpaqueRect(screen_rect.shrink(5), encode_color24()(GREEN)), screen_rect, color_cxt);
-    gd.draw(RDPOpaqueRect(screen_rect.shrink(50), encode_color24()(RED)), screen_rect, color_cxt);
+    gd.draw(RDPOpaqueRect(screen_rect, encode_color24()(NamedBGRColor::YELLOW)), screen_rect, color_cxt);
+    gd.draw(RDPOpaqueRect(screen_rect.shrink(5), encode_color24()(NamedBGRColor::GREEN)), screen_rect, color_cxt);
+    gd.draw(RDPOpaqueRect(screen_rect.shrink(50), encode_color24()(NamedBGRColor::RED)), screen_rect, color_cxt);
 
     gd.draw(RDPScrBlt(screen_rect.shrink(100), 0x55, 0, 0), screen_rect);
 

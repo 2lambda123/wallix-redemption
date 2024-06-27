@@ -65,7 +65,7 @@ RED_AUTO_TEST_CASE_WD(TestHeadlessRepl, wd)
 
     Rect screen_rect(0, 0, width, height);
 
-    gd.draw(RDPOpaqueRect(screen_rect.shrink(20), encode_color24()(YELLOW)), screen_rect, gdi::ColorCtx::depth24());
+    gd.draw(RDPOpaqueRect(screen_rect.shrink(20), encode_color24()(NamedBGRColor::YELLOW)), screen_rect, gdi::ColorCtx::depth24());
 
     repl.must_flush_capture();
 

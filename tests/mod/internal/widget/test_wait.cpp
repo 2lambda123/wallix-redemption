@@ -48,8 +48,8 @@ struct TestWidgetWaitCtx
         "you can either return to selector or exit."_av,
         nullptr, global_font_deja_vu_14(), []{
             Theme colors;
-            colors.global.bgcolor = DARK_BLUE_BIS;
-            colors.global.fgcolor = WHITE;
+            colors.global.bgcolor = NamedBGRColor::DARK_BLUE_BIS;
+            colors.global.fgcolor = NamedBGRColor::WHITE;
             return colors;
         }(), Language::en, showform, flags)
     {

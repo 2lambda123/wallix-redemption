@@ -107,7 +107,7 @@ void CompositeArray::clear()
 WidgetComposite::WidgetComposite(gdi::GraphicApi & drawable, Focusable focusable)
     : Widget(drawable, focusable)
     , pressed(nullptr)
-    , bg_color(BLACK)
+    , bg_color(NamedBGRColor::BLACK)
     , current_focus(nullptr)
 {}
 

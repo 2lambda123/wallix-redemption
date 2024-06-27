@@ -3307,7 +3307,7 @@ RED_AUTO_TEST_CASE(TestRDP60BitmapCompression)
         (FIXTURES_PATH "/red_box_20x20.png")
     ) >>= [&](char const* filename)
     {
-        Bitmap bmp = bitmap_from_file(filename, BLACK);
+        Bitmap bmp = bitmap_from_file(filename, NamedBGRColor::BLACK);
 
         auto sz = std::max(std::size_t{65536}, 2u * bmp.bmp_size());
         auto uptr = std::make_unique<uint8_t[]>(sz);
@@ -3595,7 +3595,7 @@ RED_AUTO_TEST_CASE(TestConvertBitmap2)
 {
     //const char * filename = FIXTURES_PATH "/win2008capture10.png";
 
-    //Bitmap bmp24 = bitmap_from_file(filename, BLACK);
+    //Bitmap bmp24 = bitmap_from_file(filename, NamedBGRColor::BLACK);
 
     BGRPalette palette332(BGRPalette::classic_332());
 
@@ -5437,7 +5437,7 @@ RED_AUTO_TEST_CASE(TestBitmapConv)
 {
     const char * filename = FIXTURES_PATH "/wablogoblue_198x67.png";
 
-    Bitmap bitmap_1 = bitmap_from_file(filename, BLACK);
+    Bitmap bitmap_1 = bitmap_from_file(filename, NamedBGRColor::BLACK);
 
     RED_CHECK_EQUAL(198, bitmap_1.cx());
     RED_CHECK_EQUAL(198 * 3, bitmap_1.line_size());
@@ -5448,7 +5448,7 @@ RED_AUTO_TEST_CASE(TestBitmapConv)
 
     Drawable gd(1024, 768);
 
-    gd.opaquerect(Rect(0, 0, 1024, 768), gd.u32bgr_to_color(GREEN));
+    gd.opaquerect(Rect(0, 0, 1024, 768), gd.u32bgr_to_color(NamedBGRColor::GREEN));
 
     gd.mem_blt(Rect(10, 10, bitmap_2.cx(), bitmap_2.cx()), bitmap_2, 0, 0);
 

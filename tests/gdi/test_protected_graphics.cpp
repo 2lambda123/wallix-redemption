@@ -66,9 +66,9 @@ RED_AUTO_TEST_CASE(TestModOSD)
     TestGraphic drawable(screen_rect.cx, screen_rect.cy);
     auto const color_cxt = gdi::ColorCtx::depth24();
 
-    drawable->draw(RDPOpaqueRect(Rect(0, 0, screen_rect.cx, screen_rect.cy), encode_color24()(RED)), screen_rect, color_cxt);
+    drawable->draw(RDPOpaqueRect(Rect(0, 0, screen_rect.cx, screen_rect.cy), encode_color24()(NamedBGRColor::RED)), screen_rect, color_cxt);
 
-    Bitmap const bmp = bitmap_from_file(FIXTURES_PATH "/ad8b.png", BLACK);
+    Bitmap const bmp = bitmap_from_file(FIXTURES_PATH "/ad8b.png", NamedBGRColor::BLACK);
     int const bmp_x = 200;
     int const bmp_y = 200;
     Rect const bmp_rect(bmp_x, bmp_y, bmp.cx(), bmp.cy());
@@ -78,7 +78,7 @@ RED_AUTO_TEST_CASE(TestModOSD)
     RED_CHECK_IMG(drawable, IMG_TEST_PATH "protected_graphics_1.png");
 
     auto osd = make_osd(drawable, rect, []{RED_FAIL("refresh_rects is called");});
-    osd.draw(RDPOpaqueRect(Rect(100, 100, 200, 200), encode_color24()(GREEN)), screen_rect, color_cxt);
+    osd.draw(RDPOpaqueRect(Rect(100, 100, 200, 200), encode_color24()(NamedBGRColor::GREEN)), screen_rect, color_cxt);
     RED_CHECK_IMG(drawable, IMG_TEST_PATH "protected_graphics_2.png");
 }
 
@@ -88,14 +88,14 @@ RED_AUTO_TEST_CASE(TestModOSD2)
     TestGraphic drawable(screen_rect.cx, screen_rect.cy);
     auto const color_cxt = gdi::ColorCtx::depth24();
 
-    drawable->draw(RDPOpaqueRect(Rect(0, 0, screen_rect.cx, screen_rect.cy), encode_color24()(RED)), screen_rect, color_cxt);
+    drawable->draw(RDPOpaqueRect(Rect(0, 0, screen_rect.cx, screen_rect.cy), encode_color24()(NamedBGRColor::RED)), screen_rect, color_cxt);
 
     Rect const rect = Rect(100, 100, 200, 200);
-    drawable->draw(RDPOpaqueRect(rect, encode_color24()(GREEN)), screen_rect, color_cxt);
+    drawable->draw(RDPOpaqueRect(rect, encode_color24()(NamedBGRColor::GREEN)), screen_rect, color_cxt);
 
     RED_CHECK_IMG(drawable, IMG_TEST_PATH "protected_graphics_3.png");
 
-    Bitmap const bmp = bitmap_from_file(FIXTURES_PATH "/ad8b.png", BLACK);
+    Bitmap const bmp = bitmap_from_file(FIXTURES_PATH "/ad8b.png", NamedBGRColor::BLACK);
     int const bmp_x = 200;
     int const bmp_y = 200;
     Rect const bmp_rect(bmp_x, bmp_y, bmp.cx(), bmp.cy());

@@ -557,10 +557,10 @@ void refresh_window_rect(mod_api* mod, Rect const& window_rect)
     }
 }
 
-constexpr auto black = encode_color24()(BLACK);
-constexpr auto white = encode_color24()(WHITE);
+constexpr auto black = encode_color24()(NamedBGRColor::BLACK);
+constexpr auto white = encode_color24()(NamedBGRColor::WHITE);
 
-constexpr auto button_normal_color = encode_color24()(WHITE);
+constexpr auto button_normal_color = encode_color24()(NamedBGRColor::WHITE);
 constexpr auto button_hover_color  = encode_color24()(BGRColor(0xE7EBE7));
 constexpr auto button_active_color = encode_color24()(BGRColor(0xCBCACA));
 constexpr auto close_normal_color  = button_normal_color;
@@ -854,7 +854,7 @@ ClientExecute::ClientExecute(
 : front_(front)
 , drawable_(drawable)
 , verbose(verbose)
-, wallix_icon_min(bitmap_from_file(app_path(AppPath::WallixIconMin), BLACK))
+, wallix_icon_min(bitmap_from_file(app_path(AppPath::WallixIconMin), NamedBGRColor::BLACK))
 , auxiliary_window_id(RemoteProgramsWindowIdManager::INVALID_WINDOW_ID)
 , window_title(INTERNAL_MODULE_WINDOW_TITLE)
 , current_mouse_pointer(PredefinedPointer::Normal)

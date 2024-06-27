@@ -41,7 +41,9 @@ struct TestScrollCtx
             RED_TEST(this->pos != new_pos);
             this->pos = new_pos;
         }, is_horizontal,
-        /*fg_color=*/RED, /*bg_color=*/YELLOW, /*focus_color=*/WINBLUE,
+        /*fg_color=*/NamedBGRColor::RED,
+        /*bg_color=*/NamedBGRColor::YELLOW,
+        /*focus_color=*/NamedBGRColor::WINBLUE,
         global_font_deja_vu_14(), rail_style, 50)
     {
         Dimension dim = this->scroll.get_optimal_dim();

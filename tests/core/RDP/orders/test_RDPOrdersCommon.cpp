@@ -72,10 +72,10 @@ RED_AUTO_TEST_CASE(TestOpaqueRect)
     {
         StaticOutStream<1000> out_stream;
         RDPOrderCommon state_common(0, Rect(0, 0, 800, 600));
-        RDPOpaqueRect state_orect(Rect(0, 0, 10, 10), encode_color24()(WHITE));
+        RDPOpaqueRect state_orect(Rect(0, 0, 10, 10), encode_color24()(NamedBGRColor::WHITE));
 
         RDPOrderCommon newcommon(RECT, Rect(0, 0, 800, 600));
-        RDPOpaqueRect newcmd(Rect(0, 0, 10, 10), encode_color24()(WHITE));
+        RDPOpaqueRect newcmd(Rect(0, 0, 10, 10), encode_color24()(NamedBGRColor::WHITE));
         newcmd.emit(out_stream, newcommon, state_common, state_orect);
 
         uint8_t datas[2] = {SMALL | DELTA | CHANGE | STANDARD, RECT};
@@ -90,7 +90,7 @@ RED_AUTO_TEST_CASE(TestOpaqueRect)
 
         RED_CHECK_EQUAL(static_cast<uint8_t>(RECT), common_cmd.order);
 
-        RDPOpaqueRect cmd(Rect(0, 0, 10, 10), encode_color24()(WHITE));
+        RDPOpaqueRect cmd(Rect(0, 0, 10, 10), encode_color24()(NamedBGRColor::WHITE));
         cmd.receive(in_stream, header);
 
         StaticOutStream<65536> out_stream2;
@@ -102,10 +102,10 @@ RED_AUTO_TEST_CASE(TestOpaqueRect)
     {
         StaticOutStream<1000> out_stream;
         RDPOrderCommon state_common(0, Rect(0, 0, 800, 600));
-        RDPOpaqueRect state_orect(Rect(0, 0, 10, 10), encode_color24()(WHITE));
+        RDPOpaqueRect state_orect(Rect(0, 0, 10, 10), encode_color24()(NamedBGRColor::WHITE));
 
         RDPOrderCommon newcommon(RECT, Rect(0, 0, 800, 600));
-        RDPOpaqueRect newcmd(Rect(5, 0, 10, 10), encode_color24()(WHITE));
+        RDPOpaqueRect newcmd(Rect(5, 0, 10, 10), encode_color24()(NamedBGRColor::WHITE));
         newcmd.emit(out_stream, newcommon, state_common, state_orect);
         // out_stream = old - cmd
 
@@ -124,7 +124,7 @@ RED_AUTO_TEST_CASE(TestOpaqueRect)
 
         RED_CHECK_EQUAL(static_cast<uint8_t>(RECT), common_cmd.order);
 
-        RDPOpaqueRect cmd(Rect(0, 0, 10, 10), encode_color24()(WHITE));
+        RDPOpaqueRect cmd(Rect(0, 0, 10, 10), encode_color24()(NamedBGRColor::WHITE));
         cmd.receive(in_stream, header);
 
         StaticOutStream<65536> out_stream2;
@@ -135,10 +135,10 @@ RED_AUTO_TEST_CASE(TestOpaqueRect)
     {
         StaticOutStream<1000> out_stream;
         RDPOrderCommon state_common(0, Rect(0, 0, 800, 600));
-        RDPOpaqueRect state_orect(Rect(0, 0, 10, 10), encode_color24()(WHITE));
+        RDPOpaqueRect state_orect(Rect(0, 0, 10, 10), encode_color24()(NamedBGRColor::WHITE));
 
         RDPOrderCommon newcommon(RECT, Rect(0, 0, 800, 600));
-        RDPOpaqueRect newcmd(Rect(5, 10, 25, 30), encode_color24()(WHITE));
+        RDPOpaqueRect newcmd(Rect(5, 10, 25, 30), encode_color24()(NamedBGRColor::WHITE));
         newcmd.emit(out_stream, newcommon, state_common, state_orect);
 
         uint8_t datas[7] = {DELTA | CHANGE | STANDARD, RECT,
@@ -159,7 +159,7 @@ RED_AUTO_TEST_CASE(TestOpaqueRect)
 
         RED_CHECK_EQUAL(static_cast<uint8_t>(RECT), common_cmd.order);
 
-        RDPOpaqueRect cmd(Rect(0, 0, 10, 10), encode_color24()(WHITE));
+        RDPOpaqueRect cmd(Rect(0, 0, 10, 10), encode_color24()(NamedBGRColor::WHITE));
         cmd.receive(in_stream, header);
 
         StaticOutStream<65536> out_stream2;
@@ -171,10 +171,10 @@ RED_AUTO_TEST_CASE(TestOpaqueRect)
     {
         StaticOutStream<1000> out_stream;
         RDPOrderCommon state_common(0, Rect(0, 0, 800, 600));
-        RDPOpaqueRect state_orect(Rect(0, 0, 10, 10), encode_color24()(WHITE));
+        RDPOpaqueRect state_orect(Rect(0, 0, 10, 10), encode_color24()(NamedBGRColor::WHITE));
 
         RDPOrderCommon newcommon(RECT, Rect(0, 0, 800, 600));
-        RDPOpaqueRect newcmd(Rect(0, 300, 10, 10), encode_color24()(WHITE));
+        RDPOpaqueRect newcmd(Rect(0, 300, 10, 10), encode_color24()(NamedBGRColor::WHITE));
         newcmd.emit(out_stream, newcommon, state_common, state_orect);
 
         uint8_t datas[5] = {CHANGE | STANDARD, RECT,
@@ -192,7 +192,7 @@ RED_AUTO_TEST_CASE(TestOpaqueRect)
 
         RED_CHECK_EQUAL(static_cast<uint8_t>(RECT), common_cmd.order);
 
-        RDPOpaqueRect cmd(Rect(0, 0, 10, 10), encode_color24()(WHITE));
+        RDPOpaqueRect cmd(Rect(0, 0, 10, 10), encode_color24()(NamedBGRColor::WHITE));
         cmd.receive(in_stream, header);
 
         StaticOutStream<65536> out_stream2;
@@ -203,10 +203,10 @@ RED_AUTO_TEST_CASE(TestOpaqueRect)
     {
         StaticOutStream<1000> out_stream;
         RDPOrderCommon state_common(0, Rect(0, 0, 800, 600));
-        RDPOpaqueRect state_orect(Rect(0, 0, 10, 10), encode_color24()(WHITE));
+        RDPOpaqueRect state_orect(Rect(0, 0, 10, 10), encode_color24()(NamedBGRColor::WHITE));
 
         RDPOrderCommon newcommon(RECT, Rect(0, 0, 800, 600));
-        RDPOpaqueRect newcmd(Rect(5, 300, 10, 10), encode_color24()(WHITE));
+        RDPOpaqueRect newcmd(Rect(5, 300, 10, 10), encode_color24()(NamedBGRColor::WHITE));
         newcmd.emit(out_stream, newcommon, state_common, state_orect);
 
         uint8_t datas[7] = {CHANGE | STANDARD, RECT,
@@ -225,7 +225,7 @@ RED_AUTO_TEST_CASE(TestOpaqueRect)
 
         RED_CHECK_EQUAL(static_cast<uint8_t>(RECT), common_cmd.order);
 
-        RDPOpaqueRect cmd(Rect(0, 0, 10, 10), encode_color24()(WHITE));
+        RDPOpaqueRect cmd(Rect(0, 0, 10, 10), encode_color24()(NamedBGRColor::WHITE));
         cmd.receive(in_stream, header);
 
         StaticOutStream<65536> out_stream2;
@@ -236,10 +236,10 @@ RED_AUTO_TEST_CASE(TestOpaqueRect)
     {
         StaticOutStream<1000> out_stream;
         RDPOrderCommon state_common(0, Rect(0, 0, 800, 600));
-        RDPOpaqueRect state_orect(Rect(0, 0, 10, 10), encode_color24()(WHITE));
+        RDPOpaqueRect state_orect(Rect(0, 0, 10, 10), encode_color24()(NamedBGRColor::WHITE));
 
         RDPOrderCommon newcommon(RECT, Rect(0, 0, 800, 600));
-        RDPOpaqueRect newcmd(Rect(5, 300, 25, 30), encode_color24()(WHITE));
+        RDPOpaqueRect newcmd(Rect(5, 300, 25, 30), encode_color24()(NamedBGRColor::WHITE));
         newcmd.emit(out_stream, newcommon, state_common, state_orect);
 
         uint8_t datas[11] = {CHANGE | STANDARD, RECT,
@@ -260,7 +260,7 @@ RED_AUTO_TEST_CASE(TestOpaqueRect)
 
         RED_CHECK_EQUAL(static_cast<uint8_t>(RECT), common_cmd.order);
 
-        RDPOpaqueRect cmd(Rect(0, 0, 10, 10), encode_color24()(WHITE));
+        RDPOpaqueRect cmd(Rect(0, 0, 10, 10), encode_color24()(NamedBGRColor::WHITE));
         cmd.receive(in_stream, header);
 
         StaticOutStream<65536> out_stream2;
@@ -271,7 +271,7 @@ RED_AUTO_TEST_CASE(TestOpaqueRect)
     {
         StaticOutStream<1000> out_stream;
         RDPOrderCommon state_common(0, Rect(0, 0, 800, 600));
-        RDPOpaqueRect state_orect(Rect(0, 0, 10, 10), encode_color24()(WHITE));
+        RDPOpaqueRect state_orect(Rect(0, 0, 10, 10), encode_color24()(NamedBGRColor::WHITE));
 
         RDPOrderCommon newcommon(RECT, Rect(0, 0, 800, 600));
         RDPOpaqueRect newcmd(Rect(5, 300, 25, 30), encode_color24()(BGRColor{0x102030}));
@@ -296,7 +296,7 @@ RED_AUTO_TEST_CASE(TestOpaqueRect)
 
         RED_CHECK_EQUAL(static_cast<uint8_t>(RECT), common_cmd.order);
 
-        RDPOpaqueRect cmd(Rect(0, 0, 10, 10), encode_color24()(WHITE));
+        RDPOpaqueRect cmd(Rect(0, 0, 10, 10), encode_color24()(NamedBGRColor::WHITE));
         cmd.receive(in_stream, header);
 
         StaticOutStream<65536> out_stream2;
@@ -307,7 +307,7 @@ RED_AUTO_TEST_CASE(TestOpaqueRect)
     {
         StaticOutStream<1000> out_stream;
         RDPOrderCommon state_common(0, Rect(0, 0, 800, 600));
-        RDPOpaqueRect state_orect(Rect(0, 0, 10, 10), encode_color24()(WHITE));
+        RDPOpaqueRect state_orect(Rect(0, 0, 10, 10), encode_color24()(NamedBGRColor::WHITE));
 
         RDPOrderCommon newcommon(RECT, Rect(0, 300, 310, 20));
         RDPOpaqueRect newcmd(Rect(5, 300, 25, 30), encode_color24()(BGRColor{0x102030}));
@@ -336,7 +336,7 @@ RED_AUTO_TEST_CASE(TestOpaqueRect)
 
         RED_CHECK_EQUAL(static_cast<uint8_t>(RECT), common_cmd.order);
 
-        RDPOpaqueRect cmd(Rect(0, 0, 10, 10), encode_color24()(WHITE));
+        RDPOpaqueRect cmd(Rect(0, 0, 10, 10), encode_color24()(NamedBGRColor::WHITE));
         cmd.receive(in_stream, header);
 
         StaticOutStream<65536> out_stream2;
@@ -348,7 +348,7 @@ RED_AUTO_TEST_CASE(TestOpaqueRect)
     {
         StaticOutStream<1000> out_stream;
         RDPOrderCommon state_common(0, Rect(0, 0, 800, 600));
-        RDPOpaqueRect state_orect(Rect(0, 0, 10, 10), encode_color24()(WHITE));
+        RDPOpaqueRect state_orect(Rect(0, 0, 10, 10), encode_color24()(NamedBGRColor::WHITE));
 
         RDPOrderCommon newcommon(RECT, Rect(10, 10, 800, 600));
         RDPOpaqueRect newcmd(Rect(5, 0, 810, 605), encode_color24()(BGRColor{0x102030}));
@@ -377,7 +377,7 @@ RED_AUTO_TEST_CASE(TestOpaqueRect)
 
         RED_CHECK_EQUAL(static_cast<uint8_t>(RECT), common_cmd.order);
 
-        RDPOpaqueRect cmd(Rect(0, 0, 10, 10), encode_color24()(WHITE));
+        RDPOpaqueRect cmd(Rect(0, 0, 10, 10), encode_color24()(NamedBGRColor::WHITE));
         cmd.receive(in_stream, header);
 
         StaticOutStream<65536> out_stream2;
@@ -389,7 +389,7 @@ RED_AUTO_TEST_CASE(TestOpaqueRect)
     {
         StaticOutStream<1000> out_stream;
         RDPOrderCommon state_common(RECT, Rect(0, 0, 800, 600));
-        RDPOpaqueRect state_orect(Rect(0, 0, 10, 10), encode_color24()(WHITE));
+        RDPOpaqueRect state_orect(Rect(0, 0, 10, 10), encode_color24()(NamedBGRColor::WHITE));
 
         RDPOrderCommon newcommon(RECT, Rect(0, 0, 800, 600));
         RDPOpaqueRect newcmd(Rect(5, 0, 810, 605), encode_color24()(BGRColor{0x102030}));
@@ -414,7 +414,7 @@ RED_AUTO_TEST_CASE(TestOpaqueRect)
 
         RED_CHECK_EQUAL(static_cast<uint8_t>(RECT), common_cmd.order);
 
-        RDPOpaqueRect cmd(Rect(0, 0, 10, 10), encode_color24()(WHITE));
+        RDPOpaqueRect cmd(Rect(0, 0, 10, 10), encode_color24()(NamedBGRColor::WHITE));
         cmd.receive(in_stream, header);
 
         StaticOutStream<65536> out_stream2;

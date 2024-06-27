@@ -53,7 +53,7 @@ WidgetEditValid::WidgetEditValid(
         : new WidgetEdit(drawable, copy_paste, text, onsubmit, fgcolor, bgcolor,
                          bgcolor, font, 1, 2))
     , label(!title.empty()
-        ? new WidgetLabel(drawable, title, MEDIUM_GREY, bgcolor, font, 1, 2)
+        ? new WidgetLabel(drawable, title, NamedBGRColor::MEDIUM_GREY, bgcolor, font, 1, 2)
         : nullptr)
     , button_toggle_visibility(pass
         ? new WidgetButton(drawable, button_toggle_visibility_hidden,
@@ -66,7 +66,7 @@ WidgetEditValid::WidgetEditValid(
                     button_toggle_visibility->set_text(button_toggle_visibility_hidden);
                 }
             },
-            MEDIUM_GREY, bgcolor, focus_color, 0, font, 6, 2)
+            NamedBGRColor::MEDIUM_GREY, bgcolor, focus_color, 0, font, 6, 2)
         : nullptr)
     , use_label_(use_title)
     , border_none_color(border_none_color)

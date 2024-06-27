@@ -38,8 +38,8 @@ RED_AUTO_TEST_CASE(TestWidgetForm)
     CopyPaste copy_paste(false);
 
     Theme colors;
-    colors.global.bgcolor = DARK_BLUE_BIS;
-    colors.global.fgcolor = WHITE;
+    colors.global.bgcolor = NamedBGRColor::DARK_BLUE_BIS;
+    colors.global.fgcolor = NamedBGRColor::WHITE;
 
     int flag = WidgetForm::COMMENT_DISPLAY | WidgetForm::TICKET_DISPLAY |
         WidgetForm::DURATION_DISPLAY;

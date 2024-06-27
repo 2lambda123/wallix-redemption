@@ -561,7 +561,7 @@ void WidgetModuleHost::rdp_input_invalidate(Rect clip)
             }
         }
 
-        ::fill_region(this->drawable, region, BLACK);
+        ::fill_region(this->drawable, region, NamedBGRColor::BLACK);
 
 
         Rect mod_update_rect = clip.intersect(this->vision_rect);

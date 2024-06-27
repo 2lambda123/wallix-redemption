@@ -408,7 +408,7 @@ RED_AUTO_TEST_CASE(TestAddMouse)
     DrawablePointer::BufferSaver save_mouse;
     DrawablePointer gd_pointer(normal_pointer());
 
-    gd.opaquerect(screen_rect, gd.u32bgr_to_color(RED)); // RED
+    gd.opaquerect(screen_rect, gd.u32bgr_to_color(NamedBGRColor::RED));
 
     struct Data
     {
@@ -862,7 +862,7 @@ RED_AUTO_TEST_CASE(TestAddMouse2)
 
     DrawablePointer gd_pointer(pointer_loader_new(BitsPerPixel{32}, in_stream_cursor));
 
-    gd.opaquerect(screen_rect, gd.u32bgr_to_color(RED)); // RED
+    gd.opaquerect(screen_rect, gd.u32bgr_to_color(NamedBGRColor::RED));
 
     struct Data
     {

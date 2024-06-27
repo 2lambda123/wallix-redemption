@@ -304,6 +304,11 @@ public:
         return DrawableImplPrivate::traits::u32bgr_to_color(color);
     }
 
+    [[nodiscard]] static Color u32bgr_to_color(NamedBGRColor color)
+    {
+        return DrawableImplPrivate::traits::u32bgr_to_color(static_cast<uint32_t>(color));
+    }
+
     [[nodiscard]] const uint8_t * data(int x, int y) const noexcept
     {
         return this->impl_.data(x, y);

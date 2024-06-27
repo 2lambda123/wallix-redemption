@@ -54,7 +54,7 @@ struct TestRectMod : null_mod
     void rdp_input_invalidate(Rect rect) override
     {
         this->gd->draw(
-            RDPOpaqueRect(rect, encode_color24()(RED)),
+            RDPOpaqueRect(rect, encode_color24()(NamedBGRColor::RED)),
             rect,
             gdi::ColorCtx(gdi::Depth::depth24(), nullptr));
     }

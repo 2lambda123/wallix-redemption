@@ -55,8 +55,8 @@ namespace
 
         Rect screen(0, 0, drawable.width(), drawable.height());
         auto const color_cxt = gdi::ColorCtx::depth24();
-        drawable.draw(RDPOpaqueRect(screen, encode_color24()(BLUE)), screen, color_cxt);
-        video_drawable.draw(RDPOpaqueRect(screen, encode_color24()(BLUE)), screen, color_cxt);
+        drawable.draw(RDPOpaqueRect(screen, encode_color24()(NamedBGRColor::BLUE)), screen, color_cxt);
+        video_drawable.draw(RDPOpaqueRect(screen, encode_color24()(NamedBGRColor::BLUE)), screen, color_cxt);
 
         lazy_drawable_pointer.set_position(drawable.width() / 2, drawable.height() / 2);
 
@@ -64,11 +64,11 @@ namespace
         int vx = 5;
         int vy = 4;
         for (size_t x = 0; x < duration; x++) {
-            drawable.draw(RDPOpaqueRect(r, encode_color24()(BLUE)), screen, color_cxt);
+            drawable.draw(RDPOpaqueRect(r, encode_color24()(NamedBGRColor::BLUE)), screen, color_cxt);
             r.y += vy;
             r.x += vx;
-            drawable.draw(RDPOpaqueRect(r, encode_color24()(WABGREEN)), screen, color_cxt);
-            video_drawable.draw(RDPOpaqueRect(r, encode_color24()(WABGREEN)), screen, color_cxt);
+            drawable.draw(RDPOpaqueRect(r, encode_color24()(NamedBGRColor::WABGREEN)), screen, color_cxt);
+            video_drawable.draw(RDPOpaqueRect(r, encode_color24()(NamedBGRColor::WABGREEN)), screen, color_cxt);
             now += 40000us;
             //printf("now sec=%u usec=%u\n", (unsigned)now.tv_sec, (unsigned)now.tv_usec);
             uint16_t cursor_x = mouse ? uint16_t(r.x + 10) : 0;

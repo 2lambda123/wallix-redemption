@@ -183,22 +183,22 @@ namespace
     {
         auto const color_cxt = gdi::ColorCtx::depth24();
 
-        capture.draw(RDPOpaqueRect(scr, encode_color24()(GREEN)), scr, color_cxt);
+        capture.draw(RDPOpaqueRect(scr, encode_color24()(NamedBGRColor::GREEN)), scr, color_cxt);
         now += 1s;
         capture.force_flush(now, 0, 0);
         capture.periodic_snapshot(now, 0, 0);
 
-        capture.draw(RDPOpaqueRect(Rect(1, 50, cy, 30), encode_color24()(BLUE)), scr, color_cxt);
+        capture.draw(RDPOpaqueRect(Rect(1, 50, cy, 30), encode_color24()(NamedBGRColor::BLUE)), scr, color_cxt);
         now += 1s;
         capture.force_flush(now, 0, 0);
         capture.periodic_snapshot(now, 0, 0);
 
-        capture.draw(RDPOpaqueRect(Rect(2, 100, cy, 30), encode_color24()(WHITE)), scr, color_cxt);
+        capture.draw(RDPOpaqueRect(Rect(2, 100, cy, 30), encode_color24()(NamedBGRColor::WHITE)), scr, color_cxt);
         now += 1s;
         capture.force_flush(now, 0, 0);
         capture.periodic_snapshot(now, 0, 0);
 
-        capture.draw(RDPOpaqueRect(Rect(3, 150, cy, 30), encode_color24()(RED)), scr, color_cxt);
+        capture.draw(RDPOpaqueRect(Rect(3, 150, cy, 30), encode_color24()(NamedBGRColor::RED)), scr, color_cxt);
         now += 1s;
         capture.force_flush(now, 0, 0);
         capture.periodic_snapshot(now, 0, 0);
@@ -208,17 +208,17 @@ namespace
     {
         auto const color_cxt = gdi::ColorCtx::depth24();
 
-        capture.draw(RDPOpaqueRect(Rect(4, 200, cy, 30), encode_color24()(BLACK)), scr, color_cxt);
+        capture.draw(RDPOpaqueRect(Rect(4, 200, cy, 30), encode_color24()(NamedBGRColor::BLACK)), scr, color_cxt);
         now += 1s;
         capture.force_flush(now, 0, 0);
         capture.periodic_snapshot(now, 0, 0);
 
-        capture.draw(RDPOpaqueRect(Rect(5, 250, cy, 30), encode_color24()(PINK)), scr, color_cxt);
+        capture.draw(RDPOpaqueRect(Rect(5, 250, cy, 30), encode_color24()(NamedBGRColor::PINK)), scr, color_cxt);
         now += 1s;
         capture.force_flush(now, 0, 0);
         capture.periodic_snapshot(now, 0, 0);
 
-        capture.draw(RDPOpaqueRect(Rect(6, 300, cy, 30), encode_color24()(WABGREEN)), scr, color_cxt);
+        capture.draw(RDPOpaqueRect(Rect(6, 300, cy, 30), encode_color24()(NamedBGRColor::WABGREEN)), scr, color_cxt);
         now += 1s;
         capture.force_flush(now, 0, 0);
         capture.periodic_snapshot(now, 0, 0);
@@ -363,7 +363,7 @@ RED_AUTO_TEST_CASE(TestBppToOtherBppCapture)
         auto const color_cxt = gdi::ColorCtx::depth16();
         capture.cached_pointer(PredefinedPointer::Edit);
 
-        capture.draw(RDPOpaqueRect(scr, encode_color16()(BLUE)), scr, color_cxt);
+        capture.draw(RDPOpaqueRect(scr, encode_color16()(NamedBGRColor::BLUE)), scr, color_cxt);
         now += 1s;
         capture.force_flush(now, 0, 0);
         capture.periodic_snapshot(now, 15, 21);
@@ -399,7 +399,7 @@ RED_AUTO_TEST_CASE(TestResizingCapture)
 
         auto const color_cxt = gdi::ColorCtx::depth24();
 
-        capture.draw(RDPOpaqueRect(Rect(7, 350, 1200, 30), encode_color24()(YELLOW)), scr, color_cxt);
+        capture.draw(RDPOpaqueRect(Rect(7, 350, 1200, 30), encode_color24()(NamedBGRColor::YELLOW)), scr, color_cxt);
         now += 1s;
         capture.force_flush(now, 0, 0);
         capture.periodic_snapshot(now, 0, 0);
@@ -537,7 +537,7 @@ RED_AUTO_TEST_CASE(TestResizingCapture1)
 
         auto const color_cxt = gdi::ColorCtx::depth24();
 
-        capture.draw(RDPOpaqueRect(Rect(7, 350, 700, 30), encode_color24()(YELLOW)), scr, color_cxt);
+        capture.draw(RDPOpaqueRect(Rect(7, 350, 700, 30), encode_color24()(NamedBGRColor::YELLOW)), scr, color_cxt);
         now += 1s;
         capture.force_flush(now, 0, 0);
         capture.periodic_snapshot(now, 0, 0);
@@ -1372,23 +1372,23 @@ RED_AUTO_TEST_CASE(Test6SecondsStrippedScreenToWrm)
 
     auto const color_ctx = gdi::ColorCtx::depth24();
 
-    consumer.draw(RDPOpaqueRect(screen_rect, encode_color24()(GREEN)), screen_rect, color_ctx);
+    consumer.draw(RDPOpaqueRect(screen_rect, encode_color24()(NamedBGRColor::GREEN)), screen_rect, color_ctx);
     tgtf.next_second();
     consumer.send_timestamp_chunk();
 
-    consumer.draw(RDPOpaqueRect(Rect(0, 50, 700, 30), encode_color24()(BLUE)), screen_rect, color_ctx);
+    consumer.draw(RDPOpaqueRect(Rect(0, 50, 700, 30), encode_color24()(NamedBGRColor::BLUE)), screen_rect, color_ctx);
     consumer.sync();
     tgtf.next_second();
     tgtf.next_second();
     tgtf.next_second();
     consumer.send_timestamp_chunk();
 
-    consumer.draw(RDPOpaqueRect(Rect(0, 100, 700, 30), encode_color24()(WHITE)), screen_rect, color_ctx);
+    consumer.draw(RDPOpaqueRect(Rect(0, 100, 700, 30), encode_color24()(NamedBGRColor::WHITE)), screen_rect, color_ctx);
     tgtf.next_second();
     tgtf.next_second();
     consumer.send_timestamp_chunk();
 
-    consumer.draw(RDPOpaqueRect(Rect(0, 150, 700, 30), encode_color24()(RED)), screen_rect, color_ctx);
+    consumer.draw(RDPOpaqueRect(Rect(0, 150, 700, 30), encode_color24()(NamedBGRColor::RED)), screen_rect, color_ctx);
     tgtf.next_second();
 
     consumer.send_timestamp_chunk();
@@ -1510,8 +1510,8 @@ const char expected_stripped_wrm2[] =
            "\x00\x00\x00\x00\x00"
 
            "\x00\x00\x12\x00\x00\x00\x02\x00"
-/* 0000 */ "\x11\x32\x32\xff\xff"             // encode_color24()(WHITE) rect
-           "\x11\x62\x32\x00\x00"             // encode_color24()(RED) rect
+/* 0000 */ "\x11\x32\x32\xff\xff"             // encode_color24()(NamedBGRColor::WHITE) rect
+           "\x11\x62\x32\x00\x00"             // encode_color24()(NamedBGRColor::RED) rect
 
            "\xf0\x03\x15\x00\x00\x00\x01\x00" // 03F0: TIMESTAMP 0010: chunk_len=16 0001: 1 order
 /* 0000 */ "\xc0\xcf\x6a\x00\x00\x00\x00\x00" // time 1007000000
@@ -1522,7 +1522,7 @@ const char expected_stripped_wrm2[] =
            "\x00\x00\x00\x00\x00"
 
            "\x00\x00\x13\x00\x00\x00\x01\x00"
-/* 0000 */ "\x01\x1f\x05\x00\x05\x00\x0a\x00\x0a\x00\x00" // encode_color24()(BLACK) rect
+/* 0000 */ "\x01\x1f\x05\x00\x05\x00\x0a\x00\x0a\x00\x00" // encode_color24()(NamedBGRColor::BLACK) rect
    ;
 
 
@@ -1536,17 +1536,17 @@ RED_AUTO_TEST_CASE(Test6SecondsStrippedScreenToWrmReplay2)
 
     auto const color_ctx = gdi::ColorCtx::depth24();
 
-    consumer.draw(RDPOpaqueRect(screen_rect, encode_color24()(GREEN)), screen_rect, color_ctx);
-    consumer.draw(RDPOpaqueRect(Rect(0, 50, 700, 30), encode_color24()(BLUE)), screen_rect, color_ctx);
+    consumer.draw(RDPOpaqueRect(screen_rect, encode_color24()(NamedBGRColor::GREEN)), screen_rect, color_ctx);
+    consumer.draw(RDPOpaqueRect(Rect(0, 50, 700, 30), encode_color24()(NamedBGRColor::BLUE)), screen_rect, color_ctx);
     tgtf.next_second();
     consumer.send_timestamp_chunk();
 
-    consumer.draw(RDPOpaqueRect(Rect(0, 100, 700, 30), encode_color24()(WHITE)), screen_rect, color_ctx);
-    consumer.draw(RDPOpaqueRect(Rect(0, 150, 700, 30), encode_color24()(RED)), screen_rect, color_ctx);
+    consumer.draw(RDPOpaqueRect(Rect(0, 100, 700, 30), encode_color24()(NamedBGRColor::WHITE)), screen_rect, color_ctx);
+    consumer.draw(RDPOpaqueRect(Rect(0, 150, 700, 30), encode_color24()(NamedBGRColor::RED)), screen_rect, color_ctx);
     tgtf.next_second(6);
     consumer.send_timestamp_chunk();
 
-    consumer.draw(RDPOpaqueRect(Rect(5, 5, 10, 10), encode_color24()(BLACK)), screen_rect, color_ctx);
+    consumer.draw(RDPOpaqueRect(Rect(5, 5, 10, 10), encode_color24()(NamedBGRColor::BLACK)), screen_rect, color_ctx);
 
     consumer.send_timestamp_chunk();
     consumer.sync();
@@ -1564,16 +1564,16 @@ RED_AUTO_TEST_CASE(TestCaptureToWrmReplayToPng)
 
     auto const color_ctx = gdi::ColorCtx::depth24();
 
-    RDPOpaqueRect cmd0(screen_rect, encode_color24()(GREEN));
+    RDPOpaqueRect cmd0(screen_rect, encode_color24()(NamedBGRColor::GREEN));
     consumer.draw(cmd0, screen_rect, color_ctx);
-    RDPOpaqueRect cmd1(Rect(0, 50, 700, 30), encode_color24()(BLUE));
+    RDPOpaqueRect cmd1(Rect(0, 50, 700, 30), encode_color24()(NamedBGRColor::BLUE));
     consumer.draw(cmd1, screen_rect, color_ctx);
     tgtf.next_second();
     consumer.sync();
 
-    RDPOpaqueRect cmd2(Rect(0, 100, 700, 30), encode_color24()(WHITE));
+    RDPOpaqueRect cmd2(Rect(0, 100, 700, 30), encode_color24()(NamedBGRColor::WHITE));
     consumer.draw(cmd2, screen_rect, color_ctx);
-    RDPOpaqueRect cmd3(Rect(0, 150, 700, 30), encode_color24()(RED));
+    RDPOpaqueRect cmd3(Rect(0, 150, 700, 30), encode_color24()(NamedBGRColor::RED));
     consumer.draw(cmd3, screen_rect, color_ctx);
     tgtf.next_second(6);
     consumer.sync();
@@ -1667,7 +1667,7 @@ RED_AUTO_TEST_CASE(TestSaveCache)
 
     auto const color_ctx = gdi::ColorCtx::depth24();
 
-    consumer.draw(RDPOpaqueRect(scr, encode_color24()(BLUE)), scr, color_ctx);
+    consumer.draw(RDPOpaqueRect(scr, encode_color24()(NamedBGRColor::BLUE)), scr, color_ctx);
 
     uint8_t comp20x10RED[] = {
         0xc0, 0x04, 0x00, 0x00, 0xFF, // MIX 20 (0, 0, FF)
@@ -1773,9 +1773,9 @@ RED_AUTO_TEST_CASE(TestSaveOrderStates)
 
     auto const color_cxt = gdi::ColorCtx::depth24();
 
-    consumer.draw(RDPOpaqueRect(scr, encode_color24()(RED)), scr, color_cxt);
-    consumer.draw(RDPOpaqueRect(scr.shrink(5), encode_color24()(BLUE)), scr, color_cxt);
-    consumer.draw(RDPOpaqueRect(scr.shrink(10), encode_color24()(RED)), scr, color_cxt);
+    consumer.draw(RDPOpaqueRect(scr, encode_color24()(NamedBGRColor::RED)), scr, color_cxt);
+    consumer.draw(RDPOpaqueRect(scr.shrink(5), encode_color24()(NamedBGRColor::BLUE)), scr, color_cxt);
+    consumer.draw(RDPOpaqueRect(scr.shrink(10), encode_color24()(NamedBGRColor::RED)), scr, color_cxt);
 
     consumer.sync();
 
@@ -1783,7 +1783,7 @@ RED_AUTO_TEST_CASE(TestSaveOrderStates)
 
     tgtf.next_second();
     consumer.send_timestamp_chunk();
-    consumer.draw(RDPOpaqueRect(scr.shrink(20), encode_color24()(GREEN)), scr, color_cxt);
+    consumer.draw(RDPOpaqueRect(scr.shrink(20), encode_color24()(NamedBGRColor::GREEN)), scr, color_cxt);
 
     consumer.sync();
 }
@@ -1882,9 +1882,9 @@ RED_AUTO_TEST_CASE(TestImageChunk)
            "\x00\xca\x9a\x3b\x00\x00\x00\x00" // 0x3B9ACA00 = 1000000000
 
     /* 0000 */ "\x00\x00\x1e\x00\x00\x00\x03\x00" // 0000: ORDERS  001A:chunk_len=26 0002: 2 orders
-    /* 0000 */ "\x19\x0a\x1c\x14\x0a\xff"             // encode_color24()(RED) rect
-    /* 0000 */ "\x11\x5f\x05\x05\xF6\xf9\x00\xFF\x11" // encode_color24()(BLUE) RECT
-    /* 0000 */ "\x3f\x05\xfb\xf7\x07\xff\xff"         // encode_color24()(WHITE) RECT
+    /* 0000 */ "\x19\x0a\x1c\x14\x0a\xff"             // encode_color24()(NamedBGRColor::RED) rect
+    /* 0000 */ "\x11\x5f\x05\x05\xF6\xf9\x00\xFF\x11" // encode_color24()(NamedBGRColor::BLUE) RECT
+    /* 0000 */ "\x3f\x05\xfb\xf7\x07\xff\xff"         // encode_color24()(NamedBGRColor::WHITE) RECT
 
     /* 0000 */ "\x00\x10\x74\x00\x00\x00\x01\x00" // 0x1000: IMAGE_CHUNK 0048: chunk_len=86 0001: 1 order
         "\x89\x50\x4e\x47\x0d\x0a\x1a\x0a"                                 //.PNG....
@@ -1906,12 +1906,12 @@ RED_AUTO_TEST_CASE(TestImageChunk)
     RDPDrawable& drawable = tgtf.drawable;
 
     auto const color_cxt = gdi::ColorCtx::depth24();
-    drawable.draw(RDPOpaqueRect(scr, encode_color24()(RED)), scr, color_cxt);
-    consumer.draw(RDPOpaqueRect(scr, encode_color24()(RED)), scr, color_cxt);
-    drawable.draw(RDPOpaqueRect(Rect(5, 5, 10, 3), encode_color24()(BLUE)), scr, color_cxt);
-    consumer.draw(RDPOpaqueRect(Rect(5, 5, 10, 3), encode_color24()(BLUE)), scr, color_cxt);
-    drawable.draw(RDPOpaqueRect(Rect(10, 0, 1, 10), encode_color24()(WHITE)), scr, color_cxt);
-    consumer.draw(RDPOpaqueRect(Rect(10, 0, 1, 10), encode_color24()(WHITE)), scr, color_cxt);
+    drawable.draw(RDPOpaqueRect(scr, encode_color24()(NamedBGRColor::RED)), scr, color_cxt);
+    consumer.draw(RDPOpaqueRect(scr, encode_color24()(NamedBGRColor::RED)), scr, color_cxt);
+    drawable.draw(RDPOpaqueRect(Rect(5, 5, 10, 3), encode_color24()(NamedBGRColor::BLUE)), scr, color_cxt);
+    consumer.draw(RDPOpaqueRect(Rect(5, 5, 10, 3), encode_color24()(NamedBGRColor::BLUE)), scr, color_cxt);
+    drawable.draw(RDPOpaqueRect(Rect(10, 0, 1, 10), encode_color24()(NamedBGRColor::WHITE)), scr, color_cxt);
+    consumer.draw(RDPOpaqueRect(Rect(10, 0, 1, 10), encode_color24()(NamedBGRColor::WHITE)), scr, color_cxt);
     consumer.sync();
     consumer.send_image_chunk();
 }
@@ -1941,9 +1941,9 @@ RED_AUTO_TEST_CASE(TestImagePNGMediumChunks)
            "\x00\xca\x9a\x3b\x00\x00\x00\x00" // 0x3B9ACA00 = 1000000000
 
     /* 0000 */ "\x00\x00\x1e\x00\x00\x00\x03\x00" // 0000: ORDERS  001A:chunk_len=26 0002: 2 orders
-    /* 0000 */ "\x19\x0a\x1c\x14\x0a\xff"             // encode_color24()(RED) rect
-    /* 0000 */ "\x11\x5f\x05\x05\xF6\xf9\x00\xFF\x11" // encode_color24()(BLUE) RECT
-    /* 0000 */ "\x3f\x05\xfb\xf7\x07\xff\xff"         // encode_color24()(WHITE) RECT
+    /* 0000 */ "\x19\x0a\x1c\x14\x0a\xff"             // encode_color24()(NamedBGRColor::RED) rect
+    /* 0000 */ "\x11\x5f\x05\x05\xF6\xf9\x00\xFF\x11" // encode_color24()(NamedBGRColor::BLUE) RECT
+    /* 0000 */ "\x3f\x05\xfb\xf7\x07\xff\xff"         // encode_color24()(NamedBGRColor::WHITE) RECT
 
     /* 0000 */ "\x01\x10\x64\x00\x00\x00\x01\x00" // 0x1000: PARTIAL_IMAGE_CHUNK 0048: chunk_len=100 0001: 1 order
 
@@ -1974,12 +1974,12 @@ RED_AUTO_TEST_CASE(TestImagePNGMediumChunks)
     RDPDrawable& drawable = tgtf.drawable;
 
     auto const color_cxt = gdi::ColorCtx::depth24();
-    drawable.draw(RDPOpaqueRect(scr, encode_color24()(RED)), scr, color_cxt);
-    consumer.draw(RDPOpaqueRect(scr, encode_color24()(RED)), scr, color_cxt);
-    drawable.draw(RDPOpaqueRect(Rect(5, 5, 10, 3), encode_color24()(BLUE)), scr, color_cxt);
-    consumer.draw(RDPOpaqueRect(Rect(5, 5, 10, 3), encode_color24()(BLUE)), scr, color_cxt);
-    drawable.draw(RDPOpaqueRect(Rect(10, 0, 1, 10), encode_color24()(WHITE)), scr, color_cxt);
-    consumer.draw(RDPOpaqueRect(Rect(10, 0, 1, 10), encode_color24()(WHITE)), scr, color_cxt);
+    drawable.draw(RDPOpaqueRect(scr, encode_color24()(NamedBGRColor::RED)), scr, color_cxt);
+    consumer.draw(RDPOpaqueRect(scr, encode_color24()(NamedBGRColor::RED)), scr, color_cxt);
+    drawable.draw(RDPOpaqueRect(Rect(5, 5, 10, 3), encode_color24()(NamedBGRColor::BLUE)), scr, color_cxt);
+    consumer.draw(RDPOpaqueRect(Rect(5, 5, 10, 3), encode_color24()(NamedBGRColor::BLUE)), scr, color_cxt);
+    drawable.draw(RDPOpaqueRect(Rect(10, 0, 1, 10), encode_color24()(NamedBGRColor::WHITE)), scr, color_cxt);
+    consumer.draw(RDPOpaqueRect(Rect(10, 0, 1, 10), encode_color24()(NamedBGRColor::WHITE)), scr, color_cxt);
     consumer.sync();
 
     OutChunkedBufferingTransport<100> png_trans(trans);
@@ -2011,9 +2011,9 @@ RED_AUTO_TEST_CASE(TestImagePNGSmallChunks)
            "\x00\xca\x9a\x3b\x00\x00\x00\x00" // 0x3B9ACA00 = 1000000000
 
     /* 0000 */ "\x00\x00\x1e\x00\x00\x00\x03\x00" // 0000: ORDERS  001A:chunk_len=26 0002: 2 orders
-    /* 0000 */ "\x19\x0a\x1c\x14\x0a\xff"             // encode_color24()(RED) rect
-    /* 0000 */ "\x11\x5f\x05\x05\xF6\xf9\x00\xFF\x11" // encode_color24()(BLUE) RECT
-    /* 0000 */ "\x3f\x05\xfb\xf7\x07\xff\xff"         // encode_color24()(WHITE) RECT
+    /* 0000 */ "\x19\x0a\x1c\x14\x0a\xff"             // encode_color24()(NamedBGRColor::RED) rect
+    /* 0000 */ "\x11\x5f\x05\x05\xF6\xf9\x00\xFF\x11" // encode_color24()(NamedBGRColor::BLUE) RECT
+    /* 0000 */ "\x3f\x05\xfb\xf7\x07\xff\xff"         // encode_color24()(NamedBGRColor::WHITE) RECT
 
     /* 0000 */ "\x01\x10\x10\x00\x00\x00\x01\x00" // 0x1000: PARTIAL_IMAGE_CHUNK 0048: chunk_len=100 0001: 1 order
         "\x89\x50\x4e\x47\x0d\x0a\x1a\x0a"                                 //.PNG....
@@ -2052,12 +2052,12 @@ RED_AUTO_TEST_CASE(TestImagePNGSmallChunks)
     RDPDrawable& drawable = tgtf.drawable;
 
     auto const color_cxt = gdi::ColorCtx::depth24();
-    drawable.draw(RDPOpaqueRect(scr, encode_color24()(RED)), scr, color_cxt);
-    consumer.draw(RDPOpaqueRect(scr, encode_color24()(RED)), scr, color_cxt);
-    drawable.draw(RDPOpaqueRect(Rect(5, 5, 10, 3), encode_color24()(BLUE)), scr, color_cxt);
-    consumer.draw(RDPOpaqueRect(Rect(5, 5, 10, 3), encode_color24()(BLUE)), scr, color_cxt);
-    drawable.draw(RDPOpaqueRect(Rect(10, 0, 1, 10), encode_color24()(WHITE)), scr, color_cxt);
-    consumer.draw(RDPOpaqueRect(Rect(10, 0, 1, 10), encode_color24()(WHITE)), scr, color_cxt);
+    drawable.draw(RDPOpaqueRect(scr, encode_color24()(NamedBGRColor::RED)), scr, color_cxt);
+    consumer.draw(RDPOpaqueRect(scr, encode_color24()(NamedBGRColor::RED)), scr, color_cxt);
+    drawable.draw(RDPOpaqueRect(Rect(5, 5, 10, 3), encode_color24()(NamedBGRColor::BLUE)), scr, color_cxt);
+    consumer.draw(RDPOpaqueRect(Rect(5, 5, 10, 3), encode_color24()(NamedBGRColor::BLUE)), scr, color_cxt);
+    drawable.draw(RDPOpaqueRect(Rect(10, 0, 1, 10), encode_color24()(NamedBGRColor::WHITE)), scr, color_cxt);
+    consumer.draw(RDPOpaqueRect(Rect(10, 0, 1, 10), encode_color24()(NamedBGRColor::WHITE)), scr, color_cxt);
     consumer.sync();
 
     OutChunkedBufferingTransport<16> png_trans(trans);
@@ -2480,7 +2480,7 @@ RED_AUTO_TEST_CASE(TestSwitchTitleExtractor)
 
         auto draw_img = [&](char const* filename){
             Bitmap img;
-            RED_CHECK((img = bitmap_from_file(filename, BLACK)).is_valid());
+            RED_CHECK((img = bitmap_from_file(filename, NamedBGRColor::BLACK)).is_valid());
             capture.draw(
                 RDPMemBlt(0, Rect(0, 0, img.cx(), img.cy()), 0xCC, 0, 0, 0),
                 scr, img);

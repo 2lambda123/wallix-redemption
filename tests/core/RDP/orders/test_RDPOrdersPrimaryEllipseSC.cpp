@@ -73,10 +73,10 @@ RED_AUTO_TEST_CASE(TestEllipseSC)
     {
         StaticOutStream<1000> out_stream;
         RDPOrderCommon state_common(0, Rect(0, 0, 800, 600));
-        RDPEllipseSC state_ellipse(Rect(0, 0, 10, 10), encode_color24()(WHITE));
+        RDPEllipseSC state_ellipse(Rect(0, 0, 10, 10), encode_color24()(NamedBGRColor::WHITE));
 
         RDPOrderCommon newcommon(ELLIPSESC, Rect(0, 0, 800, 600));
-        RDPEllipseSC(Rect(0, 0, 10, 10), encode_color24()(WHITE)).emit(out_stream, newcommon, state_common, state_ellipse);
+        RDPEllipseSC(Rect(0, 0, 10, 10), encode_color24()(NamedBGRColor::WHITE)).emit(out_stream, newcommon, state_common, state_ellipse);
 
         uint8_t datas[2] = {SMALL | CHANGE | STANDARD | DELTA, ELLIPSESC};
         RED_CHECK(out_stream.get_produced_bytes() == make_array_view(datas));
@@ -90,7 +90,7 @@ RED_AUTO_TEST_CASE(TestEllipseSC)
 
         RED_CHECK_EQUAL(static_cast<uint8_t>(ELLIPSESC), common_cmd.order);
 
-        RDPEllipseSC cmd(Rect(0, 0, 10, 10), encode_color24()(WHITE));
+        RDPEllipseSC cmd(Rect(0, 0, 10, 10), encode_color24()(NamedBGRColor::WHITE));
         cmd.receive(in_stream, header);
 
         decltype(out_stream) out_stream2;
@@ -101,10 +101,10 @@ RED_AUTO_TEST_CASE(TestEllipseSC)
     {
         StaticOutStream<1000> out_stream;
         RDPOrderCommon state_common(0, Rect(0, 0, 800, 600));
-        RDPEllipseSC state_ellipse(Rect(0, 0, 10, 10), encode_color24()(WHITE));
+        RDPEllipseSC state_ellipse(Rect(0, 0, 10, 10), encode_color24()(NamedBGRColor::WHITE));
 
         RDPOrderCommon newcommon(ELLIPSESC, Rect(0, 0, 800, 600));
-        RDPEllipseSC(Rect(5, 0, 10, 10), encode_color24()(WHITE)).emit(out_stream, newcommon, state_common, state_ellipse);
+        RDPEllipseSC(Rect(5, 0, 10, 10), encode_color24()(NamedBGRColor::WHITE)).emit(out_stream, newcommon, state_common, state_ellipse);
         // out_stream = old - cmd
 
         uint8_t datas[5] = {CHANGE | STANDARD | DELTA,
@@ -124,7 +124,7 @@ RED_AUTO_TEST_CASE(TestEllipseSC)
 
         RED_CHECK_EQUAL(static_cast<uint8_t>(ELLIPSESC), common_cmd.order);
 
-        RDPEllipseSC cmd(Rect(0, 0, 10, 10), encode_color24()(WHITE));
+        RDPEllipseSC cmd(Rect(0, 0, 10, 10), encode_color24()(NamedBGRColor::WHITE));
         cmd.receive(in_stream, header);
 
         decltype(out_stream) out_stream2;
@@ -135,10 +135,10 @@ RED_AUTO_TEST_CASE(TestEllipseSC)
     {
         StaticOutStream<1000> out_stream;
         RDPOrderCommon state_common(0, Rect(0, 0, 800, 600));
-        RDPEllipseSC state_ellipse(Rect(0, 0, 10, 10), encode_color24()(WHITE));
+        RDPEllipseSC state_ellipse(Rect(0, 0, 10, 10), encode_color24()(NamedBGRColor::WHITE));
 
         RDPOrderCommon newcommon(ELLIPSESC, Rect(0, 0, 800, 600));
-        RDPEllipseSC newcmd(Rect(5, 10, 25, 30), encode_color24()(WHITE));
+        RDPEllipseSC newcmd(Rect(5, 10, 25, 30), encode_color24()(NamedBGRColor::WHITE));
         newcmd.emit(out_stream, newcommon, state_common, state_ellipse);
 
         uint8_t datas[7] = {CHANGE | STANDARD | DELTA,
@@ -160,7 +160,7 @@ RED_AUTO_TEST_CASE(TestEllipseSC)
 
         RED_CHECK_EQUAL(static_cast<uint8_t>(ELLIPSESC), common_cmd.order);
 
-        RDPEllipseSC cmd(Rect(0, 0, 10, 10), encode_color24()(WHITE));
+        RDPEllipseSC cmd(Rect(0, 0, 10, 10), encode_color24()(NamedBGRColor::WHITE));
         cmd.receive(in_stream, header);
 
         decltype(out_stream) out_stream2;
@@ -171,10 +171,10 @@ RED_AUTO_TEST_CASE(TestEllipseSC)
     {
         StaticOutStream<1000> out_stream;
         RDPOrderCommon state_common(0, Rect(0, 0, 800, 600));
-        RDPEllipseSC state_ellipse(Rect(0, 0, 10, 10), encode_color24()(WHITE));
+        RDPEllipseSC state_ellipse(Rect(0, 0, 10, 10), encode_color24()(NamedBGRColor::WHITE));
 
         RDPOrderCommon newcommon(ELLIPSESC, Rect(0, 0, 800, 600));
-        RDPEllipseSC(Rect(0, 300, 10, 10), encode_color24()(WHITE)).emit(out_stream, newcommon, state_common, state_ellipse);
+        RDPEllipseSC(Rect(0, 300, 10, 10), encode_color24()(NamedBGRColor::WHITE)).emit(out_stream, newcommon, state_common, state_ellipse);
 
         uint8_t datas[7] = {CHANGE | STANDARD, ELLIPSESC,
                             0x02 | 0x08, // top and bottom coordinate changed
@@ -192,7 +192,7 @@ RED_AUTO_TEST_CASE(TestEllipseSC)
 
         RED_CHECK_EQUAL(static_cast<uint8_t>(ELLIPSESC), common_cmd.order);
 
-        RDPEllipseSC cmd(Rect(0, 0, 10, 10), encode_color24()(WHITE));
+        RDPEllipseSC cmd(Rect(0, 0, 10, 10), encode_color24()(NamedBGRColor::WHITE));
         cmd.receive(in_stream, header);
 
         decltype(out_stream) out_stream2;
@@ -203,10 +203,10 @@ RED_AUTO_TEST_CASE(TestEllipseSC)
     {
         StaticOutStream<1000> out_stream;
         RDPOrderCommon state_common(0, Rect(0, 0, 800, 600));
-        RDPEllipseSC state_ellipse(Rect(0, 0, 10, 10), encode_color24()(WHITE));
+        RDPEllipseSC state_ellipse(Rect(0, 0, 10, 10), encode_color24()(NamedBGRColor::WHITE));
 
         RDPOrderCommon newcommon(ELLIPSESC, Rect(0, 0, 800, 600));
-        RDPEllipseSC(Rect(5, 300, 10, 10), encode_color24()(WHITE)).emit(out_stream, newcommon, state_common, state_ellipse);
+        RDPEllipseSC(Rect(5, 300, 10, 10), encode_color24()(NamedBGRColor::WHITE)).emit(out_stream, newcommon, state_common, state_ellipse);
 
         uint8_t datas[11] = {CHANGE | STANDARD, ELLIPSESC,
                              0x0f,    // left top right bottom coordinate changed
@@ -226,7 +226,7 @@ RED_AUTO_TEST_CASE(TestEllipseSC)
 
         RED_CHECK_EQUAL(static_cast<uint8_t>(ELLIPSESC), common_cmd.order);
 
-        RDPEllipseSC cmd(Rect(0, 0, 10, 10), encode_color24()(WHITE));
+        RDPEllipseSC cmd(Rect(0, 0, 10, 10), encode_color24()(NamedBGRColor::WHITE));
         cmd.receive(in_stream, header);
 
         decltype(out_stream) out_stream2;
@@ -237,10 +237,10 @@ RED_AUTO_TEST_CASE(TestEllipseSC)
     {
         StaticOutStream<1000> out_stream;
         RDPOrderCommon state_common(0, Rect(0, 0, 800, 600));
-        RDPEllipseSC state_ellipse(Rect(0, 0, 10, 10), encode_color24()(WHITE));
+        RDPEllipseSC state_ellipse(Rect(0, 0, 10, 10), encode_color24()(NamedBGRColor::WHITE));
 
         RDPOrderCommon newcommon(ELLIPSESC, Rect(0, 0, 800, 600));
-        RDPEllipseSC(Rect(5, 300, 25, 30), encode_color24()(WHITE)).emit(out_stream, newcommon, state_common, state_ellipse);
+        RDPEllipseSC(Rect(5, 300, 25, 30), encode_color24()(NamedBGRColor::WHITE)).emit(out_stream, newcommon, state_common, state_ellipse);
 
         uint8_t datas[11] = {CHANGE | STANDARD, ELLIPSESC,
             0x0F,   // x, y, w, h coordinates changed
@@ -260,7 +260,7 @@ RED_AUTO_TEST_CASE(TestEllipseSC)
 
         RED_CHECK_EQUAL(static_cast<uint8_t>(ELLIPSESC), common_cmd.order);
 
-        RDPEllipseSC cmd(Rect(0, 0, 10, 10), encode_color24()(WHITE));
+        RDPEllipseSC cmd(Rect(0, 0, 10, 10), encode_color24()(NamedBGRColor::WHITE));
         cmd.receive(in_stream, header);
 
         decltype(out_stream) out_stream2;
@@ -271,7 +271,7 @@ RED_AUTO_TEST_CASE(TestEllipseSC)
     {
         StaticOutStream<1000> out_stream;
         RDPOrderCommon state_common(0, Rect(0, 0, 800, 600));
-        RDPEllipseSC state_ellipse(Rect(0, 0, 10, 10), encode_color24()(WHITE));
+        RDPEllipseSC state_ellipse(Rect(0, 0, 10, 10), encode_color24()(NamedBGRColor::WHITE));
 
         RDPOrderCommon newcommon(ELLIPSESC, Rect(0, 0, 800, 600));
         RDPEllipseSC(Rect(5, 300, 25, 30), encode_color24()(BGRColor{0x102030})).emit(out_stream, newcommon, state_common, state_ellipse);
@@ -295,7 +295,7 @@ RED_AUTO_TEST_CASE(TestEllipseSC)
 
         RED_CHECK_EQUAL(static_cast<uint8_t>(ELLIPSESC), common_cmd.order);
 
-        RDPEllipseSC cmd(Rect(0, 0, 10, 10), encode_color24()(WHITE));
+        RDPEllipseSC cmd(Rect(0, 0, 10, 10), encode_color24()(NamedBGRColor::WHITE));
         cmd.receive(in_stream, header);
 
         decltype(out_stream) out_stream2;
@@ -306,7 +306,7 @@ RED_AUTO_TEST_CASE(TestEllipseSC)
     {
         StaticOutStream<1000> out_stream;
         RDPOrderCommon state_common(0, Rect(0, 0, 800, 600));
-        RDPEllipseSC state_ellipse(Rect(0, 0, 10, 10), encode_color24()(WHITE));
+        RDPEllipseSC state_ellipse(Rect(0, 0, 10, 10), encode_color24()(NamedBGRColor::WHITE));
 
         RDPOrderCommon newcommon(ELLIPSESC, Rect(0, 300, 310, 20));
         RDPEllipseSC(Rect(5, 300, 25, 30), encode_color24()(BGRColor{0x102030})).emit(out_stream, newcommon, state_common, state_ellipse);
@@ -334,7 +334,7 @@ RED_AUTO_TEST_CASE(TestEllipseSC)
 
         RED_CHECK_EQUAL(static_cast<uint8_t>(ELLIPSESC), common_cmd.order);
 
-        RDPEllipseSC cmd(Rect(0, 0, 10, 10), encode_color24()(WHITE));
+        RDPEllipseSC cmd(Rect(0, 0, 10, 10), encode_color24()(NamedBGRColor::WHITE));
         cmd.receive(in_stream, header);
 
         decltype(out_stream) out_stream2;
@@ -345,7 +345,7 @@ RED_AUTO_TEST_CASE(TestEllipseSC)
     {
         StaticOutStream<1000> out_stream;
         RDPOrderCommon state_common(0, Rect(0, 0, 800, 600));
-        RDPEllipseSC state_ellipse(Rect(0, 0, 10, 10), encode_color24()(WHITE));
+        RDPEllipseSC state_ellipse(Rect(0, 0, 10, 10), encode_color24()(NamedBGRColor::WHITE));
 
         RDPOrderCommon newcommon(ELLIPSESC, Rect(10, 10, 800, 600));
         RDPEllipseSC(Rect(5, 0, 810, 605), encode_color24()(BGRColor{0x102030})).emit(out_stream, newcommon, state_common, state_ellipse);
@@ -373,7 +373,7 @@ RED_AUTO_TEST_CASE(TestEllipseSC)
 
         RED_CHECK_EQUAL(static_cast<uint8_t>(ELLIPSESC), common_cmd.order);
 
-        RDPEllipseSC cmd(Rect(0, 0, 10, 10), encode_color24()(WHITE));
+        RDPEllipseSC cmd(Rect(0, 0, 10, 10), encode_color24()(NamedBGRColor::WHITE));
         cmd.receive(in_stream, header);
 
         decltype(out_stream) out_stream2;
@@ -384,7 +384,7 @@ RED_AUTO_TEST_CASE(TestEllipseSC)
     {
         StaticOutStream<1000> out_stream;
         RDPOrderCommon state_common(ELLIPSESC, Rect(0, 0, 800, 600));
-        RDPEllipseSC state_ellipse(Rect(0, 0, 10, 10), encode_color24()(WHITE));
+        RDPEllipseSC state_ellipse(Rect(0, 0, 10, 10), encode_color24()(NamedBGRColor::WHITE));
 
         RDPOrderCommon newcommon(ELLIPSESC, Rect(0, 0, 800, 600));
         RDPEllipseSC(Rect(5, 0, 810, 605), encode_color24()(BGRColor{0x102030})).emit(out_stream, newcommon, state_common, state_ellipse);
@@ -408,7 +408,7 @@ RED_AUTO_TEST_CASE(TestEllipseSC)
 
         RED_CHECK_EQUAL(static_cast<uint8_t>(ELLIPSESC), common_cmd.order);
 
-        RDPEllipseSC cmd(Rect(0, 0, 10, 10), encode_color24()(WHITE));
+        RDPEllipseSC cmd(Rect(0, 0, 10, 10), encode_color24()(NamedBGRColor::WHITE));
         cmd.receive(in_stream, header);
 
         decltype(out_stream) out_stream2;
@@ -419,10 +419,10 @@ RED_AUTO_TEST_CASE(TestEllipseSC)
     {
         StaticOutStream<1000> out_stream;
         RDPOrderCommon state_common(0, Rect(0, 0, 800, 600));
-        RDPEllipseSC state_ellipse(Rect(0, 0, 10, 10), encode_color24()(WHITE));
+        RDPEllipseSC state_ellipse(Rect(0, 0, 10, 10), encode_color24()(NamedBGRColor::WHITE));
 
         RDPOrderCommon newcommon(ELLIPSESC, Rect(0, 0, 800, 600));
-        RDPEllipseSC(Rect(0, 0, 10, 10), encode_color24()(WHITE), 0x0A, 0x00).emit(out_stream, newcommon, state_common, state_ellipse);
+        RDPEllipseSC(Rect(0, 0, 10, 10), encode_color24()(NamedBGRColor::WHITE), 0x0A, 0x00).emit(out_stream, newcommon, state_common, state_ellipse);
 
         uint8_t datas[5] = { CHANGE | STANDARD | DELTA,
                              ELLIPSESC,
@@ -440,7 +440,7 @@ RED_AUTO_TEST_CASE(TestEllipseSC)
 
         RED_CHECK_EQUAL(static_cast<uint8_t>(ELLIPSESC), common_cmd.order);
 
-        RDPEllipseSC cmd(Rect(0, 0, 10, 10), encode_color24()(WHITE));
+        RDPEllipseSC cmd(Rect(0, 0, 10, 10), encode_color24()(NamedBGRColor::WHITE));
         cmd.receive(in_stream, header);
 
         decltype(out_stream) out_stream2;
@@ -452,7 +452,7 @@ RED_AUTO_TEST_CASE(TestEllipseSC)
     {
         StaticOutStream<1000> out_stream;
         RDPOrderCommon state_common(ELLIPSESC, Rect(0, 0, 800, 600));
-        RDPEllipseSC state_ellipse(Rect(0, 0, 10, 10), encode_color24()(WHITE));
+        RDPEllipseSC state_ellipse(Rect(0, 0, 10, 10), encode_color24()(NamedBGRColor::WHITE));
 
         RDPOrderCommon newcommon(ELLIPSESC, Rect(0, 0, 800, 600));
         RDPEllipseSC(Rect(5, 0, 810, 605), encode_color24()(BGRColor{0x102030}), 0x0E, 0x00).emit(out_stream, newcommon, state_common, state_ellipse);
@@ -478,7 +478,7 @@ RED_AUTO_TEST_CASE(TestEllipseSC)
 
         RED_CHECK_EQUAL(static_cast<uint8_t>(ELLIPSESC), common_cmd.order);
 
-        RDPEllipseSC cmd(Rect(0, 0, 10, 10), encode_color24()(WHITE));
+        RDPEllipseSC cmd(Rect(0, 0, 10, 10), encode_color24()(NamedBGRColor::WHITE));
         cmd.receive(in_stream, header);
 
         decltype(out_stream) out_stream2;

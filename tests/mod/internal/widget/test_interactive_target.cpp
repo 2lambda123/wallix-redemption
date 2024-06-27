@@ -49,8 +49,8 @@ struct TestWidgetInteractivePasswordCtx
         {WidgetEventNotifier(), WidgetEventNotifier(), WidgetEventNotifier()},
         ask_device, ask_login, ask_password, []{
             Theme colors;
-            colors.global.bgcolor = DARK_BLUE_BIS;
-            colors.global.fgcolor = WHITE;
+            colors.global.bgcolor = NamedBGRColor::DARK_BLUE_BIS;
+            colors.global.fgcolor = NamedBGRColor::WHITE;
             return colors;
         }(),
         caption, text_device, device_str,

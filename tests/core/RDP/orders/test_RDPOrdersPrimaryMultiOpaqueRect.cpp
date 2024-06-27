@@ -54,7 +54,7 @@ RED_AUTO_TEST_CASE(TestMultiOpaqueRect)
 
         InStream in_deltaRectangles(deltaRectangles.get_produced_bytes());
 
-        RDPMultiOpaqueRect multiopaquerect(316, 378, 200, 200, encode_color24()(BLACK), 20, in_deltaRectangles);
+        RDPMultiOpaqueRect multiopaquerect(316, 378, 200, 200, encode_color24()(NamedBGRColor::BLACK), 20, in_deltaRectangles);
 
 
         multiopaquerect.emit(out_stream, newcommon, state_common, state_multiopaquerect);

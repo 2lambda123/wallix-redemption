@@ -604,7 +604,7 @@ private:
         if (!this->drawable) return;
 
         this->drawable->draw(
-            RDPOpaqueRect(this->protected_rect, encode_color24()(BLACK)),
+            RDPOpaqueRect(this->protected_rect, encode_color24()(NamedBGRColor::BLACK)),
             this->protected_rect, gdi::ColorCtx::depth24());
 
         {
@@ -636,7 +636,7 @@ private:
         if (!this->drawable) return;
 
         this->drawable->draw(
-            RDPOpaqueRect(this->protected_rect, encode_color24()(BLACK)),
+            RDPOpaqueRect(this->protected_rect, encode_color24()(NamedBGRColor::BLACK)),
             this->protected_rect, gdi::ColorCtx::depth24());
 
         {

@@ -103,7 +103,7 @@ RED_AUTO_TEST_CASE(TestPolygonSC)
 
     InStream deltaPoints_in(deltaPoints.get_produced_bytes());
 
-    RDPPolygonSC polygonSC(158, 230, 0x0D, 0, encode_color24()(BLACK), 7, deltaPoints_in);
+    RDPPolygonSC polygonSC(158, 230, 0x0D, 0, encode_color24()(NamedBGRColor::BLACK), 7, deltaPoints_in);
 
 
     polygonSC.emit(out_stream, newcommon, state_common, state_polygonSC);

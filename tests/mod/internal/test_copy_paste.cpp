@@ -132,7 +132,8 @@ RED_AUTO_TEST_CASE(TestPaste)
     WidgetScreen parent(gd, screen_info.width, screen_info.height, global_font_deja_vu_14(), Theme{});
 
     WidgetEdit edit(gd, copy_paste, ""_av, {WidgetEventNotifier()},
-                    PINK, ORANGE, RED, global_font_deja_vu_14(), 0, 0);
+                    NamedBGRColor::PINK, NamedBGRColor::ORANGE, NamedBGRColor::RED,
+                    global_font_deja_vu_14(), 0, 0);
     Dimension dim = edit.get_optimal_dim();
     edit.set_wh(120, dim.h);
     edit.set_xy(0, 0);

@@ -38,27 +38,27 @@ RED_AUTO_TEST_CASE(TraceWidgetComposite)
                       drawable.height());
     wcomposite.set_xy(0, 0);
 
-    WidgetRect wrect1(drawable, CYAN);
+    WidgetRect wrect1(drawable, NamedBGRColor::CYAN);
     wrect1.set_wh(100, 100);
     wrect1.set_xy(0, 0);
 
-    WidgetRect wrect2(drawable, RED);
+    WidgetRect wrect2(drawable, NamedBGRColor::RED);
     wrect2.set_wh(100, 100);
     wrect2.set_xy(0, 100);
 
-    WidgetRect wrect3(drawable, BLUE);
+    WidgetRect wrect3(drawable, NamedBGRColor::BLUE);
     wrect3.set_wh(100, 100);
     wrect3.set_xy(100, 100);
 
-    WidgetRect wrect4(drawable, GREEN);
+    WidgetRect wrect4(drawable, NamedBGRColor::GREEN);
     wrect4.set_wh(100, 100);
     wrect4.set_xy(300, 300);
 
-    WidgetRect wrect5(drawable, WHITE);
+    WidgetRect wrect5(drawable, NamedBGRColor::WHITE);
     wrect5.set_wh(100, 100);
     wrect5.set_xy(700, -50);
 
-    WidgetRect wrect6(drawable, GREY);
+    WidgetRect wrect6(drawable, NamedBGRColor::GREY);
     wrect6.set_wh(100, 100);
     wrect6.set_xy(-50, 550);
 
@@ -70,7 +70,7 @@ RED_AUTO_TEST_CASE(TraceWidgetComposite)
     wcomposite.add_widget(wrect6);
 
     {
-        WidgetRect wrect7(drawable, GREY);
+        WidgetRect wrect7(drawable, NamedBGRColor::GREY);
         wrect7.set_wh(800, 800);
         wrect7.set_xy(0, 0);
 

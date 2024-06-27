@@ -42,8 +42,8 @@ struct TestWidgetEditCtx
 
     struct Colors
     {
-        BGRColor fg_color = RED;
-        BGRColor bg_color = YELLOW;
+        BGRColor fg_color = NamedBGRColor::RED;
+        BGRColor bg_color = NamedBGRColor::YELLOW;
         BGRColor focus_color = bg_color;
     };
 
@@ -97,7 +97,7 @@ RED_AUTO_TEST_CASE(TraceWidgetEdit)
 
 RED_AUTO_TEST_CASE(TraceWidgetEdit2)
 {
-    TestWidgetEditCtx ctx("test2"_av, {.focus_color = BLACK});
+    TestWidgetEditCtx ctx("test2"_av, {.focus_color = NamedBGRColor::BLACK});
 
     ctx.wedit.set_xy(10, 100);
 
@@ -109,7 +109,7 @@ RED_AUTO_TEST_CASE(TraceWidgetEdit2)
 
 RED_AUTO_TEST_CASE(TraceWidgetEdit3)
 {
-    TestWidgetEditCtx ctx("test3"_av, {.focus_color = BLACK});
+    TestWidgetEditCtx ctx("test3"_av, {.focus_color = NamedBGRColor::BLACK});
 
     ctx.wedit.set_xy(-10, 500);
 
@@ -121,7 +121,7 @@ RED_AUTO_TEST_CASE(TraceWidgetEdit3)
 
 RED_AUTO_TEST_CASE(TraceWidgetEdit4)
 {
-    TestWidgetEditCtx ctx("test4"_av, {.focus_color = BLACK});
+    TestWidgetEditCtx ctx("test4"_av, {.focus_color = NamedBGRColor::BLACK});
 
     ctx.wedit.set_xy(770, 500);
 
@@ -133,7 +133,7 @@ RED_AUTO_TEST_CASE(TraceWidgetEdit4)
 
 RED_AUTO_TEST_CASE(TraceWidgetEdit5)
 {
-    TestWidgetEditCtx ctx("test5"_av, {.focus_color = BLACK});
+    TestWidgetEditCtx ctx("test5"_av, {.focus_color = NamedBGRColor::BLACK});
 
     ctx.wedit.set_xy(-20, -7);
 
@@ -145,7 +145,7 @@ RED_AUTO_TEST_CASE(TraceWidgetEdit5)
 
 RED_AUTO_TEST_CASE(TraceWidgetEdit6)
 {
-    TestWidgetEditCtx ctx("test6"_av, {.focus_color = BLACK});
+    TestWidgetEditCtx ctx("test6"_av, {.focus_color = NamedBGRColor::BLACK});
 
     ctx.wedit.set_xy(760, -7);
 
@@ -157,7 +157,7 @@ RED_AUTO_TEST_CASE(TraceWidgetEdit6)
 
 RED_AUTO_TEST_CASE(TraceWidgetEditClip)
 {
-    TestWidgetEditCtx ctx("test6"_av, {.focus_color = BLACK});
+    TestWidgetEditCtx ctx("test6"_av, {.focus_color = NamedBGRColor::BLACK});
 
     ctx.wedit.set_xy(760, -7);
 
@@ -174,7 +174,7 @@ RED_AUTO_TEST_CASE(TraceWidgetEditClip)
 
 RED_AUTO_TEST_CASE(TraceWidgetEditClip2)
 {
-    TestWidgetEditCtx ctx("test6"_av, {.focus_color = BLACK});
+    TestWidgetEditCtx ctx("test6"_av, {.focus_color = NamedBGRColor::BLACK});
 
     ctx.wedit.set_xy(0, 0);
 
@@ -192,7 +192,7 @@ RED_AUTO_TEST_CASE(TraceWidgetEditClip2)
 RED_AUTO_TEST_CASE(EventWidgetEdit)
 {
     NotifyTrace onsubmit;
-    TestWidgetEditCtx ctx("abcdef"_av, {GREEN, RED, RED}, 100, onsubmit);
+    TestWidgetEditCtx ctx("abcdef"_av, {NamedBGRColor::GREEN, NamedBGRColor::RED, NamedBGRColor::RED}, 100, onsubmit);
 
     ctx.wedit.set_xy(0, 0);
 
@@ -273,44 +273,44 @@ RED_AUTO_TEST_CASE(TraceWidgetEditAndComposite)
     wcomposite.set_wh(800, 600);
     wcomposite.set_xy(0, 0);
 
-    WidgetEdit wedit1(drawable, copy_paste, "abababab"_av,
-                      {WidgetEventNotifier()}, YELLOW, BLACK, BLACK, global_font_deja_vu_14(),
-                      0, 0);
+    WidgetEdit wedit1(drawable, copy_paste, "abababab"_av, {WidgetEventNotifier()},
+                      NamedBGRColor::YELLOW, NamedBGRColor::BLACK, NamedBGRColor::BLACK,
+                      global_font_deja_vu_14(), 0, 0);
     Dimension dim = wedit1.get_optimal_dim();
     wedit1.set_wh(50, dim.h);
     wedit1.set_xy(0, 0);
 
-    WidgetEdit wedit2(drawable, copy_paste, "ggghdgh"_av,
-                      {WidgetEventNotifier()}, WHITE, RED, RED, global_font_deja_vu_14(),
-                      0, 0);
+    WidgetEdit wedit2(drawable, copy_paste, "ggghdgh"_av, {WidgetEventNotifier()},
+                      NamedBGRColor::WHITE, NamedBGRColor::RED, NamedBGRColor::RED,
+                      global_font_deja_vu_14(), 0, 0);
     dim = wedit2.get_optimal_dim();
     wedit2.set_wh(50, dim.h);
     wedit2.set_xy(0, 100);
 
-    WidgetEdit wedit3(drawable, copy_paste, "lldlslql"_av,
-                      {WidgetEventNotifier()}, BLUE, RED, RED, global_font_deja_vu_14(),
-                      0, 0);
+    WidgetEdit wedit3(drawable, copy_paste, "lldlslql"_av, {WidgetEventNotifier()},
+                      NamedBGRColor::BLUE, NamedBGRColor::RED, NamedBGRColor::RED,
+                      global_font_deja_vu_14(), 0, 0);
     dim = wedit3.get_optimal_dim();
     wedit3.set_wh(50, dim.h);
     wedit3.set_xy(100, 100);
 
-    WidgetEdit wedit4(drawable, copy_paste, "LLLLMLLM"_av,
-                      {WidgetEventNotifier()}, PINK, DARK_GREEN, DARK_GREEN, global_font_deja_vu_14(),
-                      0, 0);
+    WidgetEdit wedit4(drawable, copy_paste, "LLLLMLLM"_av, {WidgetEventNotifier()},
+                      NamedBGRColor::PINK, NamedBGRColor::DARK_GREEN, NamedBGRColor::DARK_GREEN,
+                      global_font_deja_vu_14(), 0, 0);
     dim = wedit4.get_optimal_dim();
     wedit4.set_wh(50, dim.h);
     wedit4.set_xy(300, 300);
 
-    WidgetEdit wedit5(drawable, copy_paste, "dsdsdjdjs"_av,
-                      {WidgetEventNotifier()}, LIGHT_GREEN, DARK_BLUE, DARK_BLUE, global_font_deja_vu_14(),
-                      0, 0);
+    WidgetEdit wedit5(drawable, copy_paste, "dsdsdjdjs"_av, {WidgetEventNotifier()},
+                      NamedBGRColor::LIGHT_GREEN, NamedBGRColor::DARK_BLUE,
+                      NamedBGRColor::DARK_BLUE, global_font_deja_vu_14(), 0, 0);
     dim = wedit5.get_optimal_dim();
     wedit5.set_wh(50, dim.h);
     wedit5.set_xy(700, -10);
 
-    WidgetEdit wedit6(drawable, copy_paste, "xxwwp"_av,
-                      {WidgetEventNotifier()}, ANTHRACITE, PALE_GREEN, PALE_GREEN, global_font_deja_vu_14(),
-                      0, 0);
+    WidgetEdit wedit6(drawable, copy_paste, "xxwwp"_av, {WidgetEventNotifier()},
+                      NamedBGRColor::ANTHRACITE, NamedBGRColor::PALE_GREEN,
+                      NamedBGRColor::PALE_GREEN, global_font_deja_vu_14(), 0, 0);
     dim = wedit6.get_optimal_dim();
     wedit6.set_wh(50, dim.h);
     wedit6.set_xy(-10, 550);
@@ -335,7 +335,7 @@ RED_AUTO_TEST_CASE(TraceWidgetEditAndComposite)
 
 RED_AUTO_TEST_CASE(TraceWidgetEditScrolling)
 {
-    TestWidgetEditCtx ctx("abcde"_av, {BLACK, WHITE, WHITE}, 100, {WidgetEventNotifier()}, 1, 1);
+    TestWidgetEditCtx ctx("abcde"_av, {NamedBGRColor::BLACK, NamedBGRColor::WHITE, NamedBGRColor::WHITE}, 100, {WidgetEventNotifier()}, 1, 1);
     WidgetScreen parent{ctx.drawable, 800, 600, global_font_deja_vu_14(), Theme{}};
 
     ctx.wedit.set_xy(0, 0);
