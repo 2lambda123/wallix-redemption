@@ -854,7 +854,7 @@ ClientExecute::ClientExecute(
 : front_(front)
 , drawable_(drawable)
 , verbose(verbose)
-, wallix_icon_min(bitmap_from_file(app_path(AppPath::WallixIconMin), NamedBGRColor::BLACK))
+, wallix_icon_min(bitmap_from_file(app_path(AppPath::WallixIconMin), NamedBGRColor::WHITE))
 , auxiliary_window_id(RemoteProgramsWindowIdManager::INVALID_WINDOW_ID)
 , window_title(INTERNAL_MODULE_WINDOW_TITLE)
 , current_mouse_pointer(PredefinedPointer::Normal)
