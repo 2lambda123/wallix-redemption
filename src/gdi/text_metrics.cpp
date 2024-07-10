@@ -326,7 +326,7 @@ void server_draw_text(
         if (x+total_width > endx) {
             break;
         }
-        x += total_width - 1;
+        x += total_width;
     }
 }
 
