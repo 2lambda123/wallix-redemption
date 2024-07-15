@@ -55,7 +55,11 @@ namespace detail
             char const * s = __PRETTY_FUNCTION__;
             std::size_t sz = sizeof(__PRETTY_FUNCTION__) - 1;
 #ifdef __clang__
-            return {s + 47, s + (47 + (sz-68)/2)};
+            std::size_t i = sz - 2;
+            while (s[i] != ' ') {
+                --i;
+            }
+            return {s + i + 1, s + sz - 1};
 #elif defined(__GNUG__)
             return {s + 74, s + sz - 1};
 #endif
@@ -65,7 +69,9 @@ namespace detail
 
 template<class T>
 std::string_view type_name(T const * = nullptr)
-{ return detail::type_name_impl<T>::impl().to_sv(); }
+{
+    return detail::type_name_impl<T>::impl().to_sv();
+}
 
 #define CONFIG_DEFINE_TYPE_NAME(name, /*type*/...)               \
     namespace detail {                                           \
