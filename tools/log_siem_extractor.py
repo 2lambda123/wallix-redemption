@@ -141,7 +141,7 @@ def extract_siem_format(src_path: str, color: bool) -> tuple[LogFormatType,   # 
                                log_siem_cpp_regex.finditer(text)),
                            kv_siem_cpp_regex)
 
-    log_id_enum_regex = re.compile(r'\n    f\(([A-Z0-9_]+),')
+    log_id_enum_regex = re.compile(r'\n    f\(([A-Z0-9_]+),[^,]+, (DEPRECATED)?')
 
     dirpath = ''  # used in for
     def cppfile_from_dirpath(filename: str) -> str:
@@ -195,7 +195,10 @@ def extract_siem_format(src_path: str, color: bool) -> tuple[LogFormatType,   # 
         elif dirpath == f'{src_path}/core':
             for filename in filenames:
                 if filename == 'log_id.hpp':
-                    declared_log_ids = set(log_id_enum_regex.findall(cppfile_from_dirpath(filename)))
+                    extracted_log_ids = log_id_enum_regex.findall(cppfile_from_dirpath(filename))
+                    deprecated_log_ids = set(log_id for (log_id, deprecated) in extracted_log_ids
+                                             if deprecated)
+                    declared_log_ids = set(log_id for (log_id, _) in extracted_log_ids)
                 else:
                     text = cppfile_from_dirpath(filename)
                     log6_process(rdp_and_vnc_logs, text)
@@ -222,15 +225,8 @@ def extract_siem_format(src_path: str, color: bool) -> tuple[LogFormatType,   # 
     #     print('------')
 
     used_logs = set(chain(rdp_logs, vnc_logs, capture_logs, other_logs))
-    unused_logs = declared_log_ids - used_logs
+    unused_logs = declared_log_ids - used_logs - deprecated_log_ids
     unused_logs.remove('PROBE_STATUS')
-    unused_logs.remove('CB_COPYING_PASTING_DATA_FROM_REMOTE_SESSION_EX')
-    unused_logs.remove('CB_COPYING_PASTING_DATA_TO_REMOTE_SESSION_EX')
-    unused_logs.remove('DRIVE_REDIRECTION_READ_EX')
-    unused_logs.remove('DRIVE_REDIRECTION_WRITE_EX')
-    unused_logs.remove('OUTBOUND_CONNECTION_BLOCKED_2')
-    unused_logs.remove('OUTBOUND_CONNECTION_DETECTED_2')
-    unused_logs.remove('STARTUP_APPLICATION_FAIL_TO_RUN_2')
 
     if unused_logs:
         print_alert_on_list('Some LogId are unused', unused_logs, color)
