@@ -267,7 +267,7 @@ def extract_doc_siem(docfile: str) -> tuple[LogFormatType,   # proxy
     )
     block_regex = re.compile(reg_base + r'((?:(?!</section>).)*)', re.DOTALL)
     log_regex = re.compile(reg_base + r'|<note>((?:(?!</note>).)*)', re.DOTALL)
-    optional_values_regex = re.compile('<literal>(\w+)</literal>')
+    optional_values_regex = re.compile(r'<literal>(\w+)</literal>')
 
     kv_siem_cpp_regex = re.compile(r'(\w+)=["”](?:[^"”\\]|\\.)+["”]')
 
