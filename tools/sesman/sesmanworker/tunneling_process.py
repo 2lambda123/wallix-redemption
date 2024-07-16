@@ -390,8 +390,8 @@ def ssh_tunneling_vnc(local_usocket_name: str,
         )
 
     tunneling_command = (
-        f"ssh {ssh_opts} "
-        f"-L {local_usocket_name}:localhost:{vnc_port} "
+        f"ssh {ssh_opts} -N "
+        f"-L {local_usocket_name}:127.0.0.1:{vnc_port} "
         f"-l {ssh_login} {target_host}"
     )
     remove_file(local_usocket_name)
@@ -450,7 +450,7 @@ def pxssh_ssh_tunneling_vnc(local_usocket_name: str,
             password=ssh_private_key_passphrase if use_private_key else ssh_password,
             port=ssh_port,
             ssh_tunnels={
-                'local': [f'{local_usocket_name}:localhost:{vnc_port}']
+                'local': [f'{local_usocket_name}:127.0.0.1:{vnc_port}']
             }
         )
         return p
