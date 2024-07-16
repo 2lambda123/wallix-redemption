@@ -844,10 +844,8 @@ class Sesman():
                 _status, _error = True, "OK"
         return extkv, _status, _error
 
-    def interactive_close(self, target: str, message: str) -> StatusError:
+    def interactive_close(self, target: str) -> StatusError:
         data_to_send = {
-            'error_message': message,
-            'trans_ok': 'OK',
             'module': 'close',
             'target_device': target,
             'target_login': self.shared.get('target_login'),
@@ -1849,7 +1847,6 @@ class Sesman():
 
         self.reporting_reason = None
         self.reporting_target = None
-        self.reporting_message = None
 
         try_next = False
         close_box = False
@@ -2235,8 +2232,7 @@ class Sesman():
                 self.send_data({'module': 'close'})
         # Error
         if try_next:
-            _status, _error = self.interactive_close(self.reporting_target,
-                                                     self.reporting_message)
+            _status, _error = self.interactive_close(self.reporting_target)
 
         try:
             Logger().info("Close connection ...")
@@ -2268,7 +2264,6 @@ class Sesman():
         if _reporting_reason == 'CONNECTION_FAILED':
             self.reporting_reason = _reporting_reason
             self.reporting_target = _reporting_target
-            self.reporting_message = _reporting_message
 
             release_reason = 'Connection failed'
             self.engine.set_session_status(
