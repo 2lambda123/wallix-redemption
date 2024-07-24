@@ -441,7 +441,7 @@ inline parse_error parse_from_cfg(
     char const* e = chars.end();
 
     auto consume_right = [&p, e]{
-        int r = 0;
+        unsigned r = 0;
         while (++p != e) {
             switch (*p) {
                 case 'r': r |= 4; break;
@@ -458,7 +458,7 @@ inline parse_error parse_from_cfg(
     };
 
     for (;;) {
-        int mask;
+        unsigned mask;
 
         switch (*p) {
             case 'u': mask = 0700; ++p; break;
@@ -473,7 +473,7 @@ inline parse_error parse_from_cfg(
 
         if (p == e) return parsing_error;
 
-        int r;
+        unsigned r;
         switch (*p) {
             case '=':
                 r = consume_right();
