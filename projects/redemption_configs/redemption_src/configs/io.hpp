@@ -413,100 +413,137 @@ inline parse_error parse_from_cfg(
     FilePermissions& x, ::configs::spec_type<FilePermissions> /*type*/,
     bytes_view value)
 {
-    uint32_t tmp = 0;
+    uint32_t mode = 0;
+
+    parse_error parsing_error{
+        "Cannot parse file permission because it's not an octal number (i.e. 0*[0-7]{1,3}) or a symbolic mode format (i.e. [ugoa]*[+-=][rwx]*)"
+    };
 
     if (value.empty()) {
-        return parse_error{"File permission is empty"};
+        return parsing_error;
     }
+
+    auto is_oct = [](char c) {
+        return '0' <= c && c <= '7';
+    };
 
     auto chars = value.as_chars();
-
-    if ('0' <= chars[0] && chars[0] <= '9') {
-        if (auto [p, ec] = std::from_chars(chars.begin(), chars.end(), tmp, 8);
-            p != chars.end() || ec != std::errc()
-        ){
-            return parse_error{"Cannot parse file permission because it's not an octal number"};
-        }
-
-        if (tmp > 0777) {
-            return parse_error{"Cannot have file permission higher than 0777 number"};
-        }
-
-        x = FilePermissions(tmp);
-
-        return no_parse_error;
-    }
 
     char const* p = chars.begin();
     char const* e = chars.end();
 
-    auto consume_right = [&p, e]{
-        unsigned r = 0;
-        while (++p != e) {
-            switch (*p) {
-                case 'r': r |= 4; break;
-                case 'w': r |= 2; break;
-                case 'x': r |= 1; break;
-                default: return r;
+    if (is_oct(*p)) {
+        // consume zeros
+        while (*p == '0') {
+            ++p;
+            if (p == e) {
+                break;
             }
         }
-        return r;
-    };
 
-    parse_error parsing_error{
-        "Cannot parse file permission because it's not an octal number or a symbolic mode format"
-    };
+        auto oct = [](char c){
+            return static_cast<uint32_t>(c - '0');
+        };
 
-    for (;;) {
-        unsigned mask;
-
-        switch (*p) {
-            case 'u': mask = 0700; ++p; break;
-            case 'g': mask = 0070; ++p; break;
-            case 'o': mask = 0007; ++p; break;
-            case 'a': mask = 0777; ++p; break;
-            case '+':
-            case '-':
-            case '=': mask = 0775; break;
-            default: return parsing_error;
+        if (e-p == 1 && is_oct(p[0])) {
+            mode = oct(p[0]);
+        }
+        else if (e-p == 2 && is_oct(p[0]) && is_oct(p[1])) {
+            mode = oct(p[0]) << 3 | oct(p[1]);
+        }
+        else if (e-p == 3 && is_oct(p[0]) && is_oct(p[1]) && is_oct(p[2])) {
+            mode = oct(p[0]) << 6 | oct(p[1]) << 3 | oct(p[2]);
+        }
+        else if (e-p != 0) {
+            return parsing_error;
         }
 
-        if (p == e) return parsing_error;
+        x = FilePermissions(mode);
+        return no_parse_error;
+    }
 
-        unsigned r;
-        switch (*p) {
+    for (;;) {
+        /*
+         * Read mask and operator
+         */
+
+        uint32_t mask = 0;
+        char op = 0;
+
+        do {
+            switch (*p) {
+                case 'u': mask |= 0700; ++p; break;
+                case 'g': mask |= 0070; ++p; break;
+                case 'o': mask |= 0007; ++p; break;
+                case 'a': mask |= 0777; ++p; break;
+                case '=':
+                case '+':
+                case '-': op = *p; ++p; goto break1;
+                default: return parsing_error;
+            }
+        } while (p != e);
+        break1:
+
+        // when no mask specified
+        if (!mask) {
+            mask = 0775;
+        }
+
+        /*
+         * Read right
+         */
+
+        auto consume_right = [&p, e]{
+            uint32_t r = 0;
+            for (; p != e; ++p) {
+                switch (*p) {
+                    case 'r': r |= 4; break;
+                    case 'w': r |= 2; break;
+                    case 'x': r |= 1; break;
+                    default: return r;
+                }
+            }
+            return r;
+        };
+
+        uint32_t right = consume_right();
+        right = (right << 6 | right << 3 | right) & mask;
+
+        /*
+         * Apply right part
+         */
+
+        switch (op) {
             case '=':
-                r = consume_right();
-                tmp = ((r << 6) | (r << 3) | r) & mask;
+                mode = (right & mask) | (mode & ~mask);
                 break;
             case '+':
-                r = consume_right();
-                tmp |= ((r << 6) | (r << 3) | r) & mask;
+                mode |= right & mask;
                 break;
             case '-':
-                r = consume_right();
-                tmp &= ~(((r << 6) | (r << 3) | r) & mask);
+                mode &= ~right;
                 break;
             default:
-                continue;
+                return parsing_error;
+        }
+
+        /*
+         * Read to next part
+         */
+
+        if (p != e) {
+            if (*p != ',') {
+                return parsing_error;
+            }
+
+            // consume spaces
+            while (++p != e && *p == ' ') {
+            }
         }
 
         if (p == e) {
-            x = FilePermissions(tmp);
+            x = FilePermissions(mode);
             return no_parse_error;
-        }
-
-        switch (*p) {
-            case ',':
-                while (++p != e && *p == ' ') {
-                }
-                if (p == e) {
-                    x = FilePermissions(tmp);
-                    return no_parse_error;
-                }
-                break;
-
-            default: return parsing_error;
         }
     }
 }

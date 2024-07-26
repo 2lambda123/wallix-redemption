@@ -348,6 +348,10 @@ RED_AUTO_TEST_CASE(TestOtherParser)
         RED_CHECK(Octal{0123} == Octal{perms.permissions_as_uint()});
         RED_CHECK(no_parse_error == parse_from_cfg(perms, stype, "23"_zv));
         RED_CHECK(Octal{0023} == Octal{perms.permissions_as_uint()});
+        RED_CHECK(no_parse_error == parse_from_cfg(perms, stype, "3"_zv));
+        RED_CHECK(Octal{0003} == Octal{perms.permissions_as_uint()});
+        RED_CHECK(no_parse_error == parse_from_cfg(perms, stype, "0"_zv));
+        RED_CHECK(Octal{0} == Octal{perms.permissions_as_uint()});
 
         RED_CHECK(no_parse_error != parse_from_cfg(perms, stype, ""_zv));
         RED_CHECK(no_parse_error != parse_from_cfg(perms, stype, "1234"_zv));
@@ -376,9 +380,11 @@ RED_AUTO_TEST_CASE(TestOtherParser)
         RED_CHECK(no_parse_error == parse_from_cfg(perms, stype, "u=rw, g+r"_zv));
         RED_CHECK(Octal{0640} == Octal{perms.permissions_as_uint()});
         RED_CHECK(no_parse_error == parse_from_cfg(perms, stype, "u=rw, g=r"_zv));
-        RED_CHECK(Octal{0040} == Octal{perms.permissions_as_uint()});
+        RED_CHECK(Octal{0640} == Octal{perms.permissions_as_uint()});
         RED_CHECK(no_parse_error == parse_from_cfg(perms, stype, "a=rwx, o-x"_zv));
         RED_CHECK(Octal{0776} == Octal{perms.permissions_as_uint()});
+        RED_CHECK(no_parse_error == parse_from_cfg(perms, stype, "a=rwx, og=r"_zv));
+        RED_CHECK(Octal{0744} == Octal{perms.permissions_as_uint()});
         RED_CHECK(no_parse_error == parse_from_cfg(perms, stype, "=w, +x, "_zv));
         RED_CHECK(Octal{0331} == Octal{perms.permissions_as_uint()});
         RED_CHECK(no_parse_error == parse_from_cfg(perms, stype, "="_zv));
@@ -391,6 +397,8 @@ RED_AUTO_TEST_CASE(TestOtherParser)
         RED_CHECK(no_parse_error != parse_from_cfg(perms, stype, "a"_zv));
         RED_CHECK(no_parse_error != parse_from_cfg(perms, stype, "==w"_zv));
         RED_CHECK(no_parse_error != parse_from_cfg(perms, stype, ","_zv));
+        RED_CHECK(no_parse_error != parse_from_cfg(perms, stype, "z"_zv));
+        RED_CHECK(no_parse_error != parse_from_cfg(perms, stype, "8"_zv));
     }
 
     // fixed_binary
