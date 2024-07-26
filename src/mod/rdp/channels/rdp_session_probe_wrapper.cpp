@@ -20,7 +20,6 @@ Author(s): Proxies Team
 
 #include "mod/rdp/channels/rdp_session_probe_wrapper.hpp"
 #include "mod/rdp/rdp.hpp"
-#include "utils/stream.hpp"
 
 
 RdpSessionProbeWrapper::RdpSessionProbeWrapper(mod_rdp& rdp)

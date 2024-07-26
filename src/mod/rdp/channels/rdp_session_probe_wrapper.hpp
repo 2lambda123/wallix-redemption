@@ -20,7 +20,6 @@ Author(s): Proxies Team
 
 #pragma once
 
-#include "utils/sugar/bytes_view.hpp"
 #include "keyboard/kbdtypes.hpp"
 
 class mod_rdp;
