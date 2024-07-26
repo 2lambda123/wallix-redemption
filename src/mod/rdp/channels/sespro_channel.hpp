@@ -1081,557 +1081,545 @@ public:
             this->session_probe_ending_in_progress = true;
         }
         else {
-            bool message_format_invalid = false;
-
-            if (!parameters_.empty()) {
-
-                if (upper_order == "KERBEROS_TICKET_CREATION"_ascii_upper ||
-                    upper_order == "KERBEROS_TICKET_DELETION"_ascii_upper) {
-                    if (parameters_.size() == 7) {
-                        this->log6(
-                            upper_order == "KERBEROS_TICKET_CREATION"_ascii_upper
-                                ? LogId::KERBEROS_TICKET_CREATION
-                                : LogId::KERBEROS_TICKET_DELETION, {
-                            KVLog("encryption_type"_av, parameters_[0]),
-                            KVLog("client_name"_av,     parameters_[1]),
-                            KVLog("server_name"_av,     parameters_[2]),
-                            KVLog("start_time"_av,      parameters_[3]),
-                            KVLog("end_time"_av,        parameters_[4]),
-                            KVLog("renew_time"_av,      parameters_[5]),
-                            KVLog("flags"_av,           parameters_[6]),
-                        });
-                    }
-                    else {
-                        message_format_invalid = true;
-                    }
-                }
-                else if (upper_order == "BESTSAFE_SERVICE_LOG"_ascii_upper) {
-                    KVListFromStrings builder(parameters_);
-                    while (auto kv_list = builder.next()) {
-                        this->log6(LogId::BESTSAFE_SERVICE_LOG, kv_list);
-                    }
-                }
-                else if (upper_order == "PASSWORD_TEXT_BOX_GET_FOCUS"_ascii_upper) {
-                    if (parameters_.size() == 1) {
-                        this->front.set_focus_on_password_textbox(
-                            insensitive_eq(parameters_[0], "yes"_ascii_upper));
-
-                        this->log6(
-                            LogId::PASSWORD_TEXT_BOX_GET_FOCUS, {
-                            KVLog("status"_av, parameters_[0]),
-                        });
-                    }
-                    else {
-                        message_format_invalid = true;
-                    }
-                }
-                else if (upper_order == "UNIDENTIFIED_INPUT_FIELD_GET_FOCUS"_ascii_upper) {
-                    if (parameters_.size() == 1) {
-                        this->front.set_focus_on_unidentified_input_field(
-                            insensitive_eq(parameters_[0], "yes"_ascii_upper));
-
-                        this->log6(
-                            LogId::UNIDENTIFIED_INPUT_FIELD_GET_FOCUS, {
-                            KVLog("status"_av, parameters_[0]),
-                        });
-                    }
-                    else {
-                        message_format_invalid = true;
-                    }
-                }
-                else if (upper_order == "UAC_PROMPT_BECOME_VISIBLE"_ascii_upper) {
-                    if (parameters_.size() == 1) {
-                        this->front.set_consent_ui_visible(insensitive_eq(parameters_[0], "yes"_ascii_upper));
-
-                        this->log6(
-                            LogId::UAC_PROMPT_BECOME_VISIBLE, {
-                            KVLog("status"_av, parameters_[0]),
-                        });
-                    }
-                    else {
-                        message_format_invalid = true;
-                    }
-                }
-                else if (upper_order == "SESSION_LOCKED"_ascii_upper) {
-                    if (parameters_.size() == 1) {
-                        this->front.set_session_locked(insensitive_eq(parameters_[0], "yes"_ascii_upper));
-
-                        this->log6(
-                            LogId::SESSION_LOCKED, {
-                            KVLog("status"_av, parameters_[0]),
-                        });
-                    }
-                    else {
-                        message_format_invalid = true;
-                    }
-                }
-                else if (upper_order == "INPUT_LANGUAGE"_ascii_upper) {
-                    if (parameters_.size() == 2) {
-                        this->log6(
-                            LogId::INPUT_LANGUAGE, {
-                            KVLog("identifier"_av,   parameters_[0]),
-                            KVLog("display_name"_av, parameters_[1]),
-                        });
-
-                        KeyLayout::KbdId kbdid = unchecked_hexadecimal_chars_with_prefix_to_int(parameters_[0]);
-                        auto* layout = find_layout_by_id(kbdid);
-                        if (layout) {
-                            this->front.set_keylayout(*layout);
-                        }
-                    }
-                    else {
-                        message_format_invalid = true;
-                    }
-                }
-                else if (upper_order == "NEW_PROCESS"_ascii_upper ||
-                         upper_order == "COMPLETED_PROCESS"_ascii_upper) {
-                    if (parameters_.size() == 1) {
-                        this->log6(
-                            upper_order == "NEW_PROCESS"_ascii_upper
-                                ? LogId::NEW_PROCESS
-                                : LogId::COMPLETED_PROCESS, {
-                            KVLog("command_line"_av, parameters_[0]),
-                        });
-                    }
-                    else {
-                        message_format_invalid = true;
-                    }
-                }
-                else if (upper_order == "STARTUP_APPLICATION_FAIL_TO_RUN"_ascii_upper
-                      || upper_order == "STARTUP_APPLICATION_FAIL_TO_RUN_2"_ascii_upper
-                ) {
-                    if (parameters_.size() == 2 || parameters_.size() == 3) {
-                        std::string transformed_app_name(parameters_[0]);
-
-                        utils::str_replace_inplace_between_pattern(transformed_app_name,
-                                                                   TAG_HIDE,
-                                                                   REPLACEMENT_HIDE);
-
-                        bool has_raw_result = (parameters_.size() == 3);
-
-                        if (has_raw_result) {
-                            this->log6(
-                                LogId::STARTUP_APPLICATION_FAIL_TO_RUN, {
-                                KVLog("app_name"_av,   transformed_app_name),
-                                KVLog("raw_result"_av,         parameters_[1]),
-                                KVLog("raw_result_message"_av, parameters_[2]),
-                            });
-                        }
-                        else
-                        {
-                            this->log6(LogId::STARTUP_APPLICATION_FAIL_TO_RUN, {
-                                KVLog("app_name"_av, transformed_app_name),
-                                KVLog("raw_result"_av,       parameters_[1]),
-                            });
-                        }
-
-                        auto result_message = has_raw_result ? parameters_[2] : ""_av;
-
-                        LOG(LOG_ERR,
-                            "Session Probe failed to run startup application: "
-                            "raw_result=%.*s  raw_result_message=%.*s",
-                            int(parameters_[1].size()), parameters_[1].data(),
-                            int(result_message.size()), result_message.data());
-
-                        this->session_log.report(
-                            "SESSION_PROBE_RUN_STARTUP_APPLICATION_FAILED"_av, result_message);
-                    }
-                    else {
-                        message_format_invalid = true;
-                    }
-                }
-                else if (upper_order == "OUTBOUND_CONNECTION_DETECTED"_ascii_upper) {
-                    if (parameters_.size() == 2) {
-                        this->log6(LogId::OUTBOUND_CONNECTION_DETECTED, {
-                            KVLog("rule"_av,             parameters_[0]),
-                            KVLog("app_name"_av, parameters_[1]),
-                        });
-
-                        char message[4096];
-
-                        this->tr.fmt(message, sizeof(message),
-                            trkeys::process_interrupted_security_policies,
-                            int(parameters_[1].size()), parameters_[1].data());
-
-                        this->callbacks.display_osd_message(message);
-                    }
-                    else {
-                        message_format_invalid = true;
-                    }
-                }
-                else if (upper_order == "OUTBOUND_CONNECTION_BLOCKED_2"_ascii_upper ||
-                         upper_order == "OUTBOUND_CONNECTION_DETECTED_2"_ascii_upper) {
-                    bool deny = (upper_order == "OUTBOUND_CONNECTION_BLOCKED_2"_ascii_upper);
-
-                    if ((!deny && (parameters_.size() == 5))
-                     || (deny && (parameters_.size() == 6))
-                    ) {
-                        auto const* rule =
-                            this->sespro_params.outbound_connection_monitor_rules.get(
-                                unchecked_decimal_chars_to_int(parameters_[0]));
-
-                        if (rule) {
-                            this->log6(
-                                deny
-                                    ? LogId::OUTBOUND_CONNECTION_BLOCKED
-                                    : LogId::OUTBOUND_CONNECTION_DETECTED, {
-                                KVLog("rule"_av,         rule->description()),
-                                KVLog("app_name"_av,     parameters_[1]),
-                                KVLog("app_cmd_line"_av, parameters_[2]),
-                                KVLog("dst_addr"_av,     parameters_[3]),
-                                KVLog("dst_port"_av,     parameters_[4]),
-                            });
-
-                            this->session_log.report(
-                                deny
-                                    ? "FINDCONNECTION_DENY"_av
-                                    : "FINDCONNECTION_NOTIFY"_av,
-                                // rule, app_name, app_cmd_line, dst_addr, dst_port
-                                SNPrintf<4096>("%.*s|%.*s|%.*s|%.*s|%.*s",
-                                    int(rule->description().size()), rule->description().data(),
-                                    int(parameters_[1].size()), parameters_[1].data(),
-                                    int(parameters_[2].size()), parameters_[2].data(),
-                                    int(parameters_[3].size()), parameters_[3].data(),
-                                    int(parameters_[4].size()), parameters_[4].data()
-                                )
-                            );
-
-                            if (deny) {
-                                unsigned long pid = unchecked_decimal_chars_to_int(parameters_[5]);
-                                if (pid) {
-                                    LOG(LOG_ERR,
-                                        "Session Probe failed to block outbound connection!");
-                                    this->session_log.report(
-                                        "SESSION_PROBE_OUTBOUND_CONNECTION_BLOCKING_FAILED"_av, ""_av);
-                                }
-                                else {
-                                    char message[4096];
-
-                                    this->tr.fmt(message, sizeof(message),
-                                        trkeys::process_interrupted_security_policies,
-                                        int(parameters_[1].size()), parameters_[1].data());
-
-                                    this->callbacks.display_osd_message(message);
-                                }
-                            }
-                        }
-                    }
-                    else {
-                        message_format_invalid = true;
-                    }
-                }
-                else if (upper_order == "PROCESS_BLOCKED"_ascii_upper ||
-                         upper_order == "PROCESS_DETECTED"_ascii_upper) {
-                    bool deny = (upper_order == "PROCESS_BLOCKED"_ascii_upper);
-
-                    if ((!deny && (parameters_.size() == 3)) ||
-                        (deny && (parameters_.size() == 4))) {
-                        auto const* rule =
-                            this->sespro_params.process_monitor_rules.get(
-                                unchecked_decimal_chars_to_int(parameters_[0]));
-
-                        if (rule) {
-                            this->log6(
-                                deny ? LogId::PROCESS_BLOCKED : LogId::PROCESS_DETECTED, {
-                                KVLog("rule"_av,         rule->description()),
-                                KVLog("app_name"_av,     parameters_[1]),
-                                KVLog("app_cmd_line"_av, parameters_[2]),
-                            });
-
-                            this->session_log.report(
-                                deny
-                                    ? "FINDPROCESS_DENY"_av
-                                    : "FINDPROCESS_NOTIFY"_av,
-                                // rule, app_name, app_cmd_line
-                                SNPrintf<4096>("%.*s|%.*s|%.*s",
-                                    int(rule->description().size()), rule->description().data(),
-                                    int(parameters_[1].size()), parameters_[1].data(),
-                                    int(parameters_[2].size()), parameters_[2].data()
-                                )
-                            );
-
-                            if (deny) {
-                                unsigned long pid = unchecked_decimal_chars_to_int(parameters_[3]);
-                                if (pid) {
-                                    LOG(LOG_ERR,
-                                        "Session Probe failed to block process!");
-                                    this->session_log.report(
-                                        "SESSION_PROBE_PROCESS_BLOCKING_FAILED"_av, ""_av);
-                                }
-                                else {
-                                    char message[4096];
-
-                                    this->tr.fmt(message, sizeof(message),
-                                        trkeys::process_interrupted_security_policies,
-                                        int(parameters_[1].size()), parameters_[1].data());
-
-                                    this->callbacks.display_osd_message(message);
-                                }
-                            }
-                        }
-                    }
-                    else {
-                        message_format_invalid = true;
-                    }
-                }
-                else if (upper_order == "ACCOUNT_MANIPULATION_BLOCKED"_ascii_upper ||
-                         upper_order == "ACCOUNT_MANIPULATION_DETECTED"_ascii_upper) {
-                    bool deny = (upper_order == "ACCOUNT_MANIPULATION_BLOCKED"_ascii_upper);
-
-                    if (parameters_.size() == 6) {
-                        this->log6(
-                            deny ? LogId::ACCOUNT_MANIPULATION_BLOCKED : LogId::ACCOUNT_MANIPULATION_DETECTED, {
-                            KVLog("operation"_av,    parameters_[0]),
-                            KVLog("server_name"_av,  parameters_[1]),
-                            KVLog("group_name"_av,   parameters_[2]),
-                            KVLog("account_name"_av, parameters_[3]),
-                            KVLog("app_name"_av,     parameters_[4]),
-                            KVLog("app_cmd_line"_av, parameters_[5]),
-                        });
-
-                        this->session_log.report(
-                            deny
-                                ? "ACCOUNTMANIPULATION_DENY"_av
-                                : "ACCOUNTMANIPULATION_NOTIFY"_av,
-                            // operation, server_name, group_name, account_name, app_name, app_cmd_line
-                            SNPrintf<4096>("%.*s|%.*s|%.*s|%.*s|%.*s|%.*s",
-                                int(parameters_[0].size()), parameters_[0].data(),
-                                int(parameters_[1].size()), parameters_[1].data(),
-                                int(parameters_[2].size()), parameters_[2].data(),
-                                int(parameters_[3].size()), parameters_[3].data(),
-                                int(parameters_[4].size()), parameters_[4].data(),
-                                int(parameters_[5].size()), parameters_[5].data()
-                            )
-                        );
-
-                        if (deny) {
-                            char message[4096];
-
-                            int slen = this->tr.fmt(message, sizeof(message),
-                                trkeys::account_manipulation_blocked_security_policies,
-                                int(parameters_[3].size()), parameters_[3].data());
-                            std::size_t len = (slen == -1) ? sizeof(message) : std::size_t(slen);
-
-                            this->callbacks.display_osd_message(std::string_view(message, len));
-                        }
-                    }
-                    else {
-                        message_format_invalid = true;
-                    }
-                }
-                else if (upper_order == "FOREGROUND_WINDOW_CHANGED"_ascii_upper) {
-                    if (not parameters_.empty()) {
-                        this->log6(LogId::TITLE_BAR, {
-                            KVLog("source"_av, "Probe"_av),
-                            KVLog("window"_av, parameters_[0]),
-                        });
-                    }
-                    if ((parameters_.size() == 2) || (parameters_.size() == 3)) {
-                        this->log6(LogId::FOREGROUND_WINDOW_CHANGED, {
-                            KVLog("text"_av,         parameters_[0]),
-                            KVLog("class_name"_av,   parameters_[1]),
-                            KVLog("command_line"_av, (parameters_.size() == 2)
-                                ? chars_view{} : parameters_[2]),
-                        });
-                    }
-                    else {
-                        message_format_invalid = true;
-                    }
-                }
-                else if (upper_order == "CHECKBOX_CLICKED"_ascii_upper) {
-                    if (parameters_.size() == 3) {
-                        this->log6(LogId::CHECKBOX_CLICKED, {
-                            KVLog("window"_av, parameters_[0]),
-                            KVLog("checkbox"_av, parameters_[1]),
-                            KVLog("state"_av,
-                                ::button_state_to_string(unchecked_decimal_chars_to_int(parameters_[2]))),
-                        });
-                    }
-                    else {
-                        message_format_invalid = true;
-                    }
-                }
-
-                else if (upper_order == "SHADOW_SESSION_SUPPORTED"_ascii_upper) {
-                    if (parameters_.size() == 1) {
-                        if (this->sespro_params.session_shadowing_support
-                         && insensitive_eq(parameters_[0], "yes"_ascii_upper)
-                        ) {
-                            this->vars.set_acl<cfg::context::rd_shadow_available>(true);
-                        }
-                    }
-                    else {
-                        message_format_invalid = true;
-                    }
-                }
-
-                else if (upper_order == "SHADOW_SESSION_RESPONSE"_ascii_upper ||
-                         upper_order == "SHADOW_SESSION_RESPONSE_2"_ascii_upper) {
-                    if (parameters_.size() >= 3)
-                    {
-                        const uint32_t shadow_errcode  = unchecked_hexadecimal_chars_with_prefix_to_int(parameters_[0]);
-                        const auto&    shadow_errmsg   = parameters_[1];
-                        const auto&    shadow_userdata = parameters_[2];
-                        if (parameters_.size() >= 6) {
-                            auto is_ipv4 = [](std::string_view ip) {
-                                return std::find(ip.begin(), ip.end(), ':') == ip.end();
-                            };
-
-                            auto const shadow_id = str_concat(int_to_decimal_chars(time(nullptr)), "*", parameters_[3]);
-
-                            std::size_t const max_arity                 = 16;
-                            std::size_t       item_count                = 0;
-                            int               best_adress_port_index    = -1;
-                            int               default_adress_port_index = -1;
-                            std::string_view  target_ip                 = this->sespro_params.target_ip;
-                            bool              target_ip_is_ipv4         = is_ipv4(target_ip);
-
-                            LOG_IF(bool(this->verbose & RDPVerbose::sesprobe), LOG_INFO,
-                                "SessionProbeVirtualChannel::process_server_message: target_ip=%s",
-                                this->sespro_params.target_ip);
-
-                            std::array<std::string_view, max_arity> shadow_addresses;
-                            std::array<uint16_t, max_arity>         shadow_ports;
-
-                            auto shadow_addresses_reader = split_with(parameters_[4], '|');
-                            auto shadow_ports_reader     = split_with(parameters_[5], '|');
-
-                            for (auto addr_iter = shadow_addresses_reader.begin(),
-                                      addr_end  = shadow_addresses_reader.end(),
-                                      port_iter = shadow_ports_reader.begin(),
-                                      port_end  = shadow_ports_reader.end();
-                                 addr_iter != addr_end && port_iter != port_end;
-                                 ++addr_iter, ++port_iter
-                            ) {
-                                if (item_count == max_arity) {
-                                    LOG(LOG_WARNING, "SessionProbeVirtualChannel::process_server_message: "
-                                        "Too many network adressess/ports in Shadow Session Response!");
-                                    break;
-                                }
-
-                                shadow_addresses[item_count] = addr_iter->as<std::string_view>();
-                                shadow_ports[item_count]     = unchecked_decimal_chars_to_int(*port_iter);
-                                LOG_IF(bool(this->verbose & RDPVerbose::sesprobe), LOG_INFO,
-                                    "SessionProbeVirtualChannel::process_server_message: address=%.*s port=%u",
-                                    static_cast<int>(shadow_addresses[item_count].size()), shadow_addresses[item_count].data(),
-                                    shadow_ports[item_count]);
-
-                                if (shadow_addresses[item_count] == target_ip) {
-                                    best_adress_port_index = item_count;
-                                }
-
-                                if (default_adress_port_index == -1 && is_ipv4(shadow_addresses[item_count]) == target_ip_is_ipv4) {
-                                    default_adress_port_index = item_count;
-                                }
-
-                                ++item_count;
-                            }
-
-                            if (item_count)
-                            {
-                                if (default_adress_port_index == -1) {
-                                    default_adress_port_index = 0;
-                                }
-
-                                std::string_view shadow_addr = shadow_addresses[default_adress_port_index];
-                                uint16_t         shadow_port = shadow_ports[default_adress_port_index];
-
-                                if (best_adress_port_index > -1) {
-                                    shadow_addr = shadow_addresses[best_adress_port_index];
-                                    shadow_port = shadow_ports[best_adress_port_index];
-
-                                    LOG_IF(bool(this->verbose & RDPVerbose::sesprobe), LOG_INFO,
-                                        "SessionProbeVirtualChannel::process_server_message: "
-                                            "Use best Shadow address/port: (%.*s):%u",
-                                        static_cast<int>(shadow_addr.size()), shadow_addr.data(), shadow_port);
-                                }
-                                else {
-                                    LOG_IF(bool(this->verbose & RDPVerbose::sesprobe), LOG_INFO,
-                                        "SessionProbeVirtualChannel::process_server_message: "
-                                            "Use default Shadow address/port: (%.*s):%u",
-                                        static_cast<int>(shadow_addr.size()), shadow_addr.data(), shadow_port);
-                                }
-
-                                this->set_rd_shadow_invitation(shadow_errcode, shadow_errmsg, shadow_userdata, shadow_id, shadow_addr, shadow_port);
-                            }
-                            else {
-                                LOG(LOG_WARNING, "SessionProbeVirtualChannel::process_server_message: "
-                                    "No usable address/port found!");
-
-                                this->set_rd_shadow_invitation(0xFFFFFFFF, "No usable address/port found!", shadow_userdata, "", "", 0);
-                            }
-                        }
-                        else {
-                            this->set_rd_shadow_invitation(shadow_errcode, shadow_errmsg, shadow_userdata, "", "", 0);
-                        }
-                    }
-                    else {
-                        message_format_invalid = true;
-                    }
-                }
-
-                else if (execute_log6_if(upper_order, parameters_,
-                    [this](LogId logid, KVLogList kvlist) { this->log6(logid, kvlist); },
-                    executable_log6_if(EXECUTABLE_LOG6_ID_AND_NAME(OUTBOUND_CONNECTION_BLOCKED),
-                        "rule"_av,
-                        "app_name"_av),
-                    executable_log6_if(EXECUTABLE_LOG6_ID_AND_NAME(BUTTON_CLICKED),
-                        "window"_av,
-                        "button"_av),
-                    executable_log6_if(EXECUTABLE_LOG6_ID_AND_NAME(EDIT_CHANGED),
-                        "window"_av,
-                        "edit"_av),
-                    executable_log6_if("EDIT_CHANGED_2"_ascii_upper, LogId::EDIT_CHANGED,
-                        "window"_av,
-                        "edit"_av,
-                        "value"_av),
-                    executable_log6_if(EXECUTABLE_LOG6_ID_AND_NAME(WEB_ATTEMPT_TO_PRINT),
-                        "url"_av,
-                        "title"_av),
-                    executable_log6_if(EXECUTABLE_LOG6_ID_AND_NAME(WEB_BEFORE_NAVIGATE),
-                        "url"_av,
-                        "post"_av),
-                    executable_log6_if(EXECUTABLE_LOG6_ID_AND_NAME(WEB_DOCUMENT_COMPLETE),
-                        "url"_av,
-                        "title"_av),
-                    executable_log6_if(EXECUTABLE_LOG6_ID_AND_NAME(WEB_NAVIGATE_ERROR),
-                        "url"_av,
-                        "title"_av,
-                        "code"_av,
-                        "display_name"_av),
-                    executable_log6_if(EXECUTABLE_LOG6_ID_AND_NAME(WEB_NAVIGATION),
-                        "url"_av),
-                    executable_log6_if(EXECUTABLE_LOG6_ID_AND_NAME(WEB_PRIVACY_IMPACTED),
-                        "impacted"_av),
-                    executable_log6_if(EXECUTABLE_LOG6_ID_AND_NAME(WEB_ENCRYPTION_LEVEL_CHANGED),
-                        "identifier"_av,
-                        "display_name"_av),
-                    executable_log6_if(EXECUTABLE_LOG6_ID_AND_NAME(WEB_THIRD_PARTY_URL_BLOCKED),
-                        "url"_av),
-                    executable_log6_if(EXECUTABLE_LOG6_ID_AND_NAME(GROUP_MEMBERSHIP),
-                        "groups"_av)
-                )) {
-                }
-                else {
-                    LOG(LOG_WARNING,
-                        "SessionProbeVirtualChannel::process_server_message: "
-                            "Unexpected order. Message=\"%s\"",
-                        this->server_message.c_str());
-                }
-            }
-            else {
-                message_format_invalid = true;
-            }
-
-            if (message_format_invalid) {
-                LOG(LOG_WARNING,
-                    "SessionProbeVirtualChannel::process_server_message: "
-                        "Invalid message format. Message=\"%s\"",
-                    this->server_message.c_str());
-            }
+            this->process_server_message_parameters(upper_order, parameters_);
         }
     }   // process_server_message
 
+private:
+    REDEMPTION_ALWAYS_INLINE void process_server_message_parameters(
+        TaggedStringArray<UpperTag, 126> const& upper_order,
+        array_view<std::string_view> parameters)
+    {
+        if (parameters.empty()) {
+            // error
+        }
+        else if (upper_order == "KERBEROS_TICKET_CREATION"_ascii_upper
+              || upper_order == "KERBEROS_TICKET_DELETION"_ascii_upper
+        ) {
+            if (parameters.size() == 7) {
+                this->log6(
+                    upper_order == "KERBEROS_TICKET_CREATION"_ascii_upper
+                        ? LogId::KERBEROS_TICKET_CREATION
+                        : LogId::KERBEROS_TICKET_DELETION, {
+                    KVLog("encryption_type"_av, parameters[0]),
+                    KVLog("client_name"_av,     parameters[1]),
+                    KVLog("server_name"_av,     parameters[2]),
+                    KVLog("start_time"_av,      parameters[3]),
+                    KVLog("end_time"_av,        parameters[4]),
+                    KVLog("renew_time"_av,      parameters[5]),
+                    KVLog("flags"_av,           parameters[6]),
+                });
+                return;
+            }
+        }
+        else if (upper_order == "BESTSAFE_SERVICE_LOG"_ascii_upper) {
+            KVListFromStrings builder(parameters);
+            while (auto kv_list = builder.next()) {
+                this->log6(LogId::BESTSAFE_SERVICE_LOG, kv_list);
+            }
+            return;
+        }
+        else if (upper_order == "PASSWORD_TEXT_BOX_GET_FOCUS"_ascii_upper) {
+            if (parameters.size() == 1) {
+                this->front.set_focus_on_password_textbox(
+                    insensitive_eq(parameters[0], "yes"_ascii_upper));
+
+                this->log6(
+                    LogId::PASSWORD_TEXT_BOX_GET_FOCUS, {
+                    KVLog("status"_av, parameters[0]),
+                });
+
+                return;
+            }
+        }
+        else if (upper_order == "UNIDENTIFIED_INPUT_FIELD_GET_FOCUS"_ascii_upper) {
+            if (parameters.size() == 1) {
+                this->front.set_focus_on_unidentified_input_field(
+                    insensitive_eq(parameters[0], "yes"_ascii_upper));
+
+                this->log6(
+                    LogId::UNIDENTIFIED_INPUT_FIELD_GET_FOCUS, {
+                    KVLog("status"_av, parameters[0]),
+                });
+
+                return;
+            }
+        }
+        else if (upper_order == "UAC_PROMPT_BECOME_VISIBLE"_ascii_upper) {
+            if (parameters.size() == 1) {
+                this->front.set_consent_ui_visible(insensitive_eq(parameters[0], "yes"_ascii_upper));
+
+                this->log6(
+                    LogId::UAC_PROMPT_BECOME_VISIBLE, {
+                    KVLog("status"_av, parameters[0]),
+                });
+
+                return;
+            }
+        }
+        else if (upper_order == "SESSION_LOCKED"_ascii_upper) {
+            if (parameters.size() == 1) {
+                this->front.set_session_locked(insensitive_eq(parameters[0], "yes"_ascii_upper));
+
+                this->log6(
+                    LogId::SESSION_LOCKED, {
+                    KVLog("status"_av, parameters[0]),
+                });
+
+                return;
+            }
+        }
+        else if (upper_order == "INPUT_LANGUAGE"_ascii_upper) {
+            if (parameters.size() == 2) {
+                this->log6(
+                    LogId::INPUT_LANGUAGE, {
+                    KVLog("identifier"_av,   parameters[0]),
+                    KVLog("display_name"_av, parameters[1]),
+                });
+
+                KeyLayout::KbdId kbdid = unchecked_hexadecimal_chars_with_prefix_to_int(parameters[0]);
+                auto* layout = find_layout_by_id(kbdid);
+                if (layout) {
+                    this->front.set_keylayout(*layout);
+                }
+
+                return;
+            }
+        }
+        else if (upper_order == "NEW_PROCESS"_ascii_upper
+              || upper_order == "COMPLETED_PROCESS"_ascii_upper
+        ) {
+            if (parameters.size() == 1) {
+                this->log6(
+                    upper_order == "NEW_PROCESS"_ascii_upper
+                        ? LogId::NEW_PROCESS
+                        : LogId::COMPLETED_PROCESS, {
+                    KVLog("command_line"_av, parameters[0]),
+                });
+                return;
+            }
+        }
+        else if (upper_order == "STARTUP_APPLICATION_FAIL_TO_RUN"_ascii_upper
+              || upper_order == "STARTUP_APPLICATION_FAIL_TO_RUN_2"_ascii_upper
+        ) {
+            if (parameters.size() == 2 || parameters.size() == 3) {
+                std::string transformed_app_name(parameters[0]);
+
+                utils::str_replace_inplace_between_pattern(transformed_app_name,
+                                                           TAG_HIDE,
+                                                           REPLACEMENT_HIDE);
+
+                auto result_message = ""_av;
+
+                if (parameters.size() == 3) {
+                    this->log6(
+                        LogId::STARTUP_APPLICATION_FAIL_TO_RUN, {
+                        KVLog("app_name"_av,   transformed_app_name),
+                        KVLog("raw_result"_av,         parameters[1]),
+                        KVLog("raw_result_message"_av, parameters[2]),
+                    });
+                    result_message = parameters[2];
+                }
+                else
+                {
+                    this->log6(LogId::STARTUP_APPLICATION_FAIL_TO_RUN, {
+                        KVLog("app_name"_av, transformed_app_name),
+                        KVLog("raw_result"_av, parameters[1]),
+                    });
+                }
+
+                LOG(LOG_ERR,
+                    "Session Probe failed to run startup application: "
+                    "raw_result=%.*s  raw_result_message=%.*s",
+                    int(parameters[1].size()), parameters[1].data(),
+                    int(result_message.size()), result_message.data());
+
+                this->session_log.report(
+                    "SESSION_PROBE_RUN_STARTUP_APPLICATION_FAILED"_av, result_message);
+
+                return;
+            }
+        }
+        else if (upper_order == "OUTBOUND_CONNECTION_DETECTED"_ascii_upper) {
+            if (parameters.size() == 2) {
+                this->log6(LogId::OUTBOUND_CONNECTION_DETECTED, {
+                    KVLog("rule"_av,     parameters[0]),
+                    KVLog("app_name"_av, parameters[1]),
+                });
+
+                char message[4096];
+
+                this->tr.fmt(message, sizeof(message),
+                    trkeys::process_interrupted_security_policies,
+                    int(parameters[1].size()), parameters[1].data());
+
+                this->callbacks.display_osd_message(message);
+
+                return;
+            }
+        }
+        else if (upper_order == "OUTBOUND_CONNECTION_BLOCKED_2"_ascii_upper
+              || upper_order == "OUTBOUND_CONNECTION_DETECTED_2"_ascii_upper
+        ) {
+            const bool deny = (upper_order == "OUTBOUND_CONNECTION_BLOCKED_2"_ascii_upper);
+
+            if ((!deny && (parameters.size() == 5))
+             || (deny && (parameters.size() == 6))
+            ) {
+                auto const* rule =
+                    this->sespro_params.outbound_connection_monitor_rules.get(
+                        unchecked_decimal_chars_to_int(parameters[0]));
+
+                if (rule) {
+                    this->log6(
+                        deny
+                            ? LogId::OUTBOUND_CONNECTION_BLOCKED
+                            : LogId::OUTBOUND_CONNECTION_DETECTED, {
+                        KVLog("rule"_av,         rule->description()),
+                        KVLog("app_name"_av,     parameters[1]),
+                        KVLog("app_cmd_line"_av, parameters[2]),
+                        KVLog("dst_addr"_av,     parameters[3]),
+                        KVLog("dst_port"_av,     parameters[4]),
+                    });
+
+                    this->session_log.report(
+                        deny
+                            ? "FINDCONNECTION_DENY"_av
+                            : "FINDCONNECTION_NOTIFY"_av,
+                        // rule, app_name, app_cmd_line, dst_addr, dst_port
+                        SNPrintf<4096>("%.*s|%.*s|%.*s|%.*s|%.*s",
+                            int(rule->description().size()), rule->description().data(),
+                            int(parameters[1].size()), parameters[1].data(),
+                            int(parameters[2].size()), parameters[2].data(),
+                            int(parameters[3].size()), parameters[3].data(),
+                            int(parameters[4].size()), parameters[4].data()
+                        )
+                    );
+
+                    if (deny) {
+                        unsigned long pid = unchecked_decimal_chars_to_int(parameters[5]);
+                        if (pid) {
+                            LOG(LOG_ERR,
+                                "Session Probe failed to block outbound connection!");
+                            this->session_log.report(
+                                "SESSION_PROBE_OUTBOUND_CONNECTION_BLOCKING_FAILED"_av, ""_av);
+                        }
+                        else {
+                            char message[4096];
+
+                            this->tr.fmt(message, sizeof(message),
+                                trkeys::process_interrupted_security_policies,
+                                int(parameters[1].size()), parameters[1].data());
+
+                            this->callbacks.display_osd_message(message);
+                        }
+                    }
+                }
+
+                return;
+            }
+        }
+        else if (upper_order == "PROCESS_BLOCKED"_ascii_upper
+              || upper_order == "PROCESS_DETECTED"_ascii_upper
+        ) {
+            const bool deny = (upper_order == "PROCESS_BLOCKED"_ascii_upper);
+
+            if ((!deny && (parameters.size() == 3))
+             || (deny && (parameters.size() == 4))
+            ) {
+                auto const* rule =
+                    this->sespro_params.process_monitor_rules.get(
+                        unchecked_decimal_chars_to_int(parameters[0]));
+
+                if (rule) {
+                    this->log6(
+                        deny ? LogId::PROCESS_BLOCKED : LogId::PROCESS_DETECTED, {
+                        KVLog("rule"_av,         rule->description()),
+                        KVLog("app_name"_av,     parameters[1]),
+                        KVLog("app_cmd_line"_av, parameters[2]),
+                    });
+
+                    this->session_log.report(
+                        deny
+                            ? "FINDPROCESS_DENY"_av
+                            : "FINDPROCESS_NOTIFY"_av,
+                        // rule, app_name, app_cmd_line
+                        SNPrintf<4096>("%.*s|%.*s|%.*s",
+                            int(rule->description().size()), rule->description().data(),
+                            int(parameters[1].size()), parameters[1].data(),
+                            int(parameters[2].size()), parameters[2].data()
+                        )
+                    );
+
+                    if (deny) {
+                        unsigned long pid = unchecked_decimal_chars_to_int(parameters[3]);
+                        if (pid) {
+                            LOG(LOG_ERR,
+                                "Session Probe failed to block process!");
+                            this->session_log.report(
+                                "SESSION_PROBE_PROCESS_BLOCKING_FAILED"_av, ""_av);
+                        }
+                        else {
+                            char message[4096];
+
+                            this->tr.fmt(message, sizeof(message),
+                                trkeys::process_interrupted_security_policies,
+                                int(parameters[1].size()), parameters[1].data());
+
+                            this->callbacks.display_osd_message(message);
+                        }
+                    }
+                }
+
+                return;
+            }
+        }
+        else if (upper_order == "ACCOUNT_MANIPULATION_BLOCKED"_ascii_upper
+             || upper_order == "ACCOUNT_MANIPULATION_DETECTED"_ascii_upper
+        ) {
+            bool deny = (upper_order == "ACCOUNT_MANIPULATION_BLOCKED"_ascii_upper);
+
+            if (parameters.size() == 6) {
+                this->log6(
+                    deny ? LogId::ACCOUNT_MANIPULATION_BLOCKED : LogId::ACCOUNT_MANIPULATION_DETECTED, {
+                    KVLog("operation"_av,    parameters[0]),
+                    KVLog("server_name"_av,  parameters[1]),
+                    KVLog("group_name"_av,   parameters[2]),
+                    KVLog("account_name"_av, parameters[3]),
+                    KVLog("app_name"_av,     parameters[4]),
+                    KVLog("app_cmd_line"_av, parameters[5]),
+                });
+
+                this->session_log.report(
+                    deny
+                        ? "ACCOUNTMANIPULATION_DENY"_av
+                        : "ACCOUNTMANIPULATION_NOTIFY"_av,
+                    // operation, server_name, group_name, account_name, app_name, app_cmd_line
+                    SNPrintf<4096>("%.*s|%.*s|%.*s|%.*s|%.*s|%.*s",
+                        int(parameters[0].size()), parameters[0].data(),
+                        int(parameters[1].size()), parameters[1].data(),
+                        int(parameters[2].size()), parameters[2].data(),
+                        int(parameters[3].size()), parameters[3].data(),
+                        int(parameters[4].size()), parameters[4].data(),
+                        int(parameters[5].size()), parameters[5].data()
+                    )
+                );
+
+                if (deny) {
+                    char message[4096];
+
+                    int slen = this->tr.fmt(message, sizeof(message),
+                        trkeys::account_manipulation_blocked_security_policies,
+                        int(parameters[3].size()), parameters[3].data());
+                    std::size_t len = (slen == -1) ? sizeof(message) : std::size_t(slen);
+
+                    this->callbacks.display_osd_message(std::string_view(message, len));
+                }
+
+                return;
+            }
+        }
+        else if (upper_order == "FOREGROUND_WINDOW_CHANGED"_ascii_upper) {
+            if (not parameters.empty()) {
+                this->log6(LogId::TITLE_BAR, {
+                    KVLog("source"_av, "Probe"_av),
+                    KVLog("window"_av, parameters[0]),
+                });
+            }
+            if ((parameters.size() == 2) || (parameters.size() == 3)) {
+                this->log6(LogId::FOREGROUND_WINDOW_CHANGED, {
+                    KVLog("text"_av,         parameters[0]),
+                    KVLog("class_name"_av,   parameters[1]),
+                    KVLog("command_line"_av, (parameters.size() == 2)
+                        ? chars_view{} : parameters[2]),
+                });
+                return;
+            }
+        }
+        else if (upper_order == "CHECKBOX_CLICKED"_ascii_upper) {
+            if (parameters.size() == 3) {
+                this->log6(LogId::CHECKBOX_CLICKED, {
+                    KVLog("window"_av, parameters[0]),
+                    KVLog("checkbox"_av, parameters[1]),
+                    KVLog("state"_av,
+                        ::button_state_to_string(unchecked_decimal_chars_to_int(parameters[2]))),
+                });
+                return;
+            }
+        }
+
+        else if (upper_order == "SHADOW_SESSION_SUPPORTED"_ascii_upper) {
+            if (parameters.size() == 1) {
+                if (this->sespro_params.session_shadowing_support
+                    && insensitive_eq(parameters[0], "yes"_ascii_upper)
+                ) {
+                    this->vars.set_acl<cfg::context::rd_shadow_available>(true);
+                }
+                return;
+            }
+        }
+
+        else if (upper_order == "SHADOW_SESSION_RESPONSE"_ascii_upper
+              || upper_order == "SHADOW_SESSION_RESPONSE_2"_ascii_upper
+        ) {
+            if (parameters.size() >= 3)
+            {
+                const uint32_t shadow_errcode  = unchecked_hexadecimal_chars_with_prefix_to_int(parameters[0]);
+                const auto& shadow_errmsg   = parameters[1];
+                const auto& shadow_userdata = parameters[2];
+                if (parameters.size() >= 6) {
+                    auto is_ipv4 = [](std::string_view ip) {
+                        return std::find(ip.begin(), ip.end(), ':') == ip.end();
+                    };
+
+                    auto const shadow_id = str_concat(int_to_decimal_chars(time(nullptr)), "*", parameters[3]);
+
+                    std::size_t const max_arity                 = 16;
+                    std::size_t       item_count                = 0;
+                    int               best_adress_port_index    = -1;
+                    int               default_adress_port_index = -1;
+                    std::string_view  target_ip                 = this->sespro_params.target_ip;
+                    bool              target_ip_is_ipv4         = is_ipv4(target_ip);
+
+                    LOG_IF(bool(this->verbose & RDPVerbose::sesprobe), LOG_INFO,
+                        "SessionProbeVirtualChannel::process_server_message: target_ip=%s",
+                        this->sespro_params.target_ip);
+
+                    std::array<std::string_view, max_arity> shadow_addresses;
+                    std::array<uint16_t, max_arity>         shadow_ports;
+
+                    auto shadow_addresses_reader = split_with(parameters[4], '|');
+                    auto shadow_ports_reader     = split_with(parameters[5], '|');
+
+                    for (auto addr_iter = shadow_addresses_reader.begin(),
+                              addr_end  = shadow_addresses_reader.end(),
+                              port_iter = shadow_ports_reader.begin(),
+                              port_end  = shadow_ports_reader.end()
+                      ; addr_iter != addr_end && port_iter != port_end
+                      ; ++addr_iter, ++port_iter
+                    ) {
+                        if (item_count == max_arity) {
+                            LOG(LOG_WARNING, "SessionProbeVirtualChannel::process_server_message: "
+                                "Too many network adressess/ports in Shadow Session Response!");
+                            break;
+                        }
+
+                        shadow_addresses[item_count] = addr_iter->as<std::string_view>();
+                        shadow_ports[item_count]     = unchecked_decimal_chars_to_int(*port_iter);
+                        LOG_IF(bool(this->verbose & RDPVerbose::sesprobe), LOG_INFO,
+                            "SessionProbeVirtualChannel::process_server_message: address=%.*s port=%u",
+                            static_cast<int>(shadow_addresses[item_count].size()), shadow_addresses[item_count].data(),
+                            shadow_ports[item_count]);
+
+                        if (shadow_addresses[item_count] == target_ip) {
+                            best_adress_port_index = item_count;
+                        }
+
+                        if (default_adress_port_index == -1 && is_ipv4(shadow_addresses[item_count]) == target_ip_is_ipv4) {
+                            default_adress_port_index = item_count;
+                        }
+
+                        ++item_count;
+                    }
+
+                    if (item_count)
+                    {
+                        if (default_adress_port_index == -1) {
+                            default_adress_port_index = 0;
+                        }
+
+                        std::string_view shadow_addr = shadow_addresses[default_adress_port_index];
+                        uint16_t         shadow_port = shadow_ports[default_adress_port_index];
+
+                        if (best_adress_port_index > -1) {
+                            shadow_addr = shadow_addresses[best_adress_port_index];
+                            shadow_port = shadow_ports[best_adress_port_index];
+
+                            LOG_IF(bool(this->verbose & RDPVerbose::sesprobe), LOG_INFO,
+                                "SessionProbeVirtualChannel::process_server_message: "
+                                    "Use best Shadow address/port: (%.*s):%u",
+                                static_cast<int>(shadow_addr.size()), shadow_addr.data(), shadow_port);
+                        }
+                        else {
+                            LOG_IF(bool(this->verbose & RDPVerbose::sesprobe), LOG_INFO,
+                                "SessionProbeVirtualChannel::process_server_message: "
+                                    "Use default Shadow address/port: (%.*s):%u",
+                                static_cast<int>(shadow_addr.size()), shadow_addr.data(), shadow_port);
+                        }
+
+                        this->set_rd_shadow_invitation(shadow_errcode, shadow_errmsg, shadow_userdata, shadow_id, shadow_addr, shadow_port);
+                    }
+                    else {
+                        LOG(LOG_WARNING, "SessionProbeVirtualChannel::process_server_message: "
+                            "No usable address/port found!");
+
+                        this->set_rd_shadow_invitation(0xFFFFFFFF, "No usable address/port found!", shadow_userdata, "", "", 0);
+                    }
+                }
+                else {
+                    this->set_rd_shadow_invitation(shadow_errcode, shadow_errmsg, shadow_userdata, "", "", 0);
+                }
+
+                return;
+            }
+        }
+
+        else if (execute_log6_if(upper_order, parameters,
+            [this](LogId logid, KVLogList kvlist) { this->log6(logid, kvlist); },
+            executable_log6_if(EXECUTABLE_LOG6_ID_AND_NAME(OUTBOUND_CONNECTION_BLOCKED),
+                "rule"_av,
+                "app_name"_av),
+            executable_log6_if(EXECUTABLE_LOG6_ID_AND_NAME(BUTTON_CLICKED),
+                "window"_av,
+                "button"_av),
+            executable_log6_if(EXECUTABLE_LOG6_ID_AND_NAME(EDIT_CHANGED),
+                "window"_av,
+                "edit"_av),
+            executable_log6_if("EDIT_CHANGED_2"_ascii_upper, LogId::EDIT_CHANGED,
+                "window"_av,
+                "edit"_av,
+                "value"_av),
+            executable_log6_if(EXECUTABLE_LOG6_ID_AND_NAME(WEB_ATTEMPT_TO_PRINT),
+                "url"_av,
+                "title"_av),
+            executable_log6_if(EXECUTABLE_LOG6_ID_AND_NAME(WEB_BEFORE_NAVIGATE),
+                "url"_av,
+                "post"_av),
+            executable_log6_if(EXECUTABLE_LOG6_ID_AND_NAME(WEB_DOCUMENT_COMPLETE),
+                "url"_av,
+                "title"_av),
+            executable_log6_if(EXECUTABLE_LOG6_ID_AND_NAME(WEB_NAVIGATE_ERROR),
+                "url"_av,
+                "title"_av,
+                "code"_av,
+                "display_name"_av),
+            executable_log6_if(EXECUTABLE_LOG6_ID_AND_NAME(WEB_NAVIGATION),
+                "url"_av),
+            executable_log6_if(EXECUTABLE_LOG6_ID_AND_NAME(WEB_PRIVACY_IMPACTED),
+                "impacted"_av),
+            executable_log6_if(EXECUTABLE_LOG6_ID_AND_NAME(WEB_ENCRYPTION_LEVEL_CHANGED),
+                "identifier"_av,
+                "display_name"_av),
+            executable_log6_if(EXECUTABLE_LOG6_ID_AND_NAME(WEB_THIRD_PARTY_URL_BLOCKED),
+                "url"_av),
+            executable_log6_if(EXECUTABLE_LOG6_ID_AND_NAME(GROUP_MEMBERSHIP),
+                "groups"_av)
+        )) {
+            return;
+        }
+        else {
+            LOG(LOG_WARNING,
+                "SessionProbeVirtualChannel::process_server_message: "
+                    "Unexpected order. Message=\"%s\"", this->server_message);
+            return;
+        }
+
+        LOG(LOG_WARNING,
+            "SessionProbeVirtualChannel::process_server_message: "
+                "Invalid message format. Message=\"%s\"", this->server_message);
+    }
+
+public:
     void set_session_probe_launcher(SessionProbeLauncher* launcher) {
         this->session_probe_stop_launch_sequence_notifier = launcher;
     }
