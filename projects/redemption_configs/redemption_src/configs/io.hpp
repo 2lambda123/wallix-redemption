@@ -515,10 +515,10 @@ inline parse_error parse_from_cfg(
 
         switch (op) {
             case '=':
-                mode = (right & mask) | (mode & ~mask);
+                mode = right | (mode & ~mask);
                 break;
             case '+':
-                mode |= right & mask;
+                mode |= right;
                 break;
             case '-':
                 mode &= ~right;
