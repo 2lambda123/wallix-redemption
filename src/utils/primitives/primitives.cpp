@@ -173,7 +173,11 @@ Primitives::pstatus_t general_yCbCrToRGB_16s8u_P3AC4R(
 }
 
 
-#ifndef __EMSCRIPTEN__
+#ifdef __EMSCRIPTEN__
+#  define REDEMPTION_NO_SSE
+#endif
+
+#ifndef REDEMPTION_NO_SSE
 
 #include <cpuid.h>
 
@@ -199,7 +203,7 @@ Primitives::Primitives() noexcept
     : lShiftC_16s(general_lShiftC_16s)
     , yCbCrToRGB_16s8u_P3AC4R(general_yCbCrToRGB_16s8u_P3AC4R)
 {
-#ifndef __EMSCRIPTEN__
+#ifndef REDEMPTION_NO_SSE
     if (haveSSSE3()) {
         init_sse(this);
     }

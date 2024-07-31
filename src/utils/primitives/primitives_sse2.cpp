@@ -18,6 +18,8 @@
     Author(s): David Fort
 */
 
+#ifndef REDEMPTION_NO_SSE
+
 #include <emmintrin.h>
 #include <pmmintrin.h>
 
@@ -448,3 +450,5 @@ void init_sse(Primitives *prims) noexcept
     prims->lShiftC_16s = sse2_lShiftC_16s;
     prims->yCbCrToRGB_16s8u_P3AC4R = sse2_yCbCrToRGB_16s8u_P3AC4R;
 }
+
+#endif

@@ -15,6 +15,15 @@ rule setvar ( env : default )
     }
 }
 
+if [ os.environ TARGET ]  = "arm" {
+    REDEMPTION_CXXFLAGS += <define>REDEMPTION_NO_SSE ;
+    constant NO_HYPERSCAN : 1 ;
+}
+else {
+    REDEMPTION_CXXFLAGS += <cxxflags>-msse3 ;
+    constant NO_HYPERSCAN : [ setvar NO_HYPERSCAN : 0 ] ; # disable libhs. /!\ Test of pattern will fails
+}
+
 constant MUSL_LIBC : [ setvar MUSL_LIBC : 0 ] ;
 
 if $(MUSL_LIBC) != 0
@@ -102,8 +111,6 @@ constant FFMPEG_INC_PATH : [ setvar FFMPEG_INC_PATH : $(_FFMPEG_INC_PATH) ] ;
 constant FFMPEG_LIB_PATH : [ setvar FFMPEG_LIB_PATH : $(_FFMPEG_LIB_PATH) ] ; # /!\ without `/` terminal
 constant FFMPEG_LINK_MODE : [ setvar FFMPEG_LINK_MODE : $(_FFMPEG_LINK_MODE) ] ; # static or shared
 constant NO_FFMPEG : [ setvar NO_FFMPEG : 0 ] ;
-
-constant NO_HYPERSCAN : [ setvar NO_HYPERSCAN : 0 ] ; # disable libhs. /!\ Test of pattern will fails
 
 constant BOOST_STACKTRACE : [ setvar BOOST_STACKTRACE : 0 ] ; # `-sBOOST_STACKTRACE=1` (for debug and san mode) require libboost_stacktrace_backtrace (apt install libboost-stacktrace-dev). Other values are addr2line (libboost_stacktrace_addr2line), basic (libboost_stacktrace_basic) and static_backtrace (libbacktrace). Use REDEMPTION_FILTER_ERROR shell variable for disable backtrace of specific error (see `src/core/error.hpp`). example: `export REDEMPTION_FILTER_ERROR=ERR_TRANSPORT_NO_MORE_DATA,ERR_SEC`.
 

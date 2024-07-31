@@ -33,6 +33,7 @@ The project also contains 2 RDP clients:
         1. [Setting build variables](#setting-build-variables)
             1. [Local installation](#local-installation)
             2. [Musl libc](#musl-libc)
+            3. [ARM](#arm)
     6. [Add .cpp file](#add-cpp-file)
 2. [Run Redemption](#run-redemption)
 3. [Setting Redemption](#setting-redemption)
@@ -48,6 +49,8 @@ The project also contains 2 RDP clients:
 # Compilation
 
 For automatic compilation, a Dockerfile is available. This one is based on Ubuntu, but other linux systems are supported like Debian or Alpine. For the latter, `-s MUSL_LIBC=1` must be added on the line containing `bjam` and the `libgettext` package must be added in the installed package.
+
+For ARM, `-s TARGET=arm` must be added on the line containing `bjam`.
 
 The following is for manual installation.
 
@@ -271,6 +274,14 @@ bjam ....
 ```sh
 bjam -s MUSL_LIBC=1 ....
 ```
+
+#### ARM
+
+```sh
+bjam -s TARGET=arm ....
+```
+
+`TARGET=arm` involves `NO_HYPERSCAN=1`.
 
 ## Add .cpp file
 
