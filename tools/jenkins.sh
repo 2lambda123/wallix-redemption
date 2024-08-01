@@ -182,7 +182,7 @@ if (( $fast == 0 )); then
     #find ./bin/$gcc/release/tests/ -type d -exec \
     #  ./tools/c++-analyzer/valgrind -qd '{}' \;
     /usr/bin/time --format="%Es - %MK" \
-      find ./bin/$valgrind_compiler/release/tests/ -type d -exec \
+      find ./bin/$valgrind_compiler/release/*/tests/ -type d -exec \
       parallel -j2 ./tools/c++-analyzer/valgrind -qd ::: '{}' +
 
     show_duration valgrind
