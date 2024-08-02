@@ -403,7 +403,7 @@ public:
     template<class N>
     [[nodiscard]]
     constexpr auto first(N const& /*n*/) const noexcept
-        -> decltype(first<detail::static_uint<N>::value>())
+        -> decltype(this->first<detail::static_uint<N>::value>())
     {
         return first<detail::static_uint<N>::value>();
     }
@@ -426,7 +426,7 @@ public:
     template<class N>
     [[nodiscard]]
     constexpr auto last(N const& /*n*/) const noexcept
-        -> decltype(last<detail::static_uint<N>::value>())
+        -> decltype(this->last<detail::static_uint<N>::value>())
     {
         return last<detail::static_uint<N>::value>();
     }
@@ -457,7 +457,7 @@ public:
     template<class Offset>
     [[nodiscard]]
     constexpr auto from_offset(Offset const& /*n*/) const noexcept
-        -> decltype(from_offset<detail::static_uint<Offset>::value>())
+        -> decltype(this->from_offset<detail::static_uint<Offset>::value>())
     {
         return from_offset<detail::static_uint<Offset>::value>();
     }
@@ -481,7 +481,7 @@ public:
     [[nodiscard]]
     constexpr auto
     subarray(Offset const& /*offset*/, Count const& /*n*/) const noexcept
-    -> decltype(subarray<
+    -> decltype(this->subarray<
         detail::static_uint<Offset>::value,
         detail::static_uint<Count>::value
     >())
@@ -512,7 +512,7 @@ public:
     template<class Count>
     [[nodiscard]]
     constexpr auto drop_front(Count const& /*n*/) const noexcept
-        -> decltype(drop_front<detail::static_uint<Count>::value>())
+        -> decltype(this->drop_front<detail::static_uint<Count>::value>())
     {
         return drop_front<detail::static_uint<Count>::value>();
     }
@@ -537,7 +537,7 @@ public:
     template<class Count>
     [[nodiscard]]
     constexpr auto drop_back(Count const& /*n*/) const noexcept
-        -> decltype(drop_back<detail::static_uint<Count>::value>())
+        -> decltype(this->drop_back<detail::static_uint<Count>::value>())
     {
         return drop_back<detail::static_uint<Count>::value>();
     }
@@ -815,7 +815,7 @@ public:
     template<class N>
     [[nodiscard]]
     constexpr auto first(N const& /*n*/) noexcept
-        -> decltype(first<detail::static_uint<N>::value>())
+        -> decltype(this->first<detail::static_uint<N>::value>())
     {
         return first<detail::static_uint<N>::value>();
     }
@@ -838,7 +838,7 @@ public:
     template<class N>
     [[nodiscard]]
     constexpr auto first(N const& /*n*/) const noexcept
-        -> decltype(first<detail::static_uint<N>::value>())
+        -> decltype(this->first<detail::static_uint<N>::value>())
     {
         return first<detail::static_uint<N>::value>();
     }
@@ -863,7 +863,7 @@ public:
     template<class N>
     [[nodiscard]]
     constexpr auto last(N const& /*n*/) noexcept
-        -> decltype(last<detail::static_uint<N>::value>())
+        -> decltype(this->last<detail::static_uint<N>::value>())
     {
         return last<detail::static_uint<N>::value>();
     }
@@ -886,7 +886,7 @@ public:
     template<class N>
     [[nodiscard]]
     constexpr auto last(N const& /*n*/) const noexcept
-        -> decltype(last<detail::static_uint<N>::value>())
+        -> decltype(this->last<detail::static_uint<N>::value>())
     {
         return last<detail::static_uint<N>::value>();
     }
@@ -918,7 +918,7 @@ public:
     template<class Offset>
     [[nodiscard]]
     constexpr auto from_offset(Offset const& /*n*/) noexcept
-        -> decltype(from_offset<detail::static_uint<Offset>::value>())
+        -> decltype(this->from_offset<detail::static_uint<Offset>::value>())
     {
         return from_offset<detail::static_uint<Offset>::value>();
     }
@@ -949,7 +949,7 @@ public:
     template<class Offset>
     [[nodiscard]]
     constexpr auto from_offset(Offset const& /*n*/) const noexcept
-        -> decltype(from_offset<detail::static_uint<Offset>::value>())
+        -> decltype(this->from_offset<detail::static_uint<Offset>::value>())
     {
         return from_offset<detail::static_uint<Offset>::value>();
     }
@@ -975,7 +975,7 @@ public:
     [[nodiscard]]
     constexpr auto
     subarray(Offset const& /*offset*/, Count const& /*n*/) noexcept
-    -> decltype(subarray<
+    -> decltype(this->subarray<
         detail::static_uint<Offset>::value,
         detail::static_uint<Count>::value
     >())
@@ -1005,7 +1005,7 @@ public:
     [[nodiscard]]
     constexpr auto
     subarray(Offset const& /*offset*/, Count const& /*n*/) const noexcept
-    -> decltype(subarray<
+    -> decltype(this->subarray<
         detail::static_uint<Offset>::value,
         detail::static_uint<Count>::value
     >())
@@ -1037,7 +1037,7 @@ public:
     template<class Count>
     [[nodiscard]]
     constexpr auto drop_front(Count const& /*n*/) noexcept
-        -> decltype(drop_front<detail::static_uint<Count>::value>())
+        -> decltype(this->drop_front<detail::static_uint<Count>::value>())
     {
         return drop_front<detail::static_uint<Count>::value>();
     }
@@ -1062,7 +1062,7 @@ public:
     template<class Count>
     [[nodiscard]]
     constexpr auto drop_front(Count const& /*n*/) const noexcept
-        -> decltype(drop_front<detail::static_uint<Count>::value>())
+        -> decltype(this->drop_front<detail::static_uint<Count>::value>())
     {
         return drop_front<detail::static_uint<Count>::value>();
     }
@@ -1088,7 +1088,7 @@ public:
     template<class Count>
     [[nodiscard]]
     constexpr auto drop_back(Count const& /*n*/) noexcept
-        -> decltype(drop_back<detail::static_uint<Count>::value>())
+        -> decltype(this->drop_back<detail::static_uint<Count>::value>())
     {
         return drop_back<detail::static_uint<Count>::value>();
     }
@@ -1113,7 +1113,7 @@ public:
     template<class Count>
     [[nodiscard]]
     constexpr auto drop_back(Count const& /*n*/) const noexcept
-        -> decltype(drop_back<detail::static_uint<Count>::value>())
+        -> decltype(this->drop_back<detail::static_uint<Count>::value>())
     {
         return drop_back<detail::static_uint<Count>::value>();
     }
@@ -1561,7 +1561,6 @@ namespace detail
     };
 } // namespace detail
 
-// TODO rename to truncatable_bounded_array_view
 template<class Cont, class S = detail::truncatable_bounded_array_view_selector<Cont>>
 constexpr auto truncatable_bounded_array_view(Cont const& cont)
     noexcept(noexcept(typename S::av_type{cont}))
