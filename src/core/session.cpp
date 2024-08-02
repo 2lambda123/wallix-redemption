@@ -80,7 +80,7 @@ class Session
         {
             chars_view target_device = this->ini.get<cfg::globals::target_device>();
             this->ini.update_acl<cfg::context::reporting>([&](std::string& s){
-                str_append(s, reason, ':', target_device, ':', message);
+                str_assign(s, reason, ':', target_device, ':', message);
             });
         }
 
