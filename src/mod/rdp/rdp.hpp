@@ -1001,7 +1001,7 @@ public:
             }
 
             std::string message = str_concat(parameters[0], " : ", parameters[1], " : ", parameters[2]);
-            this->session_log.report("SESSION_EVENT"_av, message);
+            this->session_log.acl_report(AclReport::session_event(message));
         }
         else {
             LOG_IF(bool(this->verbose & RDPVerbose::basic_trace), LOG_INFO,
@@ -1971,7 +1971,7 @@ public:
                 , [&session_log](const Error & error){
                     if (error.errnum == ENOSPC) {
                         // error.id = ERR_TRANSPORT_WRITE_NO_ROOM;
-                        session_log.report("FILESYSTEM_FULL"_av, "100|unknown"_av);
+                        session_log.acl_report(AclReport::file_system_full());
                     }
                 }
                 , *this)
@@ -2221,7 +2221,7 @@ private:
             {
                 event.garbage = true;
 
-                this->session_log.report("CONNECTION_FAILED"_av, "Logon timer expired."_av);
+                this->session_log.acl_report(AclReport::connection_failed("Logon timer expired."_av));
 
                 LOG(LOG_ERR, "Logon timer expired on %s. The session will be disconnected.",
                     this->logon_info.hostname());
@@ -2244,7 +2244,7 @@ public:
 #endif
 
         if (DISCONNECTED == this->connection_finalization_state) {
-            this->session_log.report("CLOSE_SESSION_SUCCESSFUL"_av, "OK."_av);
+            this->session_log.acl_report(AclReport::close_session_successful());
         }
 
         if (bool(this->verbose & RDPVerbose::basic_trace)) {
@@ -2962,7 +2962,7 @@ public:
             LOG(LOG_INFO, "mod::rdp::DisconnectProviderUltimatum: reason=%s [%u]", reason, mcs.reason);
 
             this->connection_finalization_state = DISCONNECTED;
-            this->session_log.report("CLOSE_SESSION_SUCCESSFUL"_av, "OK."_av);
+            this->session_log.acl_report(AclReport::close_session_successful());
             this->log_disconnection(bool(this->verbose & RDPVerbose::sesprobe));
             throw Error(ERR_MCS_APPID_IS_MCS_DPUM);
         }
@@ -3194,7 +3194,9 @@ public:
                                 this->session_log.log6(LogId::SESSION_ESTABLISHED_SUCCESSFULLY, {});
 
                                 if (this->save_session_info_pdu == RdpSaveSessionInfoPDU::UnsupportedOrUnknown) {
-                                    this->session_log.report("CONNECT_DEVICE_SUCCESSFUL"_av, "OK."_av);
+                                    this->session_log.acl_report(
+                                        AclReport::connect_device_successful()
+                                    );
                                 }
                             }
 
@@ -3528,13 +3530,12 @@ public:
                     throw Error(ERR_RAIL_NOT_ENABLED);
                 }
 
-                if (e.id != ERR_MCS_APPID_IS_MCS_DPUM)
-                {
-                    chars_view reason =
-                        ((UP_AND_RUNNING == this->connection_finalization_state) ?
-                        "SESSION_EXCEPTION"_av : "SESSION_EXCEPTION_NO_RECORD"_av);
-
-                    this->session_log.report(reason, e.errmsg());
+                if (e.id != ERR_MCS_APPID_IS_MCS_DPUM) {
+                    this->session_log.acl_report(
+                        (UP_AND_RUNNING == this->connection_finalization_state)
+                        ? AclReport::session_exception(e.errmsg())
+                        : AclReport::session_exception_no_record(e.errmsg())
+                    );
                 }
 
                 if (e.id == ERR_TRANSPORT_TLS_CERTIFICATE_CHANGED
@@ -5071,7 +5072,9 @@ public:
 
             this->connection_finalization_state = DISCONNECTED;
 
-            this->session_log.report("OPEN_SESSION_FAILED"_av, "Unauthorized logon user change detected."_av);
+            this->session_log.acl_report(
+                AclReport::open_session_failed("Unauthorized logon user change detected."_av)
+            );
 
             LOG(LOG_ERR,
                 "Unauthorized logon user change detected on %s (%s%s%s) -> (%s%s%s). "
@@ -5085,17 +5088,20 @@ public:
         }
 
 #ifndef __EMSCRIPTEN__
-        if (this->channels.session_probe_virtual_channel &&
-            this->session_probe_start_launch_timeout_timer_only_after_logon) {
+        if (this->channels.session_probe_virtual_channel
+         && this->session_probe_start_launch_timeout_timer_only_after_logon
+        ) {
             this->channels.session_probe_virtual_channel->start_launch_timeout_timer();
         }
 #endif
 
-        this->session_log.report("OPEN_SESSION_SUCCESSFUL"_av, "OK."_av);
+        this->session_log.acl_report(AclReport::open_session_successful());
 
 #ifndef __EMSCRIPTEN__
-        if (this->channels.session_probe.enable_session_probe &&
-            (!this->channels.session_probe_virtual_channel || !this->channels.session_probe_virtual_channel->has_been_launched())) {
+        if (this->channels.session_probe.enable_session_probe
+         && (!this->channels.session_probe_virtual_channel
+          || !this->channels.session_probe_virtual_channel->has_been_launched())
+        ) {
             this->deny_suppress_output();
             this->disable_input_event();
             if (this->channels.session_probe.enable_launch_mask){
@@ -6040,7 +6046,7 @@ public:
     void disconnect() override {
         if (this->is_up_and_running()) {
             LOG(LOG_INFO, "mod_rdp::disconnect()");
-            this->session_log.report("CLOSE_SESSION_SUCCESSFUL"_av, "OK."_av);
+            this->session_log.acl_report(AclReport::close_session_successful());
             // this->send_shutdown_request();
             // this->draw_event(time(nullptr));
             this->send_disconnect_ultimatum();

@@ -432,7 +432,7 @@ private:
 
                 if (SessionProbeOnKeepaliveTimeout::disconnect_user ==
                     this->sespro_params.on_keepalive_timeout) {
-                    this->session_log.report("SESSION_PROBE_KEEPALIVE_MISSED"_av, ""_av);
+                    this->session_log.acl_report(AclReport::session_probe_keepalive_missed());
                 }
                 else if (SessionProbeOnKeepaliveTimeout::freeze_connection_and_wait ==
                             this->sespro_params.on_keepalive_timeout) {
@@ -573,7 +573,7 @@ public:
 
                     if (!this->sespro_params.allow_multiple_handshake &&
                         (this->reconnection_cookie != remote_reconnection_cookie)) {
-                        this->session_log.report("SESSION_PROBE_RECONNECTION"_av, ""_av);
+                        this->session_log.acl_report(AclReport::session_probe_reconnection());
                     }
                 }
                 else {
@@ -1232,8 +1232,9 @@ private:
                     int(parameters[1].size()), parameters[1].data(),
                     int(result_message.size()), result_message.data());
 
-                this->session_log.report(
-                    "SESSION_PROBE_RUN_STARTUP_APPLICATION_FAILED"_av, result_message);
+                this->session_log.acl_report(
+                    AclReport::session_probe_run_startup_application_failed(result_message)
+                );
 
                 return;
             }
@@ -1280,27 +1281,27 @@ private:
                         KVLog("dst_port"_av,     parameters[4]),
                     });
 
-                    this->session_log.report(
+                    // rule, app_name, app_cmd_line, dst_addr, dst_port
+                    SNPrintf<4096> message("%.*s|%.*s|%.*s|%.*s|%.*s",
+                        int(rule->description().size()), rule->description().data(),
+                        int(parameters[1].size()), parameters[1].data(),
+                        int(parameters[2].size()), parameters[2].data(),
+                        int(parameters[3].size()), parameters[3].data(),
+                        int(parameters[4].size()), parameters[4].data()
+                    );
+                    this->session_log.acl_report(
                         deny
-                            ? "FINDCONNECTION_DENY"_av
-                            : "FINDCONNECTION_NOTIFY"_av,
-                        // rule, app_name, app_cmd_line, dst_addr, dst_port
-                        SNPrintf<4096>("%.*s|%.*s|%.*s|%.*s|%.*s",
-                            int(rule->description().size()), rule->description().data(),
-                            int(parameters[1].size()), parameters[1].data(),
-                            int(parameters[2].size()), parameters[2].data(),
-                            int(parameters[3].size()), parameters[3].data(),
-                            int(parameters[4].size()), parameters[4].data()
-                        )
+                            ? AclReport::find_connection_deny(message)
+                            : AclReport::find_connection_notify(message)
                     );
 
                     if (deny) {
                         unsigned long pid = unchecked_decimal_chars_to_int(parameters[5]);
                         if (pid) {
-                            LOG(LOG_ERR,
-                                "Session Probe failed to block outbound connection!");
-                            this->session_log.report(
-                                "SESSION_PROBE_OUTBOUND_CONNECTION_BLOCKING_FAILED"_av, ""_av);
+                            LOG(LOG_ERR, "Session Probe failed to block outbound connection!");
+                            this->session_log.acl_report(
+                                AclReport::session_probe_outbound_connection_blocking_failed()
+                            );
                         }
                         else {
                             char message[4096];
@@ -1337,25 +1338,25 @@ private:
                         KVLog("app_cmd_line"_av, parameters[2]),
                     });
 
-                    this->session_log.report(
+                    // rule, app_name, app_cmd_line
+                    SNPrintf<4096> message("%.*s|%.*s|%.*s",
+                        int(rule->description().size()), rule->description().data(),
+                        int(parameters[1].size()), parameters[1].data(),
+                        int(parameters[2].size()), parameters[2].data()
+                    );
+                    this->session_log.acl_report(
                         deny
-                            ? "FINDPROCESS_DENY"_av
-                            : "FINDPROCESS_NOTIFY"_av,
-                        // rule, app_name, app_cmd_line
-                        SNPrintf<4096>("%.*s|%.*s|%.*s",
-                            int(rule->description().size()), rule->description().data(),
-                            int(parameters[1].size()), parameters[1].data(),
-                            int(parameters[2].size()), parameters[2].data()
-                        )
+                            ? AclReport::find_process_deny(message)
+                            : AclReport::find_process_notify(message)
                     );
 
                     if (deny) {
                         unsigned long pid = unchecked_decimal_chars_to_int(parameters[3]);
                         if (pid) {
-                            LOG(LOG_ERR,
-                                "Session Probe failed to block process!");
-                            this->session_log.report(
-                                "SESSION_PROBE_PROCESS_BLOCKING_FAILED"_av, ""_av);
+                            LOG(LOG_ERR, "Session Probe failed to block process!");
+                            this->session_log.acl_report(
+                                AclReport::session_probe_process_blocking_failed()
+                            );
                         }
                         else {
                             char message[4096];
@@ -1388,19 +1389,19 @@ private:
                     KVLog("app_cmd_line"_av, parameters[5]),
                 });
 
-                this->session_log.report(
+                // operation, server_name, group_name, account_name, app_name, app_cmd_line
+                SNPrintf<4096> message("%.*s|%.*s|%.*s|%.*s|%.*s|%.*s",
+                    int(parameters[0].size()), parameters[0].data(),
+                    int(parameters[1].size()), parameters[1].data(),
+                    int(parameters[2].size()), parameters[2].data(),
+                    int(parameters[3].size()), parameters[3].data(),
+                    int(parameters[4].size()), parameters[4].data(),
+                    int(parameters[5].size()), parameters[5].data()
+                );
+                this->session_log.acl_report(
                     deny
-                        ? "ACCOUNTMANIPULATION_DENY"_av
-                        : "ACCOUNTMANIPULATION_NOTIFY"_av,
-                    // operation, server_name, group_name, account_name, app_name, app_cmd_line
-                    SNPrintf<4096>("%.*s|%.*s|%.*s|%.*s|%.*s|%.*s",
-                        int(parameters[0].size()), parameters[0].data(),
-                        int(parameters[1].size()), parameters[1].data(),
-                        int(parameters[2].size()), parameters[2].data(),
-                        int(parameters[3].size()), parameters[3].data(),
-                        int(parameters[4].size()), parameters[4].data(),
-                        int(parameters[5].size()), parameters[5].data()
-                    )
+                        ? AclReport::account_manipulation_deny(message)
+                        : AclReport::account_manipulation_notify(message)
                 );
 
                 if (deny) {

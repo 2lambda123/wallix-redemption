@@ -625,6 +625,11 @@ test-run tests/acl/test_acl_serializer :
   <library>tests/includes/test_only/transport/test_transport.o
   $(BOOST_STACKTRACE_LINKFLAGS)
 ;
+test-run tests/acl/test_acl_update_sesion_report :
+  $(REDEMPTION_TEST_PATH)/acl/test_acl_update_sesion_report.cpp
+:
+  <library>src/utils/strutils.o
+;
 test-run tests/acl/test_kv_list_from_strings :
   $(REDEMPTION_TEST_PATH)/acl/test_kv_list_from_strings.cpp
 :
@@ -5149,6 +5154,7 @@ alias test_client_execute : tests/RAIL/test_client_execute ;
 alias test_create_module_rdp : tests/acl/module_manager/test_create_module_rdp ;
 alias test_acl_field_mask : tests/acl/test_acl_field_mask ;
 alias test_acl_serializer : tests/acl/test_acl_serializer ;
+alias test_acl_update_sesion_report : tests/acl/test_acl_update_sesion_report ;
 alias test_kv_list_from_strings : tests/acl/test_kv_list_from_strings ;
 alias test_license_api : tests/acl/test_license_api ;
 alias test_mod_wrapper : tests/acl/test_mod_wrapper ;
@@ -5465,6 +5471,7 @@ alias tests/acl/module_manager.norec :
 alias tests/acl.norec :
   tests/acl/test_acl_field_mask
   tests/acl/test_acl_serializer
+  tests/acl/test_acl_update_sesion_report
   tests/acl/test_kv_list_from_strings
   tests/acl/test_license_api
   tests/acl/test_mod_wrapper
@@ -6256,6 +6263,7 @@ explicit
   test_create_module_rdp
   test_acl_field_mask
   test_acl_serializer
+  test_acl_update_sesion_report
   test_kv_list_from_strings
   test_license_api
   test_mod_wrapper

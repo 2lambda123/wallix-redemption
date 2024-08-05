@@ -29,6 +29,7 @@
 
 #include "acl/acl_serializer.hpp"
 #include "acl/session_logfile.hpp"
+#include "acl/acl_update_session_report.hpp"
 
 #include "configs/config.hpp"
 #include "front/front.hpp"
@@ -72,20 +73,24 @@ struct FinalSocketTransport final : ::SocketTransport
 
 class Session
 {
-    struct AclReport final : AclReportApi
+    struct AclReporter final : AclReportApi
     {
-        AclReport(Inifile& ini) : ini(ini) {}
+        AclReporter(Inifile& ini) : ini(ini) {}
 
-        void report(chars_view reason, chars_view message) override
+        void acl_report(AclReport report) override
         {
             chars_view target_device = this->ini.get<cfg::globals::target_device>();
+            bool concat = this->ini.is_ready_to_send<cfg::context::reporting>();
             this->ini.update_acl<cfg::context::reporting>([&](std::string& s){
-                str_assign(s, reason, ':', target_device, ':', message);
+                acl_update_session_report.update_report(
+                    OutParam{s}, !concat, report, target_device
+                );
             });
         }
 
-    private:
         Inifile& ini;
+    private:
+        AclUpdateSessionReport acl_update_session_report;
     };
 
     struct SecondarySession final : private SessionLogApi
@@ -93,28 +98,28 @@ class Session
         enum class Type { RDP, VNC, };
 
         SecondarySession(
-            Inifile& ini,
+            AclReporter& acl_reporter,
             CryptoContext& cctx,
             Random& rnd,
             gdi::CaptureProbeApi& probe_api,
             TimeBase const& time_base,
             bool use_debug_format)
-        : ini(ini)
+        : acl_reporter(acl_reporter)
         , probe_api(probe_api)
         , time_base(time_base)
         , cctx(cctx)
         , log_file(
             cctx, rnd,
             SessionLogFile::Debug(use_debug_format),
-            [&ini](Error const& error){
+            [this](Error const& error){
                 if (error.errnum == ENOSPC) {
                     // error.id = ERR_TRANSPORT_WRITE_NO_ROOM;
-                    AclReport{ini}.report("FILESYSTEM_FULL"_av, "100|unknown"_av);
+                    this->acl_reporter.acl_report(AclReport::file_system_full());
                 }
             })
         {
-            auto has_drive = bool(ini.get<cfg::capture::disable_file_system_log>() & FileSystemLogFlags::wrm);
-            auto has_clipboard = bool(ini.get<cfg::capture::disable_clipboard_log>() & ClipboardLogFlags::wrm);
+            auto has_drive = bool(acl_reporter.ini.get<cfg::capture::disable_file_system_log>() & FileSystemLogFlags::wrm);
+            auto has_clipboard = bool(acl_reporter.ini.get<cfg::capture::disable_clipboard_log>() & ClipboardLogFlags::wrm);
 
             this->dont_log |= (has_drive ? LogCategoryId::Drive : LogCategoryId::None);
             this->dont_log |= (has_clipboard ? LogCategoryId::Clipboard : LogCategoryId::None);
@@ -131,14 +136,14 @@ class Session
                 case Type::VNC: this->session_type = "VNC"; break;
             }
 
-            this->cctx.set_master_key(this->ini.get<cfg::crypto::encryption_key>());
-            this->cctx.set_hmac_key(this->ini.get<cfg::crypto::sign_key>());
-            this->cctx.set_trace_type(this->ini.get<cfg::globals::trace_type>());
+            this->cctx.set_master_key(this->acl_reporter.ini.get<cfg::crypto::encryption_key>());
+            this->cctx.set_hmac_key(this->acl_reporter.ini.get<cfg::crypto::sign_key>());
+            this->cctx.set_trace_type(this->acl_reporter.ini.get<cfg::globals::trace_type>());
 
-            auto const& subdir = this->ini.get<cfg::capture::record_subdirectory>();
-            auto const& record_dir = this->ini.get<cfg::capture::record_path>();
-            auto const& hash_dir = this->ini.get<cfg::capture::hash_path>();
-            auto const& filebase = this->ini.get<cfg::capture::record_filebase>();
+            auto const& subdir = this->acl_reporter.ini.get<cfg::capture::record_subdirectory>();
+            auto const& record_dir = this->acl_reporter.ini.get<cfg::capture::record_path>();
+            auto const& hash_dir = this->acl_reporter.ini.get<cfg::capture::hash_path>();
+            auto const& filebase = this->acl_reporter.ini.get<cfg::capture::record_filebase>();
 
             std::string record_path = str_concat(record_dir.as_string(), subdir, '/');
             std::string hash_path = str_concat(hash_dir.as_string(), subdir, '/');
@@ -155,10 +160,10 @@ class Session
             hash_path += basename;
 
             this->log_file.open_session_log(
-                ini.get<cfg::session_log::enable_syslog_format>(),
-                SessionLogFile::SaveToFile(ini.get<cfg::session_log::enable_session_log_file>()),
+                acl_reporter.ini.get<cfg::session_log::enable_syslog_format>(),
+                SessionLogFile::SaveToFile(acl_reporter.ini.get<cfg::session_log::enable_session_log_file>()),
                 record_path.c_str(), hash_path.c_str(),
-                this->ini.get<cfg::capture::file_permissions>(), /*derivator=*/basename);
+                acl_reporter.ini.get<cfg::capture::file_permissions>(), /*derivator=*/basename);
 
             return *this;
         }
@@ -177,9 +182,9 @@ class Session
             return *this;
         }
 
-        void report(chars_view reason, chars_view message) override
+        void acl_report(AclReport report) override
         {
-            AclReport{this->ini}.report(reason, message);
+            acl_reporter.acl_report(report);
         }
 
     private:
@@ -195,7 +200,7 @@ class Session
             timespec tp;
             clock_gettime(CLOCK_REALTIME, &tp);
 
-            this->log_file.log(tp.tv_sec, this->ini, this->session_type, id, kv_list);
+            this->log_file.log(tp.tv_sec, this->acl_reporter.ini, this->session_type, id, kv_list);
 
             if (!this->dont_log.test(detail::log_id_category_map[underlying_cast(id)])) {
                 this->probe_api.session_update(this->time_base.monotonic_time, id, kv_list);
@@ -207,7 +212,7 @@ class Session
             this->log_file.set_control_owner_ctx(name);
         }
 
-        Inifile& ini;
+        AclReporter& acl_reporter;
         gdi::CaptureProbeApi& probe_api;
         TimeBase const& time_base;
         CryptoContext & cctx;
@@ -308,6 +313,7 @@ class Session
     Inifile & ini;
     PidFile & pid_file;
     SessionVerbose verbose;
+    AclUpdateSessionReport acl_update_session_report;
 
 private:
     enum class EndSessionResult
@@ -846,6 +852,7 @@ private:
 
     inline EndLoopState main_loop(
         int auth_sck,
+        AclReporter& acl_reporter,
         EventManager& event_manager,
         ErrorMessageCtx& err_msg_ctx,
         CryptoContext& cctx,
@@ -878,7 +885,7 @@ private:
         AclSerializer acl_serial(ini, auth_trans);
 
         SecondarySession secondary_session(
-            ini, cctx, rnd, front, event_manager.get_time_base(),
+            acl_reporter, cctx, rnd, front, event_manager.get_time_base(),
             bool(this->verbose & SessionVerbose::Log));
 
         enum class LoopState
@@ -1398,7 +1405,7 @@ private:
                         LOG(LOG_INFO, "SrvRedir: Change target host to '%s'", host);
                         ini.set_acl<cfg::context::target_host>(host);
                         auto message = str_concat(change_user, '@', host);
-                        secondary_session.report("SERVER_REDIRECTION"_av, message);
+                        secondary_session.acl_report(AclReport::server_redirection(message));
                     }
                     [[fallthrough]];
 
@@ -1490,8 +1497,8 @@ public:
         EventManager event_manager;
         event_manager.set_time_base(TimeBase::now());
 
-        AclReport acl_report{ini};
-        SessionFront front(event_manager.get_events(), acl_report, front_trans, rnd, ini, cctx);
+        AclReporter acl_reporter{ini};
+        SessionFront front(event_manager.get_events(), acl_reporter, front_trans, rnd, ini, cctx);
 
         ErrorMessageCtx err_msg_ctx;
 
@@ -1573,7 +1580,7 @@ public:
 
             if (auth_sck != INVALID_SOCKET) {
                 end_loop = this->main_loop(
-                    auth_sck, event_manager, err_msg_ctx, cctx, rnd,
+                    auth_sck, acl_reporter, event_manager, err_msg_ctx, cctx, rnd,
                     front_trans, front, guest_ctx,
                     mod_factory
                 );

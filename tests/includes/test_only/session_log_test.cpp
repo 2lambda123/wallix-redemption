@@ -24,9 +24,9 @@ Author(s): Proxies Team
 #include "core/log_id.hpp"
 
 
-void SessionLogTest::report(chars_view reason, chars_view message)
+void SessionLogTest::acl_report(AclReport report)
 {
-    str_append(messages, reason, ": ", message, '\n');
+    str_append(messages, report.reason(), ": ", report.message(), '\n');
 }
 
 void SessionLogTest::log6(LogId id, KVLogList kv_list)

@@ -190,7 +190,7 @@ struct FilesystemFullReporter
     void operator()(const Error & error) const
     {
         if (session_log && error.errnum == ENOSPC) {
-            session_log->report("FILESYSTEM_FULL"_av, "100|unknown"_av);
+            session_log->acl_report(AclReport::file_system_full());
         }
     }
 };
@@ -209,9 +209,9 @@ void report_pattern(
     session_log.log6(
         found.is_pattern_kill ? LogId::KILL_PATTERN_DETECTED : LogId::NOTIFY_PATTERN_DETECTED,
         {KVLog("pattern"_av, message)});
-    session_log.report(
-        found.is_pattern_kill ? "FINDPATTERN_KILL"_av : "FINDPATTERN_NOTIFY"_av,
-        message);
+    session_log.acl_report(found.is_pattern_kill
+        ? AclReport::find_pattern_kill(message)
+        : AclReport::find_pattern_notify(message));
 }
 
 class Utf8KbdBuffer
@@ -1099,7 +1099,7 @@ public:
             if (capture_params.session_log && error.errnum == ENOSPC) {
                 error.id = ERR_TRANSPORT_WRITE_NO_ROOM;
                 // ReportMessageReporter
-                capture_params.session_log->report("FILESYSTEM_FULL"_av, "100|unknown"_av);
+                capture_params.session_log->acl_report(AclReport::file_system_full());
             }
             throw error; /* NOLINT */
         }

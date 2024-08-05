@@ -135,6 +135,13 @@ public:
         return this->asked_table.get(T::index);
     }
 
+    template<class T>
+    bool is_ready_to_send() const noexcept
+    {
+        static_assert(T::acl_proxy_communication_flags & configs::proxy_to_acl_mask, "T isn't writable.");
+        return this->to_send_index.get(T::index);
+    }
+
     struct ConfigurationHolder final : ::ConfigurationHolder
     {
         void set_section(zstring_view section) override;
@@ -390,6 +397,11 @@ private:
                 word |= mask;
                 this->list[this->list_size++] = id;
             }
+        }
+
+        [[nodiscard]] bool get(authid_t id) const noexcept
+        {
+            return this->bool_table.get(id);
         }
 
         void clear() noexcept

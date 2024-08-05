@@ -2148,10 +2148,11 @@ class Sesman():
                                 self.handle_shadowing()
                                 self.handle_session_sharing()
 
-                                if self.shared.get('reporting'):
-                                    report_status = self.handle_reporting()
-                                    if report_status:
-                                        try_next = False
+                                if reporting := self.shared.get('reporting'):
+                                    self.shared['reporting'] = ''
+                                    for report_part in reporting.split('\x01'):
+                                        if self.handle_reporting(report_part):
+                                            try_next = False
 
                                 if self.shared.get('disconnect_reason_ack'):
                                     break
@@ -2246,68 +2247,54 @@ class Sesman():
                 Logger().info(f"<<<<{traceback.format_exc()}>>>>")
         return False, "End of Session"
 
-    def handle_reporting(self) -> bool:
-        _reporting = self.shared.get('reporting')
-        _reporting_reason, _, _remains = \
-            _reporting.partition(':')
-        _reporting_target, _, _reporting_message = \
-            _remains.partition(':')
-        self.shared['reporting'] = ''
+    def handle_reporting(self, reporting: str) -> bool:
+        (reason, target, message) = reporting.split(':', 2)
 
-        Logger().info(f'Reporting: reason="{_reporting_reason}" '
-                      f'target="{_reporting_target}" message="{_reporting_message}"')
+        Logger().info(f'Reporting: reason="{reason}" target="{target}" message="{message}"')
 
-        self.process_report(_reporting_reason,
-                            _reporting_target,
-                            _reporting_message)
+        self.process_report(reason, target, message)
 
-        if _reporting_reason == 'CONNECTION_FAILED':
-            self.reporting_reason = _reporting_reason
-            self.reporting_target = _reporting_target
+        if reason == 'CONNECTION_FAILED':
+            self.reporting_reason = reason
+            self.reporting_target = target
 
             release_reason = 'Connection failed'
-            self.engine.set_session_status(
-                result=False, diag=release_reason)
-        elif _reporting_reason == 'FINDPATTERN_KILL':
+            self.engine.set_session_status(result=False, diag=release_reason)
+        elif reason == 'FINDPATTERN_KILL':
             Logger().info(
                 "RDP connection terminated. Reason: Kill pattern detected"
             )
             release_reason = 'Kill pattern detected'
-            self.engine.set_session_status(
-                result=False, diag=release_reason)
+            self.engine.set_session_status(result=False, diag=release_reason)
             self.send_data({'disconnect_reason': TR(Sesmsg.PATTERN_KILL)})
-        elif _reporting_reason == 'SERVER_REDIRECTION':
-            (redir_login, _, redir_host) = \
-                _reporting_message.rpartition('@')
+        elif reason == 'SERVER_REDIRECTION':
+            (redir_login, _, redir_host) = message.rpartition('@')
             update_args = {}
             if redir_host:
                 update_args["target_host"] = redir_host
             if redir_login:
                 update_args["target_account"] = redir_login
             self.engine.update_session(**update_args)
-        elif _reporting_reason == 'SESSION_EXCEPTION':
+        elif reason == 'SESSION_EXCEPTION':
             Logger().info(
                 "RDP connection terminated. Reason: Session exception"
             )
-            release_reason = 'Session exception: ' + _reporting_message
-            self.engine.set_session_status(
-                diag=release_reason)
-        elif _reporting_reason == 'SESSION_EXCEPTION_NO_RECORD':
+            release_reason = 'Session exception: ' + message
+            self.engine.set_session_status(diag=release_reason)
+        elif reason == 'SESSION_EXCEPTION_NO_RECORD':
             Logger().info(
                 "RDP connection terminated. Reason: Session exception "
                 "(no record)"
             )
-            release_reason = 'Session exception: ' + _reporting_message
-            self.engine.set_session_status(
-                result=False, diag=release_reason)
-        elif _reporting_reason == 'SESSION_PROBE_LAUNCH_FAILED':
+            release_reason = 'Session exception: ' + message
+            self.engine.set_session_status(result=False, diag=release_reason)
+        elif reason == 'SESSION_PROBE_LAUNCH_FAILED':
             Logger().info(
                 "RDP connection terminated. Reason: Session Probe "
                 "launch failed"
             )
             release_reason = 'Interrupt: Session Probe launch failed'
-            self.engine.set_session_status(
-                result=False, diag=release_reason)
+            self.engine.set_session_status(result=False, diag=release_reason)
             if self.shared.get('session_probe_launch_error_message'):
                 self.send_data({
                     'disconnect_reason':
@@ -2318,19 +2305,17 @@ class Sesman():
                 self.send_data({
                     'disconnect_reason': TR(Sesmsg.SESPROBE_LAUNCH_FAILED)
                 })
-        elif _reporting_reason == 'SESSION_PROBE_KEEPALIVE_MISSED':
+        elif reason == 'SESSION_PROBE_KEEPALIVE_MISSED':
             Logger().info(
                 'RDP connection terminated. Reason: Session Probe '
                 'keepalive missed'
             )
             release_reason = 'Interrupt: Session Probe keepalive missed'
-            self.engine.set_session_status(
-                result=False, diag=release_reason)
+            self.engine.set_session_status(result=False, diag=release_reason)
             self.send_data({
                 'disconnect_reason': TR(Sesmsg.SESPROBE_KEEPALIVE_MISSED)
             })
-        elif (_reporting_reason
-              == 'SESSION_PROBE_OUTBOUND_CONNECTION_BLOCKING_FAILED'):
+        elif reason == 'SESSION_PROBE_OUTBOUND_CONNECTION_BLOCKING_FAILED':
             Logger().info(
                 'RDP connection terminated. Reason: Session Probe failed '
                 'to block outbound connection'
@@ -2338,60 +2323,45 @@ class Sesman():
             release_reason = (
                 'Interrupt: Session Probe failed to block outbound connection'
             )
-            self.engine.set_session_status(
-                result=False, diag=release_reason)
+            self.engine.set_session_status(result=False, diag=release_reason)
             self.send_data({
                 'disconnect_reason':
                 TR(Sesmsg.SESPROBE_OUTBOUND_CONNECTION_BLOCKING_FAILED)
             })
-        elif _reporting_reason == 'SESSION_PROBE_PROCESS_BLOCKING_FAILED':
+        elif reason == 'SESSION_PROBE_PROCESS_BLOCKING_FAILED':
             Logger().info(
                 'RDP connection terminated. Reason: Session Probe failed '
                 'to block process'
             )
-            release_reason = (
-                'Interrupt: Session Probe failed to block process'
-            )
-            self.engine.set_session_status(
-                result=False, diag=release_reason
-            )
+            release_reason = 'Interrupt: Session Probe failed to block process'
+            self.engine.set_session_status(result=False, diag=release_reason)
             self.send_data({
                 'disconnect_reason':
                 TR(Sesmsg.SESPROBE_PROCESS_BLOCKING_FAILED)
             })
-        elif (_reporting_reason
-              == 'SESSION_PROBE_RUN_STARTUP_APPLICATION_FAILED'):
+        elif reason == 'SESSION_PROBE_RUN_STARTUP_APPLICATION_FAILED':
             Logger().info(
                 'RDP connection terminated. Reason: Session Probe failed '
                 'to run startup application'
             )
-            release_reason = (
-                'Interrupt: Session Probe failed to run startup application'
-            )
-            self.engine.set_session_status(
-                result=False, diag=release_reason
-            )
+            release_reason = 'Interrupt: Session Probe failed to run startup application'
+            self.engine.set_session_status(result=False, diag=release_reason)
             self.send_data({
                 'disconnect_reason':
                 TR(Sesmsg.SESPROBE_FAILED_TO_RUN_STARTUP_APPLICATION)
             })
-        elif _reporting_reason == 'SESSION_PROBE_RECONNECTION':
+        elif reason == 'SESSION_PROBE_RECONNECTION':
             Logger().info(
                 'RDP connection terminated. Reason: Session Probe '
                 'reconnection without disconnection'
             )
-            release_reason = (
-                'Interrupt: Session Probe reconnection without disconnection'
-            )
-            self.engine.set_session_status(
-                result=False, diag=release_reason
-            )
+            release_reason = 'Interrupt: Session Probe reconnection without disconnection'
+            self.engine.set_session_status(result=False, diag=release_reason)
             self.send_data({
                 'disconnect_reason': TR(Sesmsg.SESPROBE_RECONNECTION)
             })
-        elif _reporting_reason == 'SESSION_EVENT':
-            (event_level, event_id, event_details) = \
-                _reporting_message.split(" : ", 2)
+        elif reason == 'SESSION_EVENT':
+            (event_level, event_id, event_details) = message.split(" : ", 2)
             self.engine.update_session(
                 event_level=event_level,
                 event_id=event_id,
@@ -2403,17 +2373,13 @@ class Sesman():
                     'RDP connection terminated. Reason: Application '
                     'fatal error'
                 )
-                release_reason = (
-                    'Interrupt: Application fatal error'
-                )
-                self.engine.set_session_status(
-                    result=False, diag=release_reason
-                )
+                release_reason = 'Interrupt: Application fatal error'
+                self.engine.set_session_status(result=False, diag=release_reason)
                 self.send_data({
                     'disconnect_reason': TR(Sesmsg.APPLICATION_FATAL_ERROR)
                 })
-        elif (_reporting_reason == 'OPEN_SESSION_SUCCESSFUL'
-              or _reporting_reason == 'CONNECT_DEVICE_SUCCESSFUL'):
+        elif (reason == 'OPEN_SESSION_SUCCESSFUL'
+              or reason == 'CONNECT_DEVICE_SUCCESSFUL'):
             return True
 
         return False

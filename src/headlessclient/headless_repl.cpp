@@ -257,8 +257,10 @@ void HeadlessRepl::log6(LogId id, KVLogList kv_list)
     fprintf(stderr, "[headless] %.*s\n", int(end - p), p);
 }
 
-void HeadlessRepl::report(chars_view reason, chars_view message)
+void HeadlessRepl::acl_report(AclReport report)
 {
+    const auto reason = report.reason();
+    const auto message = report.message();
     fprintf(stderr, "Report: %.*s: %.*s\n",
         static_cast<int>(reason.size()), reason.data(),
         static_cast<int>(message.size()), message.data()

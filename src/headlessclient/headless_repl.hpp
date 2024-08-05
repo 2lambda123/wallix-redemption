@@ -60,7 +60,7 @@ struct HeadlessRepl final : FrontAPI, SessionLogApi, private RdpInput
 
     void log6(LogId id, KVLogList kv_list) override;
 
-    void report(chars_view reason, chars_view message) override;
+    void acl_report(AclReport report) override;
 
     void set_control_owner_ctx(chars_view name) override
     {

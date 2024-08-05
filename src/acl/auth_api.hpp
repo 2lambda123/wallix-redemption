@@ -22,6 +22,22 @@
 
 #include "utils/sugar/noncopyable.hpp"
 #include "utils/sugar/array_view.hpp"
+#include "acl/acl_report.hpp"
+
+struct AclReportApi : noncopyable
+{
+    virtual void acl_report(AclReport report) = 0;
+
+    virtual ~AclReportApi() = default;
+};
+
+struct NullAclReport final : AclReportApi
+{
+    void acl_report(AclReport report) override
+    {
+        (void)report;
+    }
+};
 
 
 enum class LogId : uint16_t;
@@ -42,22 +58,6 @@ struct KVLogList : array_view<KVLog>
     KVLogList(std::initializer_list<KVLog> kv_list) noexcept : array_view<KVLog>(kv_list) {}
 };
 
-struct AclReportApi : noncopyable
-{
-    virtual void report(chars_view reason, chars_view message) = 0;
-
-    virtual ~AclReportApi() = default;
-};
-
-struct NullAclReport final : AclReportApi
-{
-    void report(chars_view reason, chars_view message) override
-    {
-        (void)reason;
-        (void)message;
-    }
-};
-
 struct SessionLogApi : AclReportApi
 {
     virtual void log6(LogId id, KVLogList kv_list) = 0;
@@ -67,7 +67,19 @@ struct SessionLogApi : AclReportApi
 
 struct NullSessionLog : SessionLogApi
 {
-    void report(chars_view /* reason */, chars_view /* message */) override {}
-    void log6(LogId /*id*/, KVLogList /*kv_list*/) override {}
-    void set_control_owner_ctx(chars_view /*name*/) override {}
+    void acl_report(AclReport report) override
+    {
+        (void)report;
+    }
+
+    void log6(LogId id, KVLogList kv_list) override
+    {
+        (void)id;
+        (void)kv_list;
+    }
+
+    void set_control_owner_ctx(chars_view name) override
+    {
+        (void)name;
+    }
 };

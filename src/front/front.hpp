@@ -1411,7 +1411,7 @@ public:
             [this](const Error & error){
                 if (error.errnum == ENOSPC) {
                     // error.id = ERR_TRANSPORT_WRITE_NO_ROOM;
-                    this->acl_report.report("FILESYSTEM_FULL"_av, "100|unknown"_av);
+                    this->acl_report.acl_report(AclReport::file_system_full());
                 }
             },
             safe_cast<BmpCachePersister::Verbose>(this->verbose)
