@@ -2252,23 +2252,33 @@ class Sesman():
 
         Logger().info(f'Reporting: reason="{reason}" target="{target}" message="{message}"')
 
-        self.process_report(reason, target, message)
-
         if reason == 'CONNECTION_FAILED':
             self.reporting_reason = reason
             self.reporting_target = target
 
             release_reason = 'Connection failed'
             self.engine.set_session_status(result=False, diag=release_reason)
-        elif reason == 'FINDPATTERN_KILL':
-            Logger().info(
-                "RDP connection terminated. Reason: Kill pattern detected"
+        elif (reason == 'FINDPATTERN_KILL'
+              or reason == 'FINDPATTERN_NOTIFY'):
+            pattern = message.split('|')
+            regexp = pattern[0]
+            string = pattern[1]
+            self.engine.NotifyFindPatternInRDPFlow(
+                regexp, string, self.shared.get('login'),
+                self.shared.get('target_login'),
+                self.shared.get('target_device'),
+                self.cn, self.target_service_name
             )
-            release_reason = 'Kill pattern detected'
-            self.engine.set_session_status(result=False, diag=release_reason)
-            self.send_data({'disconnect_reason': TR(Sesmsg.PATTERN_KILL)})
+            if reason == 'FINDPATTERN_KILL':
+                Logger().info(
+                    "RDP connection terminated. Reason: Kill pattern detected"
+                )
+                release_reason = 'Kill pattern detected'
+                self.engine.set_session_status(result=False, diag=release_reason)
+                self.send_data({'disconnect_reason': TR(Sesmsg.PATTERN_KILL)})
         elif reason == 'SERVER_REDIRECTION':
             (redir_login, _, redir_host) = message.rpartition('@')
+            Logger().info(f"Server Redirection: login='{redir_login}', host='{redir_host}'")
             update_args = {}
             if redir_host:
                 update_args["target_host"] = redir_host
@@ -2381,36 +2391,9 @@ class Sesman():
         elif (reason == 'OPEN_SESSION_SUCCESSFUL'
               or reason == 'CONNECT_DEVICE_SUCCESSFUL'):
             return True
-
-        return False
-
-    def process_target_connection_time(self) -> None:
-        if self.shared.get("target_connection_time"):
-            try:
-                tct = int(self.shared.get("target_connection_time", 0))
-                fct = int(self.shared.get("front_connection_time", 0))
-                logtimer.add_step_time(LogSteps.TARGET_CONN, tct / 1000.0)
-                logtimer.add_step_time(LogSteps.PRIMARY_CONN, fct / 1000.0)
-                metrics = logtimer.report_metrics()
-                self.rdplog.log("TIME_METRICS",
-                                session_id=self.shared.get('session_id'),
-                                **metrics)
-            except Exception:
-                pass
-            self.shared["target_connection_time"] = None
-
-    def process_report(self, reason: str, target: str, message: str) -> None:
-        if reason == 'CLOSE_SESSION_SUCCESSFUL':
-            pass
-        elif reason == 'CONNECTION_FAILED':
-            pass
-        # elif reason == 'CONNECTION_SUCCESSFUL':
-        #     pass
-        elif reason == 'CONNECT_DEVICE_SUCCESSFUL':
+        elif reason == 'CLOSE_SESSION_SUCCESSFUL':
             pass
         elif reason == 'OPEN_SESSION_FAILED':
-            pass
-        elif reason == 'OPEN_SESSION_SUCCESSFUL':
             pass
         elif reason == 'FILESYSTEM_FULL':
             data = message.split('|')
@@ -2419,34 +2402,6 @@ class Sesman():
 
             self.engine.NotifyFilesystemIsFullOrUsedAtXPercent(filesystem,
                                                                used)
-        elif reason == 'SESSION_EXCEPTION':
-            pass
-        elif reason == 'SESSION_EXCEPTION_NO_RECORD':
-            pass
-        elif reason == 'SESSION_PROBE_LAUNCH_FAILED':
-            pass
-        elif reason == 'SESSION_PROBE_KEEPALIVE_MISSED':
-            pass
-        elif reason == 'SESSION_PROBE_OUTBOUND_CONNECTION_BLOCKING_FAILED':
-            pass
-        elif reason == 'SESSION_PROBE_PROCESS_BLOCKING_FAILED':
-            pass
-        elif reason == 'SESSION_PROBE_RUN_STARTUP_APPLICATION_FAILED':
-            pass
-        elif reason == 'SERVER_REDIRECTION':
-            (nlogin, _, nhost) = message.rpartition('@')
-            Logger().info(f"Server Redirection: login='{nlogin}', host='{nhost}'")
-        elif (reason == 'FINDPATTERN_KILL'
-              or reason == 'FINDPATTERN_NOTIFY'):
-            pattern = message.split('|')
-            regexp = pattern[0]
-            string = pattern[1]
-            self.engine.NotifyFindPatternInRDPFlow(
-                regexp, string, self.shared.get('login'),
-                self.shared.get('target_login'),
-                self.shared.get('target_device'),
-                self.cn, self.target_service_name
-            )
         elif (reason == 'FINDCONNECTION_DENY'
               or reason == 'FINDCONNECTION_NOTIFY'):
             pattern = message.split('|')
@@ -2477,12 +2432,27 @@ class Sesman():
                 cn=self.cn,
                 service=self.target_service_name
             )
-        elif reason == 'SESSION_EVENT':
-            pass
         else:
             Logger().info(
                 "Unexpected reporting reason: "
                 f'"{reason}" "{target}" "{message}"')
+
+        return False
+
+    def process_target_connection_time(self) -> None:
+        if self.shared.get("target_connection_time"):
+            try:
+                tct = int(self.shared.get("target_connection_time", 0))
+                fct = int(self.shared.get("front_connection_time", 0))
+                logtimer.add_step_time(LogSteps.TARGET_CONN, tct / 1000.0)
+                logtimer.add_step_time(LogSteps.PRIMARY_CONN, fct / 1000.0)
+                metrics = logtimer.report_metrics()
+                self.rdplog.log("TIME_METRICS",
+                                session_id=self.shared.get('session_id'),
+                                **metrics)
+            except Exception:
+                pass
+            self.shared["target_connection_time"] = None
 
     def handle_auth_channel_target(self, selected_target) -> None:
         Logger().info(
