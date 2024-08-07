@@ -128,19 +128,19 @@ namespace
             ::unlink(this->final_filename.c_str());
         }
 
-        int write(uint8_t * buf, int buf_size)
+        int write(uint8_t const* buf, int buf_size)
         {
             assert(buf_size >= 0);
 
             if (buf_size + this->buffer_len < buffer_capacity) {
-                memcpy(this->buffer.get() + this->buffer_len, buf, size_t(buf_size));
+                memcpy(this->buffer.get() + this->buffer_len, buf, static_cast<size_t>(buf_size));
                 this->buffer_len += buf_size;
                 return buf_size;
             }
 
             iovec iov[]{
-                {this->buffer.get(), size_t(this->buffer_len)},
-                {buf, size_t(buf_size)}
+                {this->buffer.get(), static_cast<size_t>(this->buffer_len)},
+                {const_cast<uint8_t*>(buf), static_cast<size_t>(buf_size)}
             };
             ssize_t len = writev(this->fd.fd(), iov, 2);
             ssize_t total = this->buffer_len + buf_size;
@@ -448,7 +448,7 @@ video_recorder::video_recorder(
         1,                            // writable
         &this->d->out_file,           // user-specific data
         nullptr,                      // function for refilling the buffer, may be nullptr.
-        [](void * data, uint8_t * buf, int buf_size) {
+        [](void * data, auto /* uint8_t const or not... */ * buf, int buf_size) {
             return static_cast<VideoRecorderOutputFile*>(data)->write(buf, buf_size);
         },
         [](void * data, int64_t offset, int whence) {
