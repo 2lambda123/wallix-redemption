@@ -19,14 +19,14 @@ RED_AUTO_TEST_CASE(TestAclReportBuilder)
     };
 
     RED_CHECK(acl_report(true, AclReport::file_system_full(), "target1")
-        == "FILESYSTEM_FULL:target1:100|unknown"_av);
+        == "FILESYSTEM_FULL:target1:"_av);
     RED_CHECK(acl_report(true, AclReport::close_session_successful(), "target2")
         == "CLOSE_SESSION_SUCCESSFUL:target2:OK."_av);
     RED_CHECK(acl_report(false, AclReport::file_system_full(), "target3")
-        == "CLOSE_SESSION_SUCCESSFUL:target2:OK.\x01""FILESYSTEM_FULL:target3:100|unknown"_av);
+        == "CLOSE_SESSION_SUCCESSFUL:target2:OK.\x01""FILESYSTEM_FULL:target3:"_av);
     // already set, ignored
     RED_CHECK(acl_report(false, AclReport::close_session_successful(), "target4")
-        == "CLOSE_SESSION_SUCCESSFUL:target2:OK.\x01""FILESYSTEM_FULL:target3:100|unknown"_av);
+        == "CLOSE_SESSION_SUCCESSFUL:target2:OK.\x01""FILESYSTEM_FULL:target3:"_av);
     RED_CHECK(acl_report(true, AclReport::session_event("msg1"_av), "target5")
         == "SESSION_EVENT:target5:msg1"_av);
 

@@ -13,7 +13,7 @@ SPDX-License-Identifier: GPL-2.0-or-later
 #define REDEMPTION_ACL_REPORT_DEF(f)                                           \
     f(ACCOUNTMANIPULATION_DENY, account_manipulation_deny, PARAM())            \
     f(ACCOUNTMANIPULATION_NOTIFY, account_manipulation_notify, PARAM())        \
-    f(FILESYSTEM_FULL, file_system_full, MSG("100|unknown"))                   \
+    f(FILESYSTEM_FULL, file_system_full, MSG(""))                              \
     f(FINDCONNECTION_DENY, find_connection_deny, PARAM())                      \
     f(FINDCONNECTION_NOTIFY, find_connection_notify, PARAM())                  \
     f(FINDPATTERN_NOTIFY, find_pattern_notify, PARAM())                        \

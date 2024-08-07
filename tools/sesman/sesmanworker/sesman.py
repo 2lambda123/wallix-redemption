@@ -2395,12 +2395,7 @@ class Sesman():
         elif reason == 'OPEN_SESSION_FAILED':
             pass
         elif reason == 'FILESYSTEM_FULL':
-            data = message.split('|')
-            used = data[0]
-            filesystem = data[1]
-
-            self.engine.NotifyFilesystemIsFullOrUsedAtXPercent(filesystem,
-                                                               used)
+            self.engine.NotifyFilesystemIsFullOrUsedAtXPercent('unknown', 100)
         elif (reason == 'FINDCONNECTION_DENY'
               or reason == 'FINDCONNECTION_NOTIFY'):
             pattern = message.split('|')
