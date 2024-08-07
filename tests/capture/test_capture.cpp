@@ -656,7 +656,7 @@ RED_AUTO_TEST_CASE(TestResizingCapture1)
     RED_CHECK_WORKSPACE(record_wd);
 }
 
-RED_AUTO_TEST_CASE(TestPattern)
+RED_AUTO_TEST_CASE(TestPatternOcr)
 {
     force_paris_timezone();
     CapturePattern cap_pattern{
@@ -665,28 +665,46 @@ RED_AUTO_TEST_CASE(TestPattern)
         ".de."_av
     };
 
-    for (int i = 0; i < 2; ++i) {
+    // notify
+    {
         SessionLogTest report_message;
-        Capture::PatternsChecker checker(
-            report_message, {&cap_pattern, i ? 1u : 0u}, {&cap_pattern, i ? 0u : 1u});
-
-        auto const logid = i ? "KILL_PATTERN_DETECTED"_av : "NOTIFY_PATTERN_DETECTED"_av;
-        auto const reason = i ? "FINDPATTERN_KILL"_av : "FINDPATTERN_NOTIFY"_av;
-        auto mk_msg = [=](chars_view msg){
-            return str_concat(
-                logid, " pattern=\""_av, msg, "\"\n",
-                reason, ": "_av, msg, '\n'
-            );
-        };
+        Capture::PatternsChecker checker(report_message, {}, {&cap_pattern, 1u});
 
         checker.title_changed("Gestionnaire"_av);
         RED_CHECK(report_message.events() == ""_av);
 
         checker.title_changed("Gestionnaire de serveur"_av);
-        RED_CHECK(report_message.events() == mk_msg("$ocr:.de.|Gestionnaire de serveur"_av));
+        RED_CHECK(report_message.events() ==
+            "NOTIFY_PATTERN_DETECTED pattern=\"$ocr:.de.\" data=\"Gestionnaire de serveur\"\n"
+            "FINDPATTERN_NOTIFY: $ocr:.de.\x02""Gestionnaire de serveur\n"
+            ""_av);
 
         checker.title_changed("Gestionnaire de licences TS"_av);
-        RED_CHECK(report_message.events() == mk_msg("$ocr:.de.|Gestionnaire de licences TS"_av));
+        RED_CHECK(report_message.events() ==
+            "NOTIFY_PATTERN_DETECTED pattern=\"$ocr:.de.\" data=\"Gestionnaire de licences TS\"\n"
+            "FINDPATTERN_NOTIFY: $ocr:.de.\x02""Gestionnaire de licences TS\n"
+            ""_av);
+    }
+
+    // kill
+    {
+        SessionLogTest report_message;
+        Capture::PatternsChecker checker(report_message, {&cap_pattern, 1u}, {});
+
+        checker.title_changed("Gestionnaire"_av);
+        RED_CHECK(report_message.events() == ""_av);
+
+        checker.title_changed("Gestionnaire de serveur"_av);
+        RED_CHECK(report_message.events() ==
+            "KILL_PATTERN_DETECTED pattern=\"$ocr:.de.\" data=\"Gestionnaire de serveur\"\n"
+            "FINDPATTERN_KILL: $ocr:.de.\x02""Gestionnaire de serveur\n"
+            ""_av);
+
+        checker.title_changed("Gestionnaire de licences TS"_av);
+        RED_CHECK(report_message.events() ==
+            "KILL_PATTERN_DETECTED pattern=\"$ocr:.de.\" data=\"Gestionnaire de licences TS\"\n"
+            "FINDPATTERN_KILL: $ocr:.de.\x02""Gestionnaire de licences TS\n"
+            ""_av);
     }
 }
 
@@ -2329,14 +2347,14 @@ RED_AUTO_TEST_CASE(TestKbdCapturePatternNotify)
 
     RED_CHECK(pattern_count == 4);
     RED_CHECK(report_message.events() ==
-        "KILL_PATTERN_DETECTED pattern=\"$kbd:abcd|abcd\"\n"
-        "FINDPATTERN_KILL: $kbd:abcd|abcd\n"
-        "KILL_PATTERN_DETECTED pattern=\"$kbd:abcd|abcd\"\n"
-        "FINDPATTERN_KILL: $kbd:abcd|abcd\n"
-        "KILL_PATTERN_DETECTED pattern=\"$kbd:abcd|abcd\"\n"
-        "FINDPATTERN_KILL: $kbd:abcd|abcd\n"
-        "KILL_PATTERN_DETECTED pattern=\"$kbd:abcd|abcd\"\n"
-        "FINDPATTERN_KILL: $kbd:abcd|abcd\n"
+        "KILL_PATTERN_DETECTED pattern=\"$kbd:abcd\" data=\"abcd\"\n"
+        "FINDPATTERN_KILL: $kbd:abcd\x02""abcd\n"
+        "KILL_PATTERN_DETECTED pattern=\"$kbd:abcd\" data=\"abcd\"\n"
+        "FINDPATTERN_KILL: $kbd:abcd\x02""abcd\n"
+        "KILL_PATTERN_DETECTED pattern=\"$kbd:abcd\" data=\"abcd\"\n"
+        "FINDPATTERN_KILL: $kbd:abcd\x02""abcd\n"
+        "KILL_PATTERN_DETECTED pattern=\"$kbd:abcd\" data=\"abcd\"\n"
+        "FINDPATTERN_KILL: $kbd:abcd\x02""abcd\n"
         ""_av
     );
 }
@@ -2363,8 +2381,8 @@ RED_AUTO_TEST_CASE(TestKbdCapturePatternKill)
     }
     RED_CHECK_EQUAL(1, pattern_count);
     RED_CHECK(report_message.events() ==
-        "KILL_PATTERN_DETECTED pattern=\"$kbd:ab/cd|ab/cd\"\n"
-        "FINDPATTERN_KILL: $kbd:ab/cd|ab/cd\n"
+        "KILL_PATTERN_DETECTED pattern=\"$kbd:ab/cd\" data=\"ab/cd\"\n"
+        "FINDPATTERN_KILL: $kbd:ab/cd\x02""ab/cd\n"
         ""_av);
 }
 

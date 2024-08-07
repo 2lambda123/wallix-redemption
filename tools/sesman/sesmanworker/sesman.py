@@ -2260,9 +2260,8 @@ class Sesman():
             self.engine.set_session_status(result=False, diag=release_reason)
         elif (reason == 'FINDPATTERN_KILL'
               or reason == 'FINDPATTERN_NOTIFY'):
-            pattern = message.split('|')
-            regexp = pattern[0]
-            string = pattern[1]
+            # do not use split(), message may be truncated and not contain string
+            (regexp, _, string) = message.partition('\x02')
             self.engine.NotifyFindPatternInRDPFlow(
                 regexp, string, self.shared.get('login'),
                 self.shared.get('target_login'),

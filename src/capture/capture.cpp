@@ -48,7 +48,6 @@
 #include "utils/tm_to_chars.hpp"
 #include "utils/ascii.hpp"
 #include "utils/out_param.hpp"
-#include "utils/snprintf_av.hpp"
 
 #include "transport/file_transport.hpp"
 #include "transport/out_filename_sequence_transport.hpp"
@@ -196,22 +195,45 @@ struct FilesystemFullReporter
 };
 
 void report_pattern(
-    char const* type, SessionLogApi& session_log,
+    chars_view type, SessionLogApi& session_log,
     PatternSearcher::PatternFound found, chars_view data)
 {
-    SNPrintf<4096> message(
-        "$%s:%.*s|%.*s",
-        type,
-        static_cast<int>(found.pattern.size()), found.pattern.data(),
-        static_cast<int>(data.size()), data.data()
-    );
+    constexpr std::ptrdiff_t buf_len = 4096;
+    char buf[4096];
+    char* p = buf;
+
+    auto push_str = [&](chars_view s) {
+        auto remaining = static_cast<std::size_t>(buf + buf_len - p);
+        auto n = std::min(remaining, s.size());
+        memcpy(p, s.data(), n);
+        p += n;
+    };
+
+    auto push_ch = [&](char c) {
+        if (buf + buf_len != p) {
+            *p++ = c;
+        }
+    };
+
+    // "${type}:{pattern}"
+    push_ch('$');
+    push_str(type);
+    push_ch(':');
+    push_str(found.pattern);
 
     session_log.log6(
-        found.is_pattern_kill ? LogId::KILL_PATTERN_DETECTED : LogId::NOTIFY_PATTERN_DETECTED,
-        {KVLog("pattern"_av, message)});
+        found.is_pattern_kill ? LogId::KILL_PATTERN_DETECTED : LogId::NOTIFY_PATTERN_DETECTED, {
+            KVLog("pattern"_av, chars_view(buf, p)),
+            KVLog("data"_av, data),
+        });
+
+    // push "\x02{data}"
+    push_ch('\x02');
+    push_str(data);
+
     session_log.acl_report(found.is_pattern_kill
-        ? AclReport::find_pattern_kill(message)
-        : AclReport::find_pattern_notify(message));
+        ? AclReport::find_pattern_kill(chars_view(buf, p))
+        : AclReport::find_pattern_notify(chars_view(buf, p)));
 }
 
 class Utf8KbdBuffer
@@ -289,7 +311,7 @@ public:
                             can_be_sent_to_server = false;
                         }
                         auto text = utf8_kbd_buffer.get(result.match_len);
-                        report_pattern("kbd", session_log, result, text);
+                        report_pattern("kbd"_av, session_log, result, text);
                     }
                 }
             },
@@ -437,7 +459,7 @@ public:
     {
         assert(str.data() && not str.empty());
         for (auto result : patterns.scan(str)) {
-            report_pattern("ocr", session_log, result, str);
+            report_pattern("ocr"_av, session_log, result, str);
         }
     }
 };
