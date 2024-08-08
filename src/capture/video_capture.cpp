@@ -86,6 +86,10 @@ VideoCaptureCtx::VideoCropper::VideoCropper(Drawable& drawable, Rect crop_rect)
 
 void VideoCaptureCtx::VideoCropper::set_cropping(Rect cropping) noexcept
 {
+    if (this->is_fullscreen) {
+        return ;
+    }
+
     assert(cropping.cx <= original_dimension.w);
     assert(cropping.cy <= original_dimension.h);
 
