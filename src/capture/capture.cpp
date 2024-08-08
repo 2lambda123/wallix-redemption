@@ -1087,7 +1087,7 @@ public:
         int const file_mode = S_IRUSR | S_IRGRP;
         int fd = ::open(filename, O_CREAT | O_TRUNC | O_WRONLY, file_mode);
         // umask (man umask) can change effective mode of created file
-        if ((fd < 0) || (chmod(filename, file_mode) == -1)) {
+        if (fd < 0 || chmod(filename, capture_params.file_permissions.permissions_as_uint()) == -1) {
             int const errnum = errno;
             if (fd < 0) {
                 LOG(LOG_ERR, "can't open meta file %s: %s [%d]", filename, strerror(errnum), errnum);
