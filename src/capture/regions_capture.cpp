@@ -165,7 +165,7 @@ RegionsCapture RegionsCapture::compute_regions(
         RailScreenComputation rail_computation(
             reader.get_wrm_info().width,
             reader.get_wrm_info().height,
-            true);
+            bool(verbose & FileToGraphicVerbose::rdp_orders));
 
         ret.rail_window_rect_start = reader.rail_wrm_window_rect;
         rail_computation.visibility_rect_event(reader.rail_wrm_window_rect);
