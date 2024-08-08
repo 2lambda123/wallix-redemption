@@ -1499,7 +1499,7 @@ ClRes parse_command_line_options(int argc, char const ** argv, RecorderParams & 
             .parser(cli::arg_location(recorder.config_filename)).argname("<path>"),
 
         cli::option('a', "video-break-interval")
-            .help("number of seconds between splitting video files (by default, one video every 10 minutes)")
+            .help("number of seconds between splitting video files (by default, the configuration value in [audit] video_break_interval or 1 week)")
             .parser(cli::arg_location(video_break_interval)),
 
         cli::option('D', "video-codec-options")
