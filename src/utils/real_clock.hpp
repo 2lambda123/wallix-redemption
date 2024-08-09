@@ -22,4 +22,5 @@ Author(s): Proxy Team
 
 #include <chrono>
 
-using RealTimePoint = std::chrono::system_clock::time_point;
+using RealClock = std::chrono::system_clock;
+using RealTimePoint = RealClock::time_point;

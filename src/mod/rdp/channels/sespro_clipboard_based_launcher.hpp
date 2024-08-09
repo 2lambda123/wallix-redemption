@@ -162,7 +162,7 @@ private:
 
     unsigned int copy_paste_loop_counter = 0;
 
-    time_t delay_end_time = 0;
+    MonotonicClock::duration delay_end_time;
     bool   delay_executed = false;
     bool   delay_format_list_received = false;
     bool   delay_wainting_clipboard_response = false;

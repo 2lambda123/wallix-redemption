@@ -1470,8 +1470,6 @@ private:
                         return std::find(ip.begin(), ip.end(), ':') == ip.end();
                     };
 
-                    auto const shadow_id = str_concat(int_to_decimal_chars(time(nullptr)), "*", parameters[3]);
-
                     std::size_t const max_arity                 = 16;
                     std::size_t       item_count                = 0;
                     int               best_adress_port_index    = -1;
@@ -1544,6 +1542,9 @@ private:
                                     "Use default Shadow address/port: (%.*s):%u",
                                 static_cast<int>(shadow_addr.size()), shadow_addr.data(), shadow_port);
                         }
+
+                        const auto now = RealClock::to_time_t(events_guard.get_time_base().real_time);
+                        auto const shadow_id = str_concat(int_to_decimal_chars(now), '*', parameters[3]);
 
                         this->set_rd_shadow_invitation(shadow_errcode, shadow_errmsg, shadow_userdata, shadow_id, shadow_addr, shadow_port);
                     }

@@ -561,6 +561,11 @@ struct EventsGuard : private noncopyable
         return this->events.get_monotonic_time();
     }
 
+    [[nodiscard]] MonotonicClock::duration get_monotonic_time_since_epoch() const noexcept
+    {
+        return get_monotonic_time().time_since_epoch();
+    }
+
     template<class TimeoutAction>
     Event& create_event_timeout(
         std::string_view name,

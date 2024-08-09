@@ -22,4 +22,5 @@ Author(s): Proxy Team
 
 #include <chrono>
 
-using MonotonicTimePoint = std::chrono::steady_clock::time_point;
+using MonotonicClock = std::chrono::steady_clock;
+using MonotonicTimePoint = MonotonicClock::time_point;

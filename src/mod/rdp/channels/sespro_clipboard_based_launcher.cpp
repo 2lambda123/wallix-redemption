@@ -421,7 +421,7 @@ void SessionProbeClipboardBasedLauncher::make_delay_sequencer()
                     this->get_long_delay_timeout());
 
             case Wait:
-                if (time(nullptr) < this->delay_end_time){
+                if (events_guard.get_monotonic_time_since_epoch() < this->delay_end_time){
                     this->delay_coefficient += 0.5f;
                     set_state(Windows_down);
                 }
@@ -617,8 +617,8 @@ bool SessionProbeClipboardBasedLauncher::on_server_format_list_response()
 
             make_delay_sequencer();
 
-            time_t const now = time(nullptr);
-            this->delay_end_time = (now + (this->params.start_delay_ms.count() + 999) / 1000);
+            auto const now = events_guard.get_monotonic_time_since_epoch();
+            this->delay_end_time = now + this->params.start_delay_ms;
 
             this->delay_executed = true;
         }
