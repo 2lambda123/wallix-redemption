@@ -122,6 +122,11 @@ public:
         return this->creator.time_base.monotonic_time;
     }
 
+    [[nodiscard]] MonotonicClock::duration get_monotonic_time_since_epoch() const noexcept
+    {
+        return this->creator.time_base.monotonic_time.time_since_epoch();
+    }
+
     void end_of_lifespan(void const* lifespan)
     {
         for (auto* pevent: this->creator.queue){
@@ -563,7 +568,7 @@ struct EventsGuard : private noncopyable
 
     [[nodiscard]] MonotonicClock::duration get_monotonic_time_since_epoch() const noexcept
     {
-        return get_monotonic_time().time_since_epoch();
+        return this->events.get_monotonic_time_since_epoch();
     }
 
     template<class TimeoutAction>

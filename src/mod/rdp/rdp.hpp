@@ -2002,7 +2002,7 @@ public:
         , session_log(session_log)
         , bogus_refresh_rect(mod_rdp_params.bogus_refresh_rect)
         , lang(mod_rdp_params.lang)
-        , session_time_start(events.get_monotonic_time().time_since_epoch())
+        , session_time_start(events.get_monotonic_time_since_epoch())
         , replace_null_pointer_by_default_pointer(mod_rdp_params.replace_null_pointer_by_default_pointer)
         , large_pointer_support(mod_rdp_params.large_pointer_support)
         , multifragment_update_buffer(std::make_unique<uint8_t[]>(65536))
@@ -6053,7 +6053,7 @@ private:
     void log_disconnection(bool enable_verbose)
     {
         if (this->session_time_start.count()) {
-            auto delay = this->events_guard.get_monotonic_time().time_since_epoch()
+            auto delay = this->events_guard.get_monotonic_time_since_epoch()
                         - this->session_time_start;
             long seconds = std::chrono::duration_cast<std::chrono::seconds>(delay).count();
             this->session_time_start = MonotonicTimePoint::duration(0);

@@ -5439,7 +5439,7 @@ public:
         this->sharing_ctx.guest = &guest_front;
         this->sharing_ctx.guest->sharing_ctx.session_log = &session_log;
         this->sharing_ctx.session_log = &session_log;
-        this->sharing_ctx.session_time_start = this->events_guard.get_monotonic_time().time_since_epoch();
+        this->sharing_ctx.session_time_start = this->events_guard.get_monotonic_time_since_epoch();
         guest_front.orders.graphics_update_pdu().GraphicsUpdatePDU
             ::cached_pointer(PredefinedPointer::SlashedCircle);
         guest_front.sharing_ctx.disable_input();
@@ -5466,7 +5466,7 @@ public:
         this->sharing_ctx.is_sharing_mode = false;
         guest_front.sharing_ctx.is_sharing_mode = false;
 
-        auto delay = this->events_guard.get_monotonic_time().time_since_epoch()
+        auto delay = this->events_guard.get_monotonic_time_since_epoch()
                    - this->sharing_ctx.session_time_start;
         long seconds = std::chrono::duration_cast<std::chrono::seconds>(delay).count();
 

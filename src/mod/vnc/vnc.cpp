@@ -107,7 +107,7 @@ mod_vnc::mod_vnc( Transport & t
     , encodings(encodings)
     , clipboard_server_encoding_type(clipboard_server_encoding_type)
     , bogus_clipboard_infinite_loop(bogus_clipboard_infinite_loop)
-    , session_time_start(events.get_monotonic_time().time_since_epoch())
+    , session_time_start(events.get_monotonic_time_since_epoch())
     , rail_client_execute(rail_client_execute)
     , rand(rand)
     , gd(gd)
@@ -2110,7 +2110,7 @@ void mod_vnc::rdp_gdi_up_and_running()
 
 void mod_vnc::disconnect()
 {
-    auto delay = this->events_guard.get_monotonic_time().time_since_epoch()
+    auto delay = this->events_guard.get_monotonic_time_since_epoch()
                 - this->session_time_start;
     long seconds = std::chrono::duration_cast<std::chrono::seconds>(delay).count();
 
