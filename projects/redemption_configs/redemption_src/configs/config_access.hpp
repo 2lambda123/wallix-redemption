@@ -135,11 +135,25 @@ public:
         return this->ini.template set<T>(static_cast<U&&>(new_value));
     }
 
+    template<class T, class F>
+    void update(F&& f)
+    {
+        static_assert(detail::has_vcfg_access<T>(Pack(), accessmode::set), "T isn't settable");
+        return this->ini.template update<T>(static_cast<F&&>(f));
+    }
+
     template<class T, class U>
     void set_acl(U && new_value)
     {
         static_assert(detail::has_vcfg_access<T>(Pack(), accessmode::set), "T isn't settable");
         return this->ini.template set_acl<T>(static_cast<U&&>(new_value));
+    }
+
+    template<class T, class F>
+    void update_acl(F&& f)
+    {
+        static_assert(detail::has_vcfg_access<T>(Pack(), accessmode::set), "T isn't settable");
+        return this->ini.template update_acl<T>(static_cast<F&&>(f));
     }
 
     template<class T>

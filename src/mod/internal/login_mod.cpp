@@ -46,12 +46,12 @@ namespace
         return std::make_pair(std::string_view(), text);
     }
 
-    inline std::string
-    concat_target_login(chars_view login, std::string_view target)
+    inline void
+    update_target_login(std::string& auth_user, chars_view login, std::string_view target)
     {
         size_t sep_pos = target.find_last_of("+:");
         char sep = (sep_pos != std::string::npos) ? target[sep_pos] : ':';
-        return str_concat(target, sep, login);
+        str_assign(auth_user, target, sep, login);
     }
 } // anonymous namespace
 
@@ -90,9 +90,9 @@ LoginMod::LoginMod(
                         this->vars.set_acl<cfg::globals::auth_user>(login);
                     }
                     else {
-                        this->vars.set_acl<cfg::globals::auth_user>(
-                            concat_target_login(login, target.to_sv())
-                        );
+                        this->vars.update_acl<cfg::globals::auth_user>([&](std::string& auth_user) {
+                            update_target_login(auth_user, login, target.to_sv());
+                        });
                     }
                     this->vars.ask<cfg::context::selector>();
                     this->vars.ask<cfg::globals::target_user>();
