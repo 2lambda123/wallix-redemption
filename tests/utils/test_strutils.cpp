@@ -137,38 +137,24 @@ RED_AUTO_TEST_CASE(TestTrim)
     RED_CHECK_EQUAL(trim(av), "abcd"_av);
 }
 
-RED_AUTO_TEST_CASE(Test_str_replace_inplace_between_pattern)
+RED_AUTO_TEST_CASE(Test_StrReplaceBetweenPattern)
 {
-    using Replacement = std::string_view;
+    using utils::StrReplaceBetweenPattern;
 
-    auto replace_substr_on_tag = [](
-        char pattern,
-        std::string_view replacement,
-        std::string str
-    ){
-        utils::str_replace_inplace_between_pattern(str, pattern, replacement);
-        return str;
-    };
-
-    RED_CHECK(replace_substr_on_tag('+', Replacement("*****"),
-        "") ==
-        ""_av);
-    RED_CHECK(replace_substr_on_tag('+', Replacement("*****"),
-        "abc") ==
-        "abc"_av);
-    RED_CHECK(replace_substr_on_tag('+', Replacement("*****"),
-        "ab+c") ==
-        "ab+c"_av);
-    RED_CHECK(replace_substr_on_tag('+', Replacement("********"),
-        "AAAAA $$$$$$+}BBBBB$$$$$$$$+} CCCCC DDDDD") ==
-        "AAAAA $$$$$$********} CCCCC DDDDD"_av);
-    RED_CHECK(replace_substr_on_tag('+', Replacement("********"),
-        "+1++2+++") ==
-        "************************"_av);
-    RED_CHECK(replace_substr_on_tag('+', Replacement("********"),
-        "+{TAG_B}+") ==
-        "********"_av);
-    RED_CHECK(replace_substr_on_tag('+', Replacement(),
-        " +abcdef+ ") ==
-        "  "_av);
+    RED_CHECK(StrReplaceBetweenPattern(""_av, '+', "*****"_av).temporary_chars()
+                                    == ""_av);
+    RED_CHECK(StrReplaceBetweenPattern("abc"_av, '+', "*****"_av).temporary_chars()
+                                    == "abc"_av);
+    RED_CHECK(StrReplaceBetweenPattern("ab+c"_av, '+', "*****"_av).temporary_chars()
+                                    == "ab+c"_av);
+    RED_CHECK(StrReplaceBetweenPattern("AAAAA $$$$$$+}BBBBB$$$$$$$$+} CCCCC DDDDD"_av, '+', "********"_av).temporary_chars()
+                                    == "AAAAA $$$$$$********} CCCCC DDDDD"_av);
+    RED_CHECK(StrReplaceBetweenPattern("+1++2+++"_av, '+', "********"_av).temporary_chars()
+                                    == "************************"_av);
+    RED_CHECK(StrReplaceBetweenPattern("+{TAG_B}+"_av, '+', "********"_av).temporary_chars()
+                                    == "********"_av);
+    RED_CHECK(StrReplaceBetweenPattern(" +abcdef+ "_av, '+', ""_av).temporary_chars()
+                                    == "  "_av);
+    RED_CHECK(StrReplaceBetweenPattern("ab+cd+ef+gh"_av, '+', "***"_av).temporary_chars()
+                                    == "ab***ef+gh"_av);
 }

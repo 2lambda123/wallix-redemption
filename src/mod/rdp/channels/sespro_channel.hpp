@@ -1203,18 +1203,16 @@ private:
               || upper_order == "STARTUP_APPLICATION_FAIL_TO_RUN_2"_ascii_upper
         ) {
             if (parameters.size() == 2 || parameters.size() == 3) {
-                std::string transformed_app_name(parameters[0]);
-
-                utils::str_replace_inplace_between_pattern(transformed_app_name,
-                                                           TAG_HIDE,
-                                                           REPLACEMENT_HIDE);
+                auto transformed_app_name = utils::StrReplaceBetweenPattern(
+                    parameters[0], TAG_HIDE, REPLACEMENT_HIDE
+                );
 
                 auto result_message = ""_av;
 
                 if (parameters.size() == 3) {
                     this->log6(
                         LogId::STARTUP_APPLICATION_FAIL_TO_RUN, {
-                        KVLog("app_name"_av,   transformed_app_name),
+                        KVLog("app_name"_av,   transformed_app_name.chars()),
                         KVLog("raw_result"_av,         parameters[1]),
                         KVLog("raw_result_message"_av, parameters[2]),
                     });
@@ -1223,7 +1221,7 @@ private:
                 else
                 {
                     this->log6(LogId::STARTUP_APPLICATION_FAIL_TO_RUN, {
-                        KVLog("app_name"_av, transformed_app_name),
+                        KVLog("app_name"_av, transformed_app_name.chars()),
                         KVLog("raw_result"_av, parameters[1]),
                     });
                 }

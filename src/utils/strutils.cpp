@@ -73,27 +73,58 @@ void str_replace_inplace(std::string& str, chars_view pattern, chars_view replac
     }
 }
 
-void str_replace_inplace_between_pattern(std::string& str,
-                                         char pattern,
-                                         chars_view replacement)
+StrReplaceBetweenPattern::StrReplaceBetweenPattern(
+    chars_view str, char pattern, chars_view replacement)
 {
-    auto it = str.begin();
+    char const* p1 = memchr(str, pattern);
+    if (!p1) {
+        storage_view = str.data();
+        storage_len = str.size();
+        return ;
+    }
 
+    char const* p2 = memchr(str.after(p1), pattern);
+    if (!p2) {
+        storage_view = str.data();
+        storage_len = str.size();
+        return ;
+    }
+
+    // compute final string len
+    storage_len = str.size() - static_cast<std::size_t>(p2 - p1) - 1;
+    char const* last_p = p2;
     for (;;) {
-        auto open_it = std::find(it, str.end(), pattern);
-        if (open_it != str.end()) {
-            auto close_it = std::find(open_it+1, str.end(), pattern);
-            if (close_it != str.end()) {
-                ++close_it;
-                auto i = open_it - str.begin();
-                i += std::ptrdiff_t(replacement.size());
-                str.replace(open_it, close_it, replacement.begin(), replacement.end());
-                it = str.begin() + i;
+        storage_len += replacement.size();
+        if (char const* a = memchr(str.after(last_p), pattern)) {
+            if (char const* b = memchr(str.after(a), pattern)) {
+                last_p = b;
+                storage_len -= static_cast<std::size_t>(b - a + 1);
                 continue;
             }
         }
         break;
     }
+
+    // ini buffer
+    storage_owned = static_cast<char*>(operator new(storage_len));
+    storage_view = storage_owned;
+    char* dest = storage_owned;
+    auto push = [&dest](chars_view s){
+        memcpy(dest, s.data(), s.size());
+        dest += s.size();
+    };
+    for (;;) {
+        push(str.before(p1));
+        push(replacement);
+        str = str.after(p2);
+        if (last_p == p2) {
+            break;
+        }
+
+        p1 = memchr(str, pattern);
+        p2 = memchr(str.after(p1), pattern);
+    }
+    push(str);
 }
 
 } // namespace utils

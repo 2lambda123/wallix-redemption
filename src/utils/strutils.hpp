@@ -42,6 +42,16 @@ template<class... Strings>
 void str_assign(std::string& str, Strings const&... strs);
 
 
+inline char const* memchr(chars_view str, char pattern) noexcept
+{
+    return static_cast<char const*>(std::memchr(str.data(), pattern, str.size()));
+}
+
+inline char* memchr(writable_chars_view str, char pattern) noexcept
+{
+    return static_cast<char*>(std::memchr(str.data(), pattern, str.size()));
+}
+
 namespace utils
 {
 
@@ -117,9 +127,28 @@ void str_replace_inplace(std::string& str,
                          chars_view pattern,
                          chars_view replacement);
 
-void str_replace_inplace_between_pattern(std::string& str,
-                                         char pattern,
-                                         chars_view replacement);
+struct StrReplaceBetweenPattern
+{
+    StrReplaceBetweenPattern(StrReplaceBetweenPattern&&) = delete;
+    StrReplaceBetweenPattern& operator=(StrReplaceBetweenPattern const&) = delete;
+
+    StrReplaceBetweenPattern(chars_view str, char pattern, chars_view replacement);
+
+    ~StrReplaceBetweenPattern()
+    {
+        operator delete(storage_owned);
+    }
+
+    chars_view temporary_chars() const&& noexcept { return {storage_view, storage_len}; }
+    chars_view temporary_chars() && noexcept { return {storage_view, storage_len}; }
+    chars_view chars() const& noexcept { return {storage_view, storage_len}; }
+    chars_view chars() & noexcept { return {storage_view, storage_len}; }
+
+private:
+    char* storage_owned = nullptr;
+    char const* storage_view;
+    std::size_t storage_len;
+};
 //@}
 
 } // namespace utils

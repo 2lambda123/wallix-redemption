@@ -175,6 +175,30 @@ struct array_view
     }
 
     [[nodiscard]]
+    constexpr array_view from_offset(const_pointer p) const noexcept
+    {
+        assert(begin() <= p);
+        assert(p <= end());
+        return {p, end()};
+    }
+
+    [[nodiscard]]
+    constexpr array_view before(const_pointer p) const noexcept
+    {
+        assert(begin() <= p);
+        assert(p <= end());
+        return {begin(), p};
+    }
+
+    [[nodiscard]]
+    constexpr array_view after(const_pointer p) const noexcept
+    {
+        assert(begin() <= p);
+        assert(p < end());
+        return {p + 1, end()};
+    }
+
+    [[nodiscard]]
     constexpr array_view subarray(size_type offset, size_type count) const noexcept
     {
         assert(offset <= this->size() && count <= this->size() - offset);
@@ -334,6 +358,30 @@ struct writable_array_view
     }
 
     [[nodiscard]]
+    constexpr writable_array_view from_offset(pointer p) noexcept
+    {
+        assert(begin() <= p);
+        assert(p <= end());
+        return writable_array_view{p, end()};
+    }
+
+    [[nodiscard]]
+    constexpr writable_array_view before(pointer p) noexcept
+    {
+        assert(begin() <= p);
+        assert(p <= end());
+        return writable_array_view{begin(), p};
+    }
+
+    [[nodiscard]]
+    constexpr writable_array_view after(pointer p) noexcept
+    {
+        assert(begin() <= p);
+        assert(p < end());
+        return writable_array_view{p + 1, end()};
+    }
+
+    [[nodiscard]]
     constexpr writable_array_view subarray(size_type offset, size_type count) noexcept
     {
         assert(offset <= this->size() && count <= this->size() - offset);
@@ -345,6 +393,30 @@ struct writable_array_view
     {
         assert(offset <= this->size());
         return {this->data() + offset, this->size() - offset};
+    }
+
+    [[nodiscard]]
+    constexpr array_view<value_type> from_offset(const_pointer p) const noexcept
+    {
+        assert(begin() <= p);
+        assert(p <= end());
+        return {p, end()};
+    }
+
+    [[nodiscard]]
+    constexpr array_view<value_type> before(const_pointer p) const noexcept
+    {
+        assert(begin() <= p);
+        assert(p <= end());
+        return {begin(), p};
+    }
+
+    [[nodiscard]]
+    constexpr array_view<value_type> after(const_pointer p) const noexcept
+    {
+        assert(begin() <= p);
+        assert(p < end());
+        return {p + 1, end()};
     }
 
     [[nodiscard]]
