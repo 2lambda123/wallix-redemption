@@ -1294,12 +1294,16 @@ Capture::Capture(
                 return;
             }
             for (auto pattern : get_lines(patterns, capture_pattern_separator)) {
-                LOG_IF(pattern_params.verbose, LOG_INFO, "filter=\"%.*s\"",
+                LOG_IF(pattern_params.verbose, LOG_INFO, "pattern filter: \"%.*s\"",
                     static_cast<int>(pattern.size()), pattern.data());
 
                 CapturePattern const cap_pattern = parse_capture_pattern(pattern);
-                if (not cap_pattern.pattern().empty()) {
+                if (!cap_pattern.pattern().empty()) {
                     cap_patterns.push_back(cap_pattern);
+                }
+                else if (!pattern.empty()) {
+                    LOG(LOG_ERR, "invalid pattern filter (will be ignored): \"%.*s\"",
+                        static_cast<int>(pattern.size()), pattern.data());
                 }
             }
         };
