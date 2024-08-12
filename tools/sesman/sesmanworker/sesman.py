@@ -2254,7 +2254,7 @@ class Sesman():
             self.reporting_reason = reason
             self.reporting_target = target
 
-            release_reason = 'Connection failed'
+            release_reason = f'Connection failed: {message}'
             self.engine.set_session_status(result=False, diag=release_reason)
         elif (reason == 'FINDPATTERN_KILL'
               or reason == 'FINDPATTERN_NOTIFY'):
@@ -2342,6 +2342,8 @@ class Sesman():
                 'to run startup application'
             )
             release_reason = 'Interrupt: Session Probe failed to run startup application'
+            if message:
+                release_reason = f'{release_reason}: {message}'
             self.engine.set_session_status(result=False, diag=release_reason)
             self.send_data({
                 'disconnect_reason':
@@ -2381,6 +2383,7 @@ class Sesman():
         elif reason == 'CLOSE_SESSION_SUCCESSFUL':
             pass
         elif reason == 'OPEN_SESSION_FAILED':
+            # ignore message (do not emit errors with lua-checker.lua acl_report)
             pass
         elif reason == 'FILESYSTEM_FULL':
             self.engine.NotifyFilesystemIsFullOrUsedAtXPercent('unknown', 100)
