@@ -396,7 +396,6 @@ namespace cfg
         struct auth_command_rail_exec_arguments;
         struct auth_command_rail_exec_account;
         struct auth_command_rail_exec_password;
-        struct session_probe_launch_error_message;
         struct close_box_extra_message;
         struct is_wabam;
         struct pm_response;

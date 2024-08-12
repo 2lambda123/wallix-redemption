@@ -346,7 +346,6 @@ template<> struct acl_and_spec_type<cfg::context::auth_command_rail_exec_working
 template<> struct acl_and_spec_type<cfg::context::auth_command_rail_exec_arguments> { using type = std::string; };
 template<> struct acl_and_spec_type<cfg::context::auth_command_rail_exec_account> { using type = std::string; };
 template<> struct acl_and_spec_type<cfg::context::auth_command_rail_exec_password> { using type = std::string; };
-template<> struct acl_and_spec_type<cfg::context::session_probe_launch_error_message> { using type = std::string; };
 template<> struct acl_and_spec_type<cfg::context::is_wabam> { using type = bool; };
 template<> struct acl_and_spec_type<cfg::context::pm_response> { using type = std::string; };
 template<> struct acl_and_spec_type<cfg::context::pm_request> { using type = std::string; };

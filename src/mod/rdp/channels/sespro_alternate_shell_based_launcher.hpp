@@ -116,9 +116,7 @@ public:
         this->sespro_channel = channel;
     }
 
-    void stop(bool bLaunchSuccessful, error_type& id_ref) override {
-        id_ref = NO_ERROR;
-
+    LauchFailureInfo stop(bool bLaunchSuccessful) override {
         LOG_IF(bool(this->verbose & RDPVerbose::sesprobe_launcher), LOG_INFO,
             "SessionProbeAlternateShellBasedLauncher :=> stop");
 
@@ -128,32 +126,34 @@ public:
             if (this->rail_channel) {
                 this->rail_channel->confirm_session_probe_launch();
             }
+            return LauchFailureInfo{};
         }
-        else {
-            if (!this->drive_redirection_initialized) {
-                LOG(LOG_ERR,
-                    "SessionProbeAlternateShellBasedLauncher :=> "
-                        "File System Virtual Channel is unavailable. "
-                        "Please allow the drive redirection in the Remote Desktop Services settings of the target.");
-                id_ref = ERR_SESSION_PROBE_ASBL_FSVC_UNAVAILABLE;
+
+        // err_msg are translated in sesman
+        auto result
+            = !this->drive_redirection_initialized ? LauchFailureInfo{
+                ERR_SESSION_PROBE_ASBL_FSVC_UNAVAILABLE,
+                "Session Probe is not launched. "
+                "File System Virtual Channel is unavailable. "
+                "Please allow the drive redirection in the Remote Desktop Services settings of the target."
+                ""_zv
             }
-            else if (!this->image_readed) {
-                LOG(LOG_ERR,
-                    "SessionProbeAlternateShellBasedLauncher :=> "
-                        "Session Probe is not launched. "
-                        "Maybe something blocks it on the target. "
-                        "Is the target running under Microsoft Server products? "
-                        "The Command Prompt should be published as the RemoteApp program and accept any command-line parameters. "
-                        "Please also check the temporary directory to ensure there is enough free space.");
-                id_ref = ERR_SESSION_PROBE_ASBL_MAYBE_SOMETHING_BLOCKS;
+            : !this->image_readed ? LauchFailureInfo{
+                ERR_SESSION_PROBE_ASBL_MAYBE_SOMETHING_BLOCKS,
+                "Session Probe is not launched. "
+                "Maybe something blocks it on the target. "
+                "Is the target running under Microsoft Server products? "
+                "The Command Prompt should be published as the RemoteApp program and accept any command-line parameters. "
+                "Please also check the temporary directory to ensure there is enough free space."
+                ""_zv
             }
-            else {
-                LOG(LOG_ERR,
-                    "SessionProbeAlternateShellBasedLauncher :=> "
-                        "Session Probe launch has failed for unknown reason.");
-                id_ref = ERR_SESSION_PROBE_ASBL_UNKNOWN_REASON;
-            }
-        }
+            : LauchFailureInfo{
+                ERR_SESSION_PROBE_ASBL_UNKNOWN_REASON,
+                "Session Probe launch has failed for unknown reason."_zv
+            };
+
+        LOG(LOG_ERR, "SessionProbeAlternateShellBasedLauncher :=> %s", result.err_msg);
+        return result;
     }
 
     [[nodiscard]] bool is_keyboard_sequences_started() const override {

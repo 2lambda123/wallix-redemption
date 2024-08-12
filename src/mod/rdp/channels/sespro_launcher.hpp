@@ -22,6 +22,7 @@
 
 #include "core/error.hpp"
 #include "utils/sugar/noncopyable.hpp"
+#include "utils/sugar/zstring_view.hpp"
 
 #include <cstdint>
 
@@ -48,7 +49,15 @@ public:
     virtual void set_session_probe_virtual_channel(
         SessionProbeVirtualChannel* channel) = 0;
 
-    virtual void stop(bool bLaunchSuccessful, error_type& id_ref) = 0;
+    struct [[nodiscard]] LauchFailureInfo
+    {
+        error_type err_id;
+        zstring_view err_msg;
+    };
+
+    /// \return a default \c LauchFailureInfo when \p bLaunchSuccessful is true,
+    /// otherwise returns the reason for the error
+    virtual LauchFailureInfo stop(bool bLaunchSuccessful) = 0;
 
     [[nodiscard]] virtual bool is_keyboard_sequences_started() const = 0;
 

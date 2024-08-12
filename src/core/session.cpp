@@ -326,10 +326,6 @@ private:
 
     EndSessionResult end_session_exception(Error const& e, Inifile & ini, ModFactory const& mod_factory)
     {
-        if (e.id == ERR_RAIL_LOGON_FAILED_OR_WARNING){
-            ini.set_acl<cfg::context::session_probe_launch_error_message>(e.errmsg());
-        }
-
         if (e.id == ERR_SESSION_PROBE_LAUNCH
          || e.id == ERR_SESSION_PROBE_ASBL_FSVC_UNAVAILABLE
          || e.id == ERR_SESSION_PROBE_ASBL_MAYBE_SOMETHING_BLOCKS

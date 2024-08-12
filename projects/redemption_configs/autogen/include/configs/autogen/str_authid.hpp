@@ -228,7 +228,6 @@ namespace configs
         "auth_command_rail_exec_arguments"_zv,
         "auth_command_rail_exec_account"_zv,
         "auth_command_rail_exec_password"_zv,
-        "session_probe_launch_error_message"_zv,
         "is_wabam"_zv,
         "pm_response"_zv,
         "pm_request"_zv,

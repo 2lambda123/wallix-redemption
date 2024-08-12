@@ -292,8 +292,6 @@ class Sesman():
             'auth_notify': '',
 
             'login_language': MAGICASK,
-
-            'session_probe_launch_error_message': '',
         }
         self._changed_keys = []
 
@@ -2302,18 +2300,8 @@ class Sesman():
                 "RDP connection terminated. Reason: Session Probe "
                 "launch failed"
             )
-            release_reason = 'Interrupt: Session Probe launch failed'
+            release_reason = message or 'Interrupt: Session Probe launch failed'
             self.engine.set_session_status(result=False, diag=release_reason)
-            if self.shared.get('session_probe_launch_error_message'):
-                self.send_data({
-                    'disconnect_reason':
-                    self.shared.get('session_probe_launch_error_message')
-                })
-                self.shared['session_probe_launch_error_message'] = ''
-            else:
-                self.send_data({
-                    'disconnect_reason': TR(Sesmsg.SESPROBE_LAUNCH_FAILED)
-                })
         elif reason == 'SESSION_PROBE_KEEPALIVE_MISSED':
             Logger().info(
                 'RDP connection terminated. Reason: Session Probe '

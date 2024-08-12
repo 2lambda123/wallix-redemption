@@ -28,6 +28,7 @@ SPDX-License-Identifier: GPL-2.0-or-later
     f(SESSION_EXCEPTION, session_exception, PARAM())                           \
     f(SESSION_EXCEPTION_NO_RECORD, session_exception_no_record, PARAM())       \
     f(SESSION_PROBE_KEEPALIVE_MISSED, session_probe_keepalive_missed, MSG("")) \
+    f(SESSION_PROBE_LAUNCH_FAILED, session_probe_launch_failed, PARAM())       \
     f(SESSION_PROBE_OUTBOUND_CONNECTION_BLOCKING_FAILED,                       \
         session_probe_outbound_connection_blocking_failed, MSG(""))            \
     f(SESSION_PROBE_PROCESS_BLOCKING_FAILED,                                   \

@@ -859,62 +859,68 @@ void SessionProbeClipboardBasedLauncher::set_session_probe_virtual_channel(Sessi
     this->sesprob_channel = channel;
 }
 
-void SessionProbeClipboardBasedLauncher::stop(bool bLaunchSuccessful, error_type& id_ref)
+SessionProbeLauncher::LauchFailureInfo SessionProbeClipboardBasedLauncher::stop(bool bLaunchSuccessful)
 {
-    id_ref = NO_ERROR;
-
     LOG_IF(bool(this->verbose & RDPVerbose::sesprobe_launcher), LOG_INFO,
         "SessionProbeClipboardBasedLauncher :=> stop");
 
     this->state = State::STOP;
     this->event_ref.garbage();
 
+    LauchFailureInfo result {};
+
     if (!bLaunchSuccessful) {
-        if (!this->drive_redirection_initialized) {
-            LOG(LOG_ERR,
-                "SessionProbeClipboardBasedLauncher :=> "
-                    "File System Virtual Channel is unavailable. "
-                    "Please allow the drive redirection in the Remote Desktop Services settings of the target.");
-            id_ref = ERR_SESSION_PROBE_CBBL_FSVC_UNAVAILABLE;
-        }
-        else if (!this->clipboard_initialized) {
-            LOG(LOG_ERR,
-                "SessionProbeClipboardBasedLauncher :=> "
-                    "Clipboard Virtual Channel is unavailable. "
-                    "Please allow the clipboard redirection in the Remote Desktop Services settings of the target.");
-            id_ref = ERR_SESSION_PROBE_CBBL_CBVC_UNAVAILABLE;
-        }
-        else if (!this->drive_ready) {
-            LOG(LOG_ERR,
-                "SessionProbeClipboardBasedLauncher :=> "
-                    "Drive of Session Probe is not ready yet. "
-                    "Is the target running under Windows Server 2008 R2 or more recent version?");
-            id_ref = ERR_SESSION_PROBE_CBBL_DRIVE_NOT_READY_YET;
-        }
-        else if (!this->image_readed) {
-            LOG(LOG_ERR,
-                "SessionProbeClipboardBasedLauncher :=> "
-                    "Session Probe is not launched. "
-                    "Maybe something blocks it on the target. "
-                    "Please also check the temporary directory to ensure there is enough free space.");
-            id_ref = ERR_SESSION_PROBE_CBBL_MAYBE_SOMETHING_BLOCKS;
-        }
-        else if (!this->copy_paste_loop_counter) {
-            LOG(LOG_ERR,
-                "SessionProbeClipboardBasedLauncher :=> "
-                    "Session Probe launch cycle has been interrupted. "
-                    "The launch timeout duration may be too short.");
-            id_ref = ERR_SESSION_PROBE_CBBL_LAUNCH_CYCLE_INTERRUPTED;
-        }
-        else {
-            LOG(LOG_ERR,
-                "SessionProbeClipboardBasedLauncher :=> "
-                    "Session Probe launch has failed for unknown reason. "
-                    "clipboard_monitor_ready=%s server_format_data_requested=%s",
-                (this->clipboard_monitor_ready ? "yes" : "no"),
-                (this->server_format_data_requested ? "yes" : "no"));
-            id_ref = ERR_SESSION_PROBE_CBBL_UNKNOWN_REASON_REFER_TO_SYSLOG;
-        }
+        // err_msg are translated in sesman
+        result
+            = !this->drive_redirection_initialized ? LauchFailureInfo{
+                ERR_SESSION_PROBE_CBBL_FSVC_UNAVAILABLE,
+                "Session Probe is not launched. "
+                "File System Virtual Channel is unavailable. "
+                "Please allow the drive redirection in the Remote Desktop Services settings of the target."
+                ""_zv
+            }
+            : !this->clipboard_initialized ? LauchFailureInfo {
+                ERR_SESSION_PROBE_CBBL_CBVC_UNAVAILABLE,
+                "Session Probe is not launched. "
+                "Clipboard Virtual Channel is unavailable. "
+                "Please allow the clipboard redirection in the Remote Desktop Services settings of the target."
+                ""_zv
+            }
+            : !this->drive_ready ? LauchFailureInfo{
+                ERR_SESSION_PROBE_CBBL_DRIVE_NOT_READY_YET,
+                "Session Probe is not launched. "
+                "Drive of Session Probe is not ready yet. "
+                "Is the target running under Windows Server 2008 R2 or more recent version?"
+                ""_zv
+            }
+            : !this->image_readed ? LauchFailureInfo{
+                ERR_SESSION_PROBE_CBBL_MAYBE_SOMETHING_BLOCKS,
+                "Session Probe is not launched. "
+                "Maybe something blocks it on the target. "
+                "Please also check the temporary directory to ensure there is enough free space."
+                ""_zv
+            }
+            : !this->copy_paste_loop_counter ? LauchFailureInfo{
+                ERR_SESSION_PROBE_CBBL_LAUNCH_CYCLE_INTERRUPTED,
+                "Session Probe launch cycle has been interrupted. "
+                "The launch timeout duration may be too short."
+                ""_zv
+            }
+            : LauchFailureInfo{
+                ERR_SESSION_PROBE_CBBL_UNKNOWN_REASON_REFER_TO_SYSLOG,
+                this->clipboard_monitor_ready && this->server_format_data_requested
+                ? "Session Probe launch has failed for unknown reason. "
+                  "clipboard_monitor_ready=yes server_format_data_requested=yes"_zv
+                : !this->clipboard_monitor_ready && this->server_format_data_requested
+                ? "Session Probe launch has failed for unknown reason. "
+                  "clipboard_monitor_ready=no server_format_data_requested=yes"_zv
+                : this->clipboard_monitor_ready && !this->server_format_data_requested
+                ? "Session Probe launch has failed for unknown reason. "
+                  "clipboard_monitor_ready=yes server_format_data_requested=no"_zv
+                : "Session Probe launch has failed for unknown reason. "
+                  "clipboard_monitor_ready=no server_format_data_requested=no"_zv
+            };
+        LOG(LOG_ERR, "SessionProbeClipboardBasedLauncher :=> %s", result.err_msg);
     }
 
     this->restore_client_clipboard();
@@ -922,6 +928,8 @@ void SessionProbeClipboardBasedLauncher::stop(bool bLaunchSuccessful, error_type
     if (this->params.reset_keyboard_status) {
         this->rdp.reset_keyboard_status();
     }
+
+    return result;
 }
 
 bool SessionProbeClipboardBasedLauncher::restore_client_clipboard()

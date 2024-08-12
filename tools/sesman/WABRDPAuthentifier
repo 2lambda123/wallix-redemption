@@ -93,7 +93,7 @@ def standalone():
                         # os.waitpid(child_pid, 0)
 
                 # watchdog
-                if sck == sw:
+                elif sck == sw:
                     client_socket.close()
 
     except KeyboardInterrupt:

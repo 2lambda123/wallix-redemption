@@ -3781,14 +3781,6 @@
     },
     {
       "section": "context",
-      "name": "session_probe_launch_error_message",
-      "type": "str",
-      "value": "",
-      "description": "",
-      "ProxyToAcl": true
-    },
-    {
-      "section": "context",
       "name": "close_box_extra_message",
       "type": "str",
       "value": "",

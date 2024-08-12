@@ -369,10 +369,10 @@ private:
             "SessionProbeVirtualChannel::process_event_launch: "
                 "Session Probe is not ready yet!");
 
-        error_type err_id = ERR_SESSION_PROBE_LAUNCH;
+        SessionProbeLauncher::LauchFailureInfo err_info {ERR_SESSION_PROBE_LAUNCH, {}};
 
         if (this->session_probe_stop_launch_sequence_notifier) {
-            this->session_probe_stop_launch_sequence_notifier->stop(false, err_id);
+            err_info = this->session_probe_stop_launch_sequence_notifier->stop(false);
             this->session_probe_stop_launch_sequence_notifier = nullptr;
         }
 
@@ -382,7 +382,8 @@ private:
         this->callbacks.enable_input_event();
 
         if (this->sespro_params.on_launch_failure != SessionProbeOnLaunchFailure::ignore_and_continue) {
-            throw Error(err_id);
+            this->session_log.acl_report(AclReport::session_probe_launch_failed(err_info.err_msg));
+            throw Error(err_info.err_id);
         }
 
         this->rdp.sespro_launch_process_ended();
@@ -564,8 +565,6 @@ public:
                 bool const delay_disabled_launch_mask      = (this->options & OPTION_DELAY_DISABLED_LAUNCH_MASK);
                 bool const delay_disabled_redirected_drive = (this->options & OPTION_DELAY_DISABLED_REDIRECTED_DRIVE);
 
-                error_type err_id = NO_ERROR;
-
                 if (this->session_probe_ready) {
                     LOG(LOG_INFO,
                         "SessionProbeVirtualChannel::process_server_message: "
@@ -578,7 +577,7 @@ public:
                 }
                 else {
                     if (this->session_probe_stop_launch_sequence_notifier) {
-                        this->session_probe_stop_launch_sequence_notifier->stop(true, err_id);
+                        (void)this->session_probe_stop_launch_sequence_notifier->stop(true);
                         this->session_probe_stop_launch_sequence_notifier = nullptr;
                     }
 

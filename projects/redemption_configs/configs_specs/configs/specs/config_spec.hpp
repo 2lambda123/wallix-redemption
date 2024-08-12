@@ -3350,12 +3350,6 @@ _.section("context", [&]
     });
 
     _.member(MemberInfo{
-        .name = "session_probe_launch_error_message",
-        .value = value<std::string>(),
-        .spec = proxy_to_acl(no_reset_back_to_selector),
-    });
-
-    _.member(MemberInfo{
         .name = "close_box_extra_message",
         .value = value<std::string>(),
         .spec = no_acl,

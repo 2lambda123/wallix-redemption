@@ -606,7 +606,6 @@ cfg::context::auth_command_rail_exec_working_dir ⇐ auth_command_rail_exec_work
 cfg::context::auth_command_rail_exec_arguments ⇐ auth_command_rail_exec_arguments   [std::string]
 cfg::context::auth_command_rail_exec_account ⇐ auth_command_rail_exec_account   [std::string]
 cfg::context::auth_command_rail_exec_password ⇐ auth_command_rail_exec_password   [std::string]
-cfg::context::session_probe_launch_error_message ⇒ session_probe_launch_error_message   [std::string]
 cfg::context::is_wabam ⇐ is_wabam   [bool]
 cfg::context::pm_response ⇐ pm_response   [std::string]
 cfg::context::pm_request ⇒ pm_request   [std::string]

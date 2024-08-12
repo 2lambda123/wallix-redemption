@@ -90,7 +90,7 @@ public:
 
     void set_session_probe_virtual_channel(SessionProbeVirtualChannel* channel) override;
 
-    void stop(bool bLaunchSuccessful, error_type& id_ref) override;
+    LauchFailureInfo stop(bool bLaunchSuccessful) override;
 
     [[nodiscard]] bool is_keyboard_sequences_started() const override;
 
