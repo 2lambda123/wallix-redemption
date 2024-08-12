@@ -1389,28 +1389,13 @@ private:
                     KVLog("app_cmd_line"_av, parameters[5]),
                 });
 
-                // operation, server_name, group_name, account_name, app_name, app_cmd_line
-                SNPrintf<4096> message("%.*s|%.*s|%.*s|%.*s|%.*s|%.*s",
-                    int(parameters[0].size()), parameters[0].data(),
-                    int(parameters[1].size()), parameters[1].data(),
-                    int(parameters[2].size()), parameters[2].data(),
-                    int(parameters[3].size()), parameters[3].data(),
-                    int(parameters[4].size()), parameters[4].data(),
-                    int(parameters[5].size()), parameters[5].data()
-                );
-                this->session_log.acl_report(
-                    deny
-                        ? AclReport::account_manipulation_deny(message)
-                        : AclReport::account_manipulation_notify(message)
-                );
-
                 if (deny) {
                     char message[4096];
 
                     int slen = this->tr.fmt(message, sizeof(message),
                         trkeys::account_manipulation_blocked_security_policies,
                         int(parameters[3].size()), parameters[3].data());
-                    std::size_t len = (slen == -1) ? sizeof(message) : std::size_t(slen);
+                    std::size_t len = (slen <= -1) ? sizeof(message) : std::size_t(slen);
 
                     this->callbacks.display_osd_message(std::string_view(message, len));
                 }
