@@ -80,9 +80,9 @@ auto log_value(T const & x) noexcept
 { return detail_::log_value(x, 1); }
 
 #ifdef IN_IDE_PARSER
-# define LOG(priority, format, ...)                 \
-    [&](auto const&... elem){                       \
-        printf("" format, log_value(elem).value()); \
+# define LOG(priority, format, ...)                    \
+    [&](auto const&... elem){                          \
+        printf("" format, log_value(elem).value()...); \
     }(__VA_ARGS__)
 
 #else
