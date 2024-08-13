@@ -2386,7 +2386,7 @@ class Sesman():
             # ignore message (do not emit errors with lua-checker.lua acl_report)
             pass
         elif reason == 'FILESYSTEM_FULL':
-            self.engine.NotifyFilesystemIsFullOrUsedAtXPercent('unknown', 100)
+            self.engine.NotifyFilesystemIsFullOrUsedAtXPercent('unknown', '100')
         elif (reason == 'FINDCONNECTION_DENY'
               or reason == 'FINDCONNECTION_NOTIFY'):
             pattern = message.split('|')
