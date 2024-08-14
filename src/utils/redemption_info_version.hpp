@@ -32,7 +32,7 @@
 
 inline zstring_view redemption_info_copyright() noexcept
 {
-    return "Copyright (C) Wallix 2010-2020"_zv;
+    return "Copyright (C) Wallix 2010-2024"_zv;
 }
 
 inline zstring_view redemption_info_version() noexcept
