@@ -917,19 +917,20 @@ public:
 
     void process_auth_event_single(
         ModRdpVariables vars,
-        std::string const& auth_channel_message,
+        chars_view auth_channel_message,
         FrontAPI& front,
         ServerTransportContext & stc,
         GeneralCaps const & client_general_caps,
         const char (& client_name)[128]
     ) {
-        if (auth_channel_message.empty())
-        {
+        if (auth_channel_message.empty()) {
             return;
         }
 
         LOG_IF(bool(this->verbose & RDPVerbose::basic_trace), LOG_INFO,
-            "mod_rdp::process_auth_event_single: AuthEvent=\"%s\"", auth_channel_message.c_str());
+            "mod_rdp::process_auth_event_single: AuthEvent=\"%.*s\"",
+            static_cast<int>(auth_channel_message.size()),
+            auth_channel_message.data());
         ParseServerMessage parse_server_message_result;
         parse_server_message_result.parse(auth_channel_message);
         auto const upper_order = parse_server_message_result.upper_order();
@@ -1005,8 +1006,12 @@ public:
         }
         else {
             LOG_IF(bool(this->verbose & RDPVerbose::basic_trace), LOG_INFO,
-                "mod_rdp::process_auth_event_single: AuthChannelTarget=\"%s\"", auth_channel_message);
-            vars.set_acl<cfg::context::auth_channel_target>(auth_channel_message);
+                "mod_rdp::process_auth_event_single: AuthChannelTarget=\"%.*s\"",
+                static_cast<int>(auth_channel_message.size()),
+                auth_channel_message.data());
+            vars.set_acl<cfg::context::auth_channel_target>(
+                auth_channel_message.as<std::string_view>()
+            );
         }
     }
 
@@ -1029,15 +1034,17 @@ public:
             return;
         }
 
-        std::string const auth_channel_message(char_ptr_cast(stream.get_current()), stream.in_remain());
+        auto auth_channel_message = stream.in_skip_remaining().as_chars();
         LOG_IF(bool(this->verbose & RDPVerbose::basic_trace), LOG_INFO,
-            "mod_rdp::process_auth_event: AuthChannelMessage=\"%s\"", auth_channel_message);
+            "mod_rdp::process_auth_event: AuthChannelMessage=\"%.*s\"",
+            static_cast<int>(auth_channel_message.size()),
+            auth_channel_message.data());
 
         this->auth_channel_flags  = flags;
         this->auth_channel_chanid = auth_channel.chanid;
 
         for (auto param : split_with(auth_channel_message, '\x02')) {
-            process_auth_event_single(vars, param.as<std::string>(), front, stc, client_general_caps, client_name);
+            process_auth_event_single(vars, param, front, stc, client_general_caps, client_name);
         }
     }
 

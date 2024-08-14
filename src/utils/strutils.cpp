@@ -76,14 +76,14 @@ void str_replace_inplace(std::string& str, chars_view pattern, chars_view replac
 StrReplaceBetweenPattern::StrReplaceBetweenPattern(
     chars_view str, char pattern, chars_view replacement)
 {
-    char const* p1 = memchr(str, pattern);
+    char const* p1 = strchr(str, pattern);
     if (!p1) {
         storage_view = str.data();
         storage_len = str.size();
         return ;
     }
 
-    char const* p2 = memchr(str.after(p1), pattern);
+    char const* p2 = strchr(str.after(p1), pattern);
     if (!p2) {
         storage_view = str.data();
         storage_len = str.size();
@@ -95,8 +95,8 @@ StrReplaceBetweenPattern::StrReplaceBetweenPattern(
     char const* last_p = p2;
     for (;;) {
         storage_len += replacement.size();
-        if (char const* a = memchr(str.after(last_p), pattern)) {
-            if (char const* b = memchr(str.after(a), pattern)) {
+        if (char const* a = strchr(str.after(last_p), pattern)) {
+            if (char const* b = strchr(str.after(a), pattern)) {
                 last_p = b;
                 storage_len -= static_cast<std::size_t>(b - a + 1);
                 continue;
@@ -121,8 +121,8 @@ StrReplaceBetweenPattern::StrReplaceBetweenPattern(
             break;
         }
 
-        p1 = memchr(str, pattern);
-        p2 = memchr(str.after(p1), pattern);
+        p1 = strchr(str, pattern);
+        p2 = strchr(str.after(p1), pattern);
     }
     push(str);
 }

@@ -42,12 +42,12 @@ template<class... Strings>
 void str_assign(std::string& str, Strings const&... strs);
 
 
-inline char const* memchr(chars_view str, char pattern) noexcept
+inline char const* strchr(chars_view str, char pattern) noexcept
 {
     return static_cast<char const*>(std::memchr(str.data(), pattern, str.size()));
 }
 
-inline char* memchr(writable_chars_view str, char pattern) noexcept
+inline char* strchr(writable_chars_view str, char pattern) noexcept
 {
     return static_cast<char*>(std::memchr(str.data(), pattern, str.size()));
 }

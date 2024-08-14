@@ -20,12 +20,13 @@
 
 #pragma once
 
-#include "utils/sugar/zstring_view.hpp"
 #include "utils/sugar/split.hpp"
+#include "utils/strutils.hpp"
 #include "utils/ascii.hpp"
 #include "acl/auth_api.hpp"
 
 #include <type_traits>
+#include <string_view>
 
 
 struct ParseServerMessage
@@ -43,17 +44,15 @@ struct ParseServerMessage
         return array_view(parameters_).first(parameters_size_);
     }
 
-    bool parse(zstring_view msg)
+    bool parse(chars_view msg)
     {
         order_ = {};
         parameters_size_ = {};
 
-        const char * separator = strchr(msg, '=');
+        if (const char * separator = strchr(msg, '=')) {
+            order_ = msg.before(separator);
 
-        if (separator) {
-            order_ = {msg, std::size_t(separator - msg)};
-
-            for (auto param : split_with(separator + 1, '\x01')) {
+            for (auto param : split_with(msg.after(separator), '\x01')) {
                 if (parameters_size_ == max_arity) {
                     return false;
                 }
@@ -62,14 +61,14 @@ struct ParseServerMessage
             }
         }
         else {
-            order_ = msg.to_sv();
+            order_ = msg;
         }
 
         return true;
     }
 
 private:
-    std::string_view order_ {};
+    chars_view order_ {};
     std::size_t parameters_size_ {};
     std::array<std::string_view, max_arity> parameters_;
 };
