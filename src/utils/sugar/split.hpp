@@ -22,7 +22,6 @@
 
 #include "utils/sugar/array_view.hpp"
 #include "utils/sugar/cast.hpp"
-#include "utils/traits/is_null_terminated.hpp"
 
 #include <type_traits>
 #include <cstring>
@@ -93,32 +92,52 @@ namespace detail
         value_type av;
     };
 
-    inline char* strchr_impl(char* s, int c) noexcept
+    inline char* strchr_from_cstr(char* s, int c) noexcept
     {
         return std::strchr(s, c);
     }
 
-    inline char const* strchr_impl(char const* s, int c) noexcept
+    inline char const* strchr_from_cstr(char const* s, int c) noexcept
     {
         return std::strchr(s, c);
     }
 
-    inline unsigned char* strchr_impl(unsigned char* s, int c) noexcept
+    inline unsigned char* strchr_from_cstr(unsigned char* s, int c) noexcept
     {
         return byte_ptr_cast(std::strchr(char_ptr_cast(s), c));
     }
 
-    inline unsigned char const* strchr_impl(unsigned char const* s, int c) noexcept
+    inline unsigned char const* strchr_from_cstr(unsigned char const* s, int c) noexcept
     {
         return byte_ptr_cast(std::strchr(char_ptr_cast(s), c));
+    }
+
+    inline char* strchr_from_view(char* s, std::size_t n, int c) noexcept
+    {
+        return static_cast<char*>(std::memchr(s, c, n));
+    }
+
+    inline char const* strchr_from_view(char const* s, std::size_t n, int c) noexcept
+    {
+        return static_cast<char const*>(std::memchr(s, c, n));
+    }
+
+    inline unsigned char* strchr_from_view(unsigned char* s, std::size_t n, int c) noexcept
+    {
+        return static_cast<unsigned char*>(std::memchr(s, c, n));
+    }
+
+    inline unsigned char const* strchr_from_view(unsigned char const* s, std::size_t n, int c) noexcept
+    {
+        return static_cast<unsigned char const*>(std::memchr(s, c, n));
     }
 
     template<class Data, class AV>
-    struct SplitterCView
+    struct SplitterChView
     {
         using value_type = AV;
 
-        SplitterCView(Data data, int sep) noexcept
+        SplitterChView(Data data, int sep) noexcept
         : data_(data)
         , has_value_(*data.str)
         , sep_(sep)
@@ -131,7 +150,7 @@ namespace detail
             }
 
             data_.str = cur_;
-            cur_ = strchr_impl(cur_, sep_);
+            cur_ = data_.find(sep_);
             if (cur_) {
                 end_av_ = cur_;
                 ++cur_;
@@ -149,15 +168,15 @@ namespace detail
             return AV{data_.str, end_av_};
         }
 
-        split_view_iterator<SplitterCView> begin()
+        split_view_iterator<SplitterChView> begin()
         {
-            return split_view_iterator<SplitterCView>(*this);
+            return split_view_iterator<SplitterChView>(*this);
         }
 
         // should be detail::split_view_end_iterator<SplitterView> end(), but does not work with gcc-8.0
-        split_view_iterator<SplitterCView> end()
+        split_view_iterator<SplitterChView> end()
         {
-            return split_view_iterator<SplitterCView>{detail::split_view_end_iterator()};
+            return split_view_iterator<SplitterChView>{detail::split_view_end_iterator()};
         }
 
     private:
@@ -169,7 +188,7 @@ namespace detail
     };
 
     template<class Ptr>
-    struct SplitterCViewDataStr
+    struct SplitterChViewDataCStr
     {
         using pointer = Ptr;
 
@@ -177,11 +196,17 @@ namespace detail
         {
             return str + strlen(str);
         }
+
+        pointer find(int c)
+        {
+            return strchr_from_cstr(str, c);
+        }
+
         Ptr str;
     };
 
     template<class Ptr>
-    struct SplitterCViewDataView
+    struct SplitterChViewDataView
     {
         using pointer = Ptr;
 
@@ -189,12 +214,18 @@ namespace detail
         {
             return end;
         }
+
+        pointer find(int c)
+        {
+            return strchr_from_view(str, static_cast<std::size_t>(end - str), c);
+        }
+
         Ptr str;
         Ptr end;
     };
 } // namespace detail
 
-template<class AV, class Sep = typename AV::value_type, bool = is_null_terminated_v<AV>>
+template<class AV, class Sep = typename AV::value_type>
 struct SplitterView
 {
     using value_type = AV;
@@ -301,30 +332,32 @@ auto split_with(Chars&& chars, Sep&& sep)
     using Chars2 = std::decay_t<Chars>;
     using Sep2 = std::decay_t<Sep>;
     using IsCharPtr = detail::split_with_chars_ptr<Chars2>;
-    using IsCharSep = detail::split_with_char_sep<Sep2>;
 
-    if constexpr (IsCharPtr::value && IsCharSep::value) {
+    if constexpr (IsCharPtr::value && std::is_integral_v<Sep2>) {
         using CharsView = typename IsCharPtr::view;
-        using Data = detail::SplitterCViewDataStr<Chars2>;
-        return detail::SplitterCView<Data, CharsView>(
+        using Data = detail::SplitterChViewDataCStr<Chars2>;
+        return detail::SplitterChView<Data, CharsView>(
             Data{chars}, detail::normalize_split_with_sep_char(sep)
         );
     }
     else {
-        using CharsView = std::conditional_t<
-            std::is_constructible_v<writable_chars_view, Chars&>,
-            writable_chars_view,
-            chars_view>;
-        if constexpr (IsCharSep::value && is_null_terminated_v<Chars2>) {
-            CharsView av(chars);
-            using Data = detail::SplitterCViewDataView<typename CharsView::pointer>;
-            return detail::SplitterCView<Data, CharsView>(
+        using cv_elem_t = std::remove_pointer_t<decltype(utils::data(std::declval<Chars&&>()))>;
+        using elem_t = std::remove_cv_t<cv_elem_t>;
+        using View = std::conditional_t<
+            std::is_const_v<cv_elem_t>,
+            array_view<elem_t>,
+            writable_array_view<elem_t>
+        >;
+        View av(chars);
+        if constexpr (detail::split_with_chars_ptr<elem_t*>::value && std::is_integral_v<Sep2>) {
+            using Data = detail::SplitterChViewDataView<typename View::pointer>;
+            return detail::SplitterChView<Data, View>(
                 Data{av.data(), av.data() + av.size()},
                 detail::normalize_split_with_sep_char(sep)
             );
         }
         else {
-            return SplitterView<CharsView, Sep2>(CharsView(chars), static_cast<Sep&&>(sep));
+            return SplitterView<View, Sep2>(av, static_cast<Sep&&>(sep));
         }
     }
 }

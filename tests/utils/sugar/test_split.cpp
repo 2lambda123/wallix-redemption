@@ -46,19 +46,19 @@ void test_splitters(Chars& str, chars_view result, char c)
 {
     RED_TEST_CONTEXT(str) {
         test_splitter<
-            detail::SplitterCView<detail::SplitterCViewDataStr<char const*>, chars_view>
+            detail::SplitterChView<detail::SplitterChViewDataCStr<char const*>, chars_view>
         >("char const*", split_with(static_cast<char const*>(str), c), result);
 
         test_splitter<
-            detail::SplitterCView<detail::SplitterCViewDataStr<char*>, writable_chars_view>
+            detail::SplitterChView<detail::SplitterChViewDataCStr<char*>, writable_chars_view>
         >("char*", split_with(str, c), result);
 
         test_splitter<
-            detail::SplitterCView<detail::SplitterCViewDataView<char const*>, chars_view>
+            detail::SplitterChView<detail::SplitterChViewDataView<char const*>, chars_view>
         >("zstring", split_with(zstring_view::from_null_terminated(str), c), result);
 
         test_splitter<
-            SplitterView<chars_view, char>
+            detail::SplitterChView<detail::SplitterChViewDataView<char const*>, chars_view>
         >("string_view", split_with(std::string_view(str), c), result);
 
         struct Char
@@ -128,4 +128,17 @@ RED_AUTO_TEST_CASE(TestSplitter)
         char str[] = "\x02Order=Param1\x01Param2";
         test_splitters(str, "[][Order=Param1\x01Param2]"_av, '\x02');
     }
+
+    test_splitter("partial view", split_with("a:b:c"_av.first(3), ':'), "[a][b]"_av);
+
+    std::string res;
+    int ns[] {1, 2, 0, 3, 0, 4};
+    for (auto r : split_with(ns, 0)) {
+        res += '[';
+        for (auto n : r) {
+            res += static_cast<char>('0' + n);
+        }
+        res += ']';
+    }
+    RED_CHECK_EQUAL(res, "[12][3][4]"_av);
 }
