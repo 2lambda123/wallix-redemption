@@ -66,6 +66,7 @@ struct AclReport {
             REDEMPTION_ACL_REPORT_DEF(REDEMPTION_ACL_REPORT_CASE)
         }
         #undef REDEMPTION_ACL_REPORT_CASE
+        return {};
     }
 
     /// Indicates whether the construction function associated

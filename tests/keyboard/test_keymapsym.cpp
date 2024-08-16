@@ -152,6 +152,10 @@ namespace
     };
 } // anonymous namespace
 
+// ignore uninitialized value in ksyms()
+REDEMPTION_DIAGNOSTIC_PUSH()
+REDEMPTION_DIAGNOSTIC_GCC_IGNORE("-Wuninitialized")
+
 RED_AUTO_TEST_CASE(TestKeymapSymTounicode)
 {
     KeymapSymTest keymap(KeymapSym::IsApple::No, KeymapSym::IsUnix::No);
@@ -278,6 +282,7 @@ RED_AUTO_TEST_CASE(TestKeymapSymMacOS)
     RED_CHECK(keymap.scancode(release | extended, Scancode::LAlt) == ksyms(stUp(0xffea)));
 }
 
+
 RED_AUTO_TEST_CASE(TestKeymapSymResetMods)
 {
     KeymapSymTest keymap(KeymapSym::IsApple::Yes, KeymapSym::IsUnix::No);
@@ -286,3 +291,5 @@ RED_AUTO_TEST_CASE(TestKeymapSymResetMods)
     RED_CHECK(keymap.scancode(down, Scancode::LShift) == ksyms(stDown(0xffe1)));
     RED_CHECK(keymap.reset_mods() == ksyms(stUp(0xffe1)));
 }
+
+REDEMPTION_DIAGNOSTIC_POP()

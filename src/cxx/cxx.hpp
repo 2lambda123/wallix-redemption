@@ -46,6 +46,13 @@
 #endif
 
 
+#ifdef NDEBUG
+# define REDEMPTION_UNUSED_IN_DEBUG [[maybe_unused]]
+#else
+# define REDEMPTION_UNUSED_IN_DEBUG
+#endif
+
+
 #if defined(__clang__)
 #  define REDEMPTION_CXX_ANNOTATION_ATTRIBUTE_GCC_CLANG(x)     __attribute__((x))
 #  define REDEMPTION_CXX_ANNOTATION_ATTRIBUTE_GCC(x)           // no-op

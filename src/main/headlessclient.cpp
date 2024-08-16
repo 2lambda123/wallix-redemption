@@ -48,7 +48,8 @@ SPDX-License-Identifier: GPL-2.0-or-later
 
 static void show_prompt()
 {
-    write(1, ">>> ", 4);
+    auto n = write(1, ">>> ", 4);
+    (void)n;
 }
 
 static void update_times(EventManager& em)

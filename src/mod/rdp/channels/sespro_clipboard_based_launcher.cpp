@@ -773,7 +773,7 @@ void SessionProbeClipboardBasedLauncher::process_server_message(
 }
 
 // Returns false to prevent message to be sent to client.
-bool SessionProbeClipboardBasedLauncher::process_server_cliprdr_message(InStream & chunk, uint32_t length, uint32_t flags) {
+bool SessionProbeClipboardBasedLauncher::process_server_cliprdr_message(InStream & chunk, REDEMPTION_UNUSED_IN_DEBUG uint32_t length, uint32_t flags) {
     if ((flags & (CHANNELS::CHANNEL_FLAG_FIRST | CHANNELS::CHANNEL_FLAG_LAST)) &&
         (chunk.in_remain() >= 8 /* msgType(2) + msgFlags(2) + dataLen(4) */)) {
         assert(chunk.in_remain() == length);

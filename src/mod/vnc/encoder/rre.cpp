@@ -84,7 +84,7 @@ namespace
             Exit
         } state;
 
-        uint32_t number_of_subrectangles_remain;
+        uint32_t number_of_subrectangles_remain = 0;
         // this could be a fest creation of a monochrome bitmap
         // or we could also send a drawing order for background color:
         // easy and fast and use very few memory,
