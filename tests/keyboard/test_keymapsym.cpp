@@ -154,7 +154,8 @@ namespace
 
 // ignore uninitialized value in ksyms()
 REDEMPTION_DIAGNOSTIC_PUSH()
-REDEMPTION_DIAGNOSTIC_GCC_IGNORE("-Wuninitialized")
+REDEMPTION_DIAGNOSTIC_GCC_ONLY_WARNING("-Wuninitialized")
+REDEMPTION_DIAGNOSTIC_GCC_ONLY_WARNING("-Wmaybe-uninitialized")
 
 RED_AUTO_TEST_CASE(TestKeymapSymTounicode)
 {
