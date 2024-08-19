@@ -78,7 +78,7 @@ if [[ "$BUILD_EMSCRIPTEN" != '0' ]]; then
     source ~/emsdk/emsdk_env.sh
     rm_nofast bin
     #version=$(clang++ --version | sed -E 's/^.*clang version ([0-9]+\.[0-9]+).*/\1/;q')
-    echo "using clang : : clang++ -DREDEMPTION_DISABLE_NO_BOOST_PREPROCESSOR_WARNING ;" > project-config.jam
+    echo "using clang : : clang++ ;" > project-config.jam
     if [[ ! -d system_include/boost ]]; then
         mkdir -p system_include
         ln -s /usr/include/boost/ system_include
@@ -109,11 +109,7 @@ show_duration jsclient
 # ln -s /usr/lib/gcc/x86_64-linux-gnu/$libstdcxx_compact_version libstdc++-compact/lib/gcc/x86_64-unknown-linux-gnu
 
 # BJAM Build Test
-echo -e "
-using gcc : : g++ -DREDEMPTION_DISABLE_NO_BOOST_PREPROCESSOR_WARNING ;
-using gcc : 8.0 : g++-8 -DREDEMPTION_DISABLE_NO_BOOST_PREPROCESSOR_WARNING ;
-using clang : : clang++ -DREDEMPTION_DISABLE_NO_BOOST_PREPROCESSOR_WARNING -Wno-reserved-identifier ;
-" > project-config.jam
+echo -e "" > project-config.jam
 valgrind_compiler=gcc-12
 toolset_gcc=toolset=gcc
 toolset_wab=toolset=gcc-12
