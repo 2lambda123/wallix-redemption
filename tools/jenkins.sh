@@ -148,6 +148,14 @@ build()
     }
 }
 
+build_all() {
+    build "$@" -j4 ocr_tools tests/utils tests/transport tests/acl \
+        tests/system tests/gdi tests/keyboard
+    # build "$@" -j1 exe libs tests/capture tests/lib tests/server \
+    #     tests/client_mods tests/mod/rdp.norec tests/mod/vnc.norec
+    build "$@" -j2
+}
+
 rootlist()
 {
     ls -1
@@ -158,18 +166,7 @@ mkdir -p bin
 beforerun=$(rootlist)
 
 # release for -Warray-bounds and not assert
-# build $toolset_wab cxxflags=-g
-# multi-thread
-big_mem='exe libs
-  tests/capture
-  tests/lib
-  tests/server
-  tests/client_mods
-  tests/mod/rdp.norec
-  tests/mod/vnc.norec'
-build $toolset_wab cxxflags=-g -j2 ocr_tools
-build $toolset_wab cxxflags=-g $big_mem
-build $toolset_wab cxxflags=-g -j2
+build_all $toolset_wab cxxflags=-g
 
 show_duration $toolset_wab
 
@@ -198,12 +195,6 @@ done || if (( $fast == 1 )); then
     exit 1
 fi
 set +o pipefail
-
-build_all() {
-    build "$@" -j3 ocr_tools
-    build "$@" $big_mem
-    build "$@" -j2
-}
 
 build_all $toolset_clang -sNO_FFMPEG=1 san -s FAST_CHECK=1
 rm_nofast bin/clang*
