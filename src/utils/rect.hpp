@@ -95,10 +95,9 @@ struct Dimension
 inline auto log_value(Dimension const & dim) noexcept
 {
     struct {
-        char buffer[64];
-        char const * value() { return buffer; }
+        char value[64];
     } d;
-    ::sprintf(d.buffer, "Dimension(%u %u)", dim.w, dim.h);
+    ::sprintf(d.value, "Dimension(%u %u)", dim.w, dim.h);
     return d;
 }
 
@@ -347,10 +346,9 @@ struct Rect
 inline auto log_value(Rect const & rect) noexcept
 {
     struct {
-        char buffer[128];
-        char const * value() { return buffer; }
+        char value[128];
     } d;
-    ::sprintf(d.buffer, "Rect(%d %d %u %u)", rect.x, rect.y, rect.cx, rect.cy);
+    ::sprintf(d.value, "Rect(%d %d %u %u)", rect.x, rect.y, rect.cx, rect.cy);
     return d;
 }
 
@@ -383,10 +381,9 @@ class DeltaRect {
 inline auto log_value(DeltaRect const & delta) noexcept
 {
     struct {
-        char buffer[128];
-        char const * value() { return buffer; }
+        char value[128];
     } d;
-    ::sprintf(d.buffer, "DeltaRect(%d %d %d %d)",
+    ::sprintf(d.value, "DeltaRect(%d %d %d %d)",
         delta.dleft, delta.dtop, delta.dheight, delta.dwidth);
     return d;
 }

@@ -148,8 +148,6 @@ REDEMPTION_OSTREAM(out, BGRColor c)
     return out.write(chars.data(), chars.size());
 }
 
-constexpr uint32_t log_value(BGRColor const & c) noexcept { return c.as_u32(); }
-
 
 struct RDPColor
 {
@@ -176,8 +174,6 @@ constexpr bool operator != (RDPColor const & lhs, RDPColor const & rhs)
 
 REDEMPTION_OSTREAM(out, RDPColor c)
 { return out << c.as_bgr(); }
-
-constexpr uint32_t log_value(RDPColor const & c) noexcept { return c.as_bgr().as_u32(); }
 
 
 struct BGRPalette

@@ -39,9 +39,25 @@ namespace detail_ {
     template<class T>
     struct vlog_wrap
     {
-        T x;
-        [[nodiscard]] T const & value() const noexcept { return x; }
+        T value;
     };
+
+    // has c_str() member
+    template<class T>
+    auto log_value(T const & x, int /*unused*/) noexcept
+    -> typename std::enable_if<
+        std::is_convertible<decltype(x.c_str()), char const *>::value,
+        vlog_wrap<char const *>
+    >::type
+    {
+        return {x.c_str()};
+    }
+
+    template<class T>
+    vlog_wrap<T const &> log_value(T const & x, char /*unused*/) noexcept
+    {
+        return {x};
+    }
 } // namespace detail_
 
 // T* to void* for %p
@@ -52,37 +68,23 @@ inline detail_::vlog_wrap<char const*> log_value(char const* p) noexcept { retur
 inline detail_::vlog_wrap<uint8_t const*> log_value(uint8_t* p) noexcept { return {p}; } // NOLINT
 inline detail_::vlog_wrap<uint8_t const*> log_value(uint8_t const* p) noexcept { return {p}; }
 
-// enum type
-template<class T, typename std::enable_if<std::is_enum<T>::value, bool>::type = 1>
-detail_::vlog_wrap<typename std::underlying_type<T>::type>
-log_value(T const & e) noexcept
-{ return {static_cast<typename std::underlying_type<T>::type>(e)}; }
-
-namespace detail_ {
-    // has c_str() member
-    template<class T>
-    auto log_value(T const & x, int /*unused*/) noexcept
-    -> typename std::enable_if<
-        std::is_convertible<decltype(x.c_str()), char const *>::value,
-        vlog_wrap<char const *>
-    >::type
-    { return {x.c_str()}; }
-
-    template<class T>
-    vlog_wrap<T const &> log_value(T const & x, char /*unused*/) noexcept
-    { return {x}; }
-} // namespace detail_
-
-// not enum type
-template<class T, typename std::enable_if<!std::is_enum<T>::value, bool>::type = 1>
+template<class T>
 auto log_value(T const & x) noexcept
--> decltype(detail_::log_value(x, 1))
-{ return detail_::log_value(x, 1); }
+{
+    if constexpr (std::is_enum<T>::value) {
+        return detail_::vlog_wrap<typename std::underlying_type<T>::type>{
+            static_cast<typename std::underlying_type<T>::type>(x)
+        };
+    }
+    else {
+        return detail_::log_value(x, 1);
+    }
+}
 
 #ifdef IN_IDE_PARSER
-# define LOG(priority, format, ...)                    \
-    [&](auto const&... elem){                          \
-        printf("" format, log_value(elem).value()...); \
+# define LOG(priority, format, ...)                  \
+    [&](auto const&... elem){                        \
+        printf("" format, log_value(elem).value...); \
     }(__VA_ARGS__)
 
 #else
@@ -104,9 +106,9 @@ auto log_value(T const & x) noexcept
 # define LOG(priority, format, ...) [&](auto const&... elem){    \
     using ::log_value;                                           \
     LOG_REDEMPTION_FILENAME(priority)                            \
-    void(sizeof(printf("" format, log_value(elem).value()...))), \
+    void(sizeof(printf("" format, log_value(elem).value...))),   \
     ::detail::LOG_REDEMPTION_INTERNAL(priority, "%s (%d/%d) -- " \
-        format, log_value(elem).value()...);                     \
+        format, log_value(elem).value...);                       \
  }(__VA_ARGS__)
 #endif
 
