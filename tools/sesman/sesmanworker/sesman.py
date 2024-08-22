@@ -2337,6 +2337,11 @@ class Sesman():
                 TR(Sesmsg.SESPROBE_PROCESS_BLOCKING_FAILED)
             })
         elif reason == 'SESSION_PROBE_RUN_STARTUP_APPLICATION_FAILED':
+            self.engine.NotifySecondaryConnectionFailed(
+                self.shared.get(u'login'),
+                self.shared.get(u'ip_client'),
+                self.shared.get(u'target_login'),
+                self._physical_target_host)
             Logger().info(
                 'RDP connection terminated. Reason: Session Probe failed '
                 'to run startup application'
