@@ -97,6 +97,11 @@ static ut::assertion_result test_comp_keysyms(Keysyms const& a, Keysyms const& b
 RED_TEST_DISPATCH_COMPARISON_EQ((), (::Keysyms), (::Keysyms), ::test_comp_keysyms)
 #endif
 
+// ignore uninitialized value in ksyms()
+REDEMPTION_DIAGNOSTIC_PUSH()
+REDEMPTION_DIAGNOSTIC_GCC_ONLY_IGNORE("-Wuninitialized")
+REDEMPTION_DIAGNOSTIC_GCC_ONLY_IGNORE("-Wmaybe-uninitialized")
+
 namespace
 {
     constexpr uint16_t eacute = 0xa9c3 /* é */;
@@ -151,11 +156,6 @@ namespace
         KeymapSym keymapSym;
     };
 } // anonymous namespace
-
-// ignore uninitialized value in ksyms()
-REDEMPTION_DIAGNOSTIC_PUSH()
-REDEMPTION_DIAGNOSTIC_GCC_ONLY_WARNING("-Wuninitialized")
-REDEMPTION_DIAGNOSTIC_GCC_ONLY_WARNING("-Wmaybe-uninitialized")
 
 RED_AUTO_TEST_CASE(TestKeymapSymTounicode)
 {

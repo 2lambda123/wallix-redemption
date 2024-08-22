@@ -28,6 +28,12 @@ extern "C" inline int sigaction(
 #endif
 
 // #define BOOST_TEST_ALTERNATIVE_INIT_API
+#include "cxx/diagnostic.hpp"
+
+REDEMPTION_DIAGNOSTIC_PUSH()
+REDEMPTION_DIAGNOSTIC_GCC_ONLY_IGNORE("-Wnull-dereference")
 
 #include <boost/test/unit_test_monitor.hpp>
 #include <boost/test/included/unit_test.hpp>
+
+REDEMPTION_DIAGNOSTIC_POP()
