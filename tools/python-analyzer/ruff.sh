@@ -6,7 +6,7 @@ errcode=0
 ruff=${RUFF:-ruff}
 
 # sources only (exclude tests)
-"$ruff" --preview --target-version=py311 "$@" \
+"$ruff" check --preview --target-version=py311 "$@" \
     tools/*.py \
     tools/conf_migration_tool/*.py \
     tools/gen_locale/ \
@@ -20,7 +20,7 @@ ruff=${RUFF:-ruff}
 
 # tests only (exclude sources)
 # S104: hardcoded-bind-all-interfaces
-"$ruff" --preview --target-version=py311 --ignore=S104 "$@" \
+"$ruff" check --preview --target-version=py311 --ignore=S104 "$@" \
     tools/conf_migration_tool/tests \
     tools/sesman/tests \
     || errcode=$?
