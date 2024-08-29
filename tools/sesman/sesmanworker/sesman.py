@@ -1250,7 +1250,8 @@ class Sesman():
                     # Logger().info(f"Only one target : service name {self.target_service_name}")
                     _status = True
                 else:  # empty services
-                    _status, _error = False, TR(Sesmsg.NO_REACHABLE_TARGET)
+                    _status, _error = False, 'No reachable target'
+                    self.rdplog.log("TARGET_ERROR", reason=_error)
 
             else:
                 self.send_data({
@@ -1671,8 +1672,6 @@ class Sesman():
                     _status, _error = self.get_service()
                     Logger().info(f"get_service end: {_status}: {_error}")
                     if not _status:
-                        if _status == False and _error:
-                            self.rdplog.log("TARGET_ERROR", reason=_error)
                         # logout or error in selector
                         self.engine.reset_proxy_rights()
                         logtimer.stop(LogSteps.FETCH_RIGHTS)
