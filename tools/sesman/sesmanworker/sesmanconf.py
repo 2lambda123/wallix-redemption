@@ -36,7 +36,7 @@ class Sesmsg:
     INVALID_USER = 'Invalid user, try again'
     NO_ERROR = 'No error'
     TARGET_S_NOT_FOUND = 'Target %s not found in user rights'
-    TARGET_UNREACHABLE = 'Target unreachable'
+    NO_REACHABLE_TARGET = 'No reachable target'
     TOO_MANY_LOGIN_FAILURES = (
         'Too many login failures or selector orders, closing'
     )
@@ -123,7 +123,7 @@ class SesmanConfig:
                 Sesmsg.TARGET_S_NOT_FOUND: (
                     "Cible %s inconnu dans les droits de l'utilisateur"
                 ),
-                Sesmsg.TARGET_UNREACHABLE: "Impossible d'atteindre à cible",
+                Sesmsg.NO_REACHABLE_TARGET: "Pas de cible accessible",
                 Sesmsg.TOO_MANY_LOGIN_FAILURES: (
                     "Trop d'échecs d'authentification, fermeture"
                 ),
@@ -226,7 +226,7 @@ class SesmanConfig:
                 Sesmsg.TARGET_S_NOT_FOUND: (
                     "Target %s not found in user rights"
                 ),
-                Sesmsg.TARGET_UNREACHABLE: "Target unreachable",
+                Sesmsg.NO_REACHABLE_TARGET: "No reachable target",
                 Sesmsg.TOO_MANY_LOGIN_FAILURES: (
                     "Too many login failures or selector orders, closing"
                 ),
