@@ -1402,11 +1402,12 @@ class Sesman():
                                                           target_group,
                                                           self.target_context)
         if not selected_target:
-            _target = f"{target_login}@{target_device}:{target_service} ({target_group})"
+            _sep = ':' if target_group else ''
+            _target = f"{target_login}@{target_device}:{target_service}{_sep}{target_group}"
             _error_log = TR(Sesmsg.TARGET_S_NOT_FOUND) % _target
             _status, _error = False, _error_log
             self.rdplog.log("TARGET_ERROR",
-                            target=target_login,
+                            target=_target,
                             reason="Target not found in user rights")
             Logger().info(_error)
             return None, _status, _error
