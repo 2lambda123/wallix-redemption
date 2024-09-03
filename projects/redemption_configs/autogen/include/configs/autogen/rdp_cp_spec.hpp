@@ -64,13 +64,11 @@ disabled_orders = string(default="27")
 #_display_name=Enable NLA
 enable_nla = boolean(default=True)
 
-# If enabled, NLA authentication will try Kerberos before NTLM.
-# (if "Enable NLA" option is disabled, this value is ignored).
+# When "Enable NLA" is selected, this option instructs the Bastion to use Kerberos as its initial method.
 #_display_name=Enable Kerberos
 enable_kerberos = boolean(default=True)
 
-# Allow NTLM fallback if Kerberos authentication fail.
-# (if "Enable Kerberos" option is disabled, this value is ignored).
+# When both "Enable NLA" and "Enable Kerberos" are selected, this option instructs the Bastion to use Kerberos first and, if necessary, NTLM as a backup.
 #_display_name=Allow NLA NTLM fallback
 allow_nla_ntlm_fallback = boolean(default=False)
 

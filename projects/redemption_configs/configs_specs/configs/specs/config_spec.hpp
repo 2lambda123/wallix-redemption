@@ -909,16 +909,19 @@ _.section(names{.all="mod_rdp", .connpolicy="rdp"}, [&]
         .value = value(true, rdp_sogisces_1_3_2030_policy_value(true)),
         .spec = connpolicy(rdp, loggable),
         .desc =
-            "If enabled, NLA authentication will try Kerberos before NTLM.\n"
-            "(if :REF:[mod_rdp]:enable_nla is disabled, this value is ignored)."
+            "When :REF:NOSUFFIX:[mod_rdp]:enable_nla is selected, this option"
+            " instructs the Bastion to use Kerberos as its initial method."
     });
 
     _.member(MemberInfo{
         .name = "allow_nla_ntlm_fallback",
         .value = value<bool>(false, rdp_sogisces_1_3_2030_policy_value(false)),
         .spec = connpolicy(rdp, loggable),
-        .desc = "Allow NTLM fallback if Kerberos authentication fail.\n"
-        "(if :REF:[mod_rdp]:enable_kerberos is disabled, this value is ignored).",
+        .desc =
+            "When both :REF:NOSUFFIX:[mod_rdp]:enable_nla and"
+            " :REF:NOSUFFIX:[mod_rdp]:enable_kerberos are selected,"
+            " this option instructs the Bastion to use Kerberos first"
+            " and, if necessary, NTLM as a backup.",
     });
 
     _.member(MemberInfo{

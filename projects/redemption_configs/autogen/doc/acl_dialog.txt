@@ -62,11 +62,9 @@ cfg::mod_rdp::disabled_orders ⇐ mod_rdp:disabled_orders   [std::string]
 cfg::mod_rdp::enable_nla ⇐ mod_rdp:enable_nla   [bool]
     Enable NLA authentication in secondary target.
 cfg::mod_rdp::enable_kerberos ⇐ mod_rdp:enable_kerberos   [bool]
-    If enabled, NLA authentication will try Kerberos before NTLM.
-    (if [mod_rdp]enable_nla is disabled, this value is ignored).
+    When [mod_rdp]enable_nla is selected, this option instructs the Bastion to use Kerberos as its initial method.
 cfg::mod_rdp::allow_nla_ntlm_fallback ⇐ mod_rdp:allow_nla_ntlm_fallback   [bool]
-    Allow NTLM fallback if Kerberos authentication fail.
-    (if [mod_rdp]enable_kerberos is disabled, this value is ignored).
+    When both [mod_rdp]enable_nla and [mod_rdp]enable_kerberos are selected, this option instructs the Bastion to use Kerberos first and, if necessary, NTLM as a backup.
 cfg::mod_rdp::allow_tls_only_fallback ⇐ mod_rdp:allow_tls_only_fallback   [bool]
     Allow TLS only fallback if NLA authentication fail.
     (if [mod_rdp]enable_nla is disabled, this value is ignored).

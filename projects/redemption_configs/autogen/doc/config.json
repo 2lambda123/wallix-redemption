@@ -772,7 +772,7 @@
       "name": "enable_kerberos",
       "type": "bool",
       "value": true,
-      "description": "If enabled, NLA authentication will try Kerberos before NTLM.\n(if <code>\"Enable NLA\" option</code> is disabled, this value is ignored).",
+      "description": "When <code>\"Enable NLA\"</code> is selected, this option instructs the Bastion to use Kerberos as its initial method.",
       "connpolicyValues": {
         "rdp-sogisces_1.3_2030": true
       },
@@ -787,7 +787,7 @@
       "name": "allow_nla_ntlm_fallback",
       "type": "bool",
       "value": false,
-      "description": "Allow NTLM fallback if Kerberos authentication fail.\n(if <code>\"Enable Kerberos\" option</code> is disabled, this value is ignored).",
+      "description": "When both <code>\"Enable NLA\"</code> and <code>\"Enable Kerberos\"</code> are selected, this option instructs the Bastion to use Kerberos first and, if necessary, NTLM as a backup.",
       "connpolicyValues": {
         "rdp-sogisces_1.3_2030": false
       },

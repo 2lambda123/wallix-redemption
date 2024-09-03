@@ -905,8 +905,7 @@ namespace cfg
         using mapped_type = bool;
         type value { true };
     };
-    /// If enabled, NLA authentication will try Kerberos before NTLM. <br/>
-    /// (if [mod_rdp]enable_nla is disabled, this value is ignored). <br/>
+    /// When [mod_rdp]enable_nla is selected, this option instructs the Bastion to use Kerberos as its initial method. <br/>
     /// type: bool <br/>
     /// connpolicy -> proxy <br/>
     /// aclName: mod_rdp:enable_kerberos <br/>
@@ -921,8 +920,7 @@ namespace cfg
         using mapped_type = bool;
         type value { true };
     };
-    /// Allow NTLM fallback if Kerberos authentication fail. <br/>
-    /// (if [mod_rdp]enable_kerberos is disabled, this value is ignored). <br/>
+    /// When both [mod_rdp]enable_nla and [mod_rdp]enable_kerberos are selected, this option instructs the Bastion to use Kerberos first and, if necessary, NTLM as a backup. <br/>
     /// type: bool <br/>
     /// connpolicy -> proxy <br/>
     /// aclName: mod_rdp:allow_nla_ntlm_fallback <br/>

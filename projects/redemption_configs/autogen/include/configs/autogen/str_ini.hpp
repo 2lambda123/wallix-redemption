@@ -381,15 +381,13 @@ R"gen_config_ini(## Config file for RDP proxy.
 # (acl config: proxy ⇐ mod_rdp:enable_nla)
 #enable_nla = 1
 
-# If enabled, NLA authentication will try Kerberos before NTLM.
-# (if [mod_rdp]enable_nla is disabled, this value is ignored).
+# When [mod_rdp]enable_nla is selected, this option instructs the Bastion to use Kerberos as its initial method.
 # (type: boolean (0/no/false or 1/yes/true))
 #_display_name=Enable Kerberos
 # (acl config: proxy ⇐ mod_rdp:enable_kerberos)
 #enable_kerberos = 1
 
-# Allow NTLM fallback if Kerberos authentication fail.
-# (if [mod_rdp]enable_kerberos is disabled, this value is ignored).
+# When both [mod_rdp]enable_nla and [mod_rdp]enable_kerberos are selected, this option instructs the Bastion to use Kerberos first and, if necessary, NTLM as a backup.
 # (type: boolean (0/no/false or 1/yes/true))
 #_display_name=Allow NLA NTLM fallback
 # (acl config: proxy ⇐ mod_rdp:allow_nla_ntlm_fallback)
