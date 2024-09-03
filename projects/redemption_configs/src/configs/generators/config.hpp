@@ -2259,13 +2259,18 @@ public:
                 : mem.connpolicy_section;
         };
 
-        auto ini_desc_replacer = [&](std::string& s, Section const& section, MemberInfo const& mem){
+        auto ini_desc_replacer = [&](
+            std::string& s, Section const& section, MemberInfo const& mem, bool no_suffix
+        ){
+            (void)no_suffix;
             str_append(s, '[', section.names.ini_name(), ']', mem.name.ini_name());
         };
 
         auto ini_mem_desc = desc_ref_replacer.replace_refs(has_ini || has_acl, ini_desc_replacer);
 
-        auto spec_desc_replacer = [&](std::string& s, Section const& section, MemberInfo const& mem){
+        auto spec_desc_replacer = [&](
+            std::string& s, Section const& section, MemberInfo const& mem, bool no_suffix
+        ){
             if (!mem.name.display.empty()) {
                 str_append(s, '"', mem.name.display, '"');
             }
@@ -2283,7 +2288,9 @@ public:
                 }
                 s.push_back('"');
             }
-            s += " option"sv;
+            if (!no_suffix) {
+                s += " option"sv;
+            }
 
             const bool refer_to_same_spec =
                 (mem.spec.has_connpolicy() == mem_info.spec.has_connpolicy());
@@ -2426,13 +2433,13 @@ public:
                 "\n      \"description\": \""sv
             );
             json_quoted(json_values, desc_ref_replacer.replace_refs(
-                true, [&](std::string& s, Section const& section, MemberInfo const& mem){
+                true, [&](std::string& s, Section const& section, MemberInfo const& mem, bool no_suffix){
                     s += "<code>"sv;
                     if (has_global_spec || has_connpolicy) {
-                        spec_desc_replacer(s, section, mem);
+                        spec_desc_replacer(s, section, mem, no_suffix);
                     }
                     else {
-                        ini_desc_replacer(s, section, mem);
+                        ini_desc_replacer(s, section, mem, no_suffix);
                     }
                     s += "</code>"sv;
                 }
@@ -2752,6 +2759,7 @@ private:
         //  :REF:SELF:
         static constexpr std::string_view sref = ":REF:"sv;
         static constexpr std::string_view self_param = "SELF:"sv;
+        static constexpr std::string_view no_option_suffix = "NOSUFFIX:"sv;
 
         struct String
         {
@@ -2823,7 +2831,7 @@ private:
             for (auto const& rep : replacements) {
                 buf.insert(buf.end(), desc.data() + pos, desc.data() + rep.pattern_start);
                 rep_buffer.clear();
-                fn(rep_buffer, *rep.section, *rep.member);
+                fn(rep_buffer, *rep.section, *rep.member, rep.no_suffix);
                 buf.insert(buf.end(), rep_buffer.begin(), rep_buffer.end());
                 pos = rep.pattern_start + rep.pattern_len;
             }
@@ -2839,6 +2847,7 @@ private:
             MemberInfo const* member;
             std::size_t pattern_start;
             std::size_t pattern_len;
+            bool no_suffix;
         };
 
         std::vector<ReplacementInfo> replacements;
@@ -2849,9 +2858,16 @@ private:
         std::size_t add_replacement(std::string_view str, std::string_view::size_type pos, Section const& section_info, MemberInfo const& mem_info, ConfigInfo const& conf)
         {
             str = str.substr(pos + sref.size());
+
+            const bool no_suffix_option = utils::starts_with(str, no_option_suffix);
+            const std::size_t option_len = no_suffix_option ? no_option_suffix.size() : 0;
+
+            str = str.substr(option_len);
+
             if (str.empty()) {
                 return 0;
             }
+
 
             Section const* section_ref = &section_info;
 
@@ -2875,8 +2891,14 @@ private:
                 if (!utils::starts_with(str, self_param)) {
                     return 0;
                 }
-                auto patt_len = sref.size() + self_param.size();
-                replacements.push_back(ReplacementInfo{&section_info, &mem_info, pos, patt_len});
+                auto patt_len = sref.size() + self_param.size() + option_len;
+                replacements.push_back(ReplacementInfo{
+                    .section = &section_info,
+                    .member = &mem_info,
+                    .pattern_start = pos,
+                    .pattern_len = patt_len,
+                    .no_suffix = true,
+                });
                 return patt_len;
             }
 
@@ -2899,8 +2921,14 @@ private:
                 return 0;
             }
 
-            auto patt_len = end_mem_pos + sref.size();
-            replacements.push_back(ReplacementInfo{section_ref, member_ref, pos, patt_len});
+            auto patt_len = end_mem_pos + sref.size() + option_len;
+            replacements.push_back(ReplacementInfo{
+                .section = section_ref,
+                .member = member_ref,
+                .pattern_start = pos,
+                .pattern_len = patt_len,
+                .no_suffix = no_suffix_option,
+            });
             return patt_len;
         }
     };
