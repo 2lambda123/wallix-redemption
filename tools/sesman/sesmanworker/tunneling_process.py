@@ -14,6 +14,8 @@ from time import (
     monotonic as get_time,
     sleep,
 )
+from security import safe_command
+
 try:
     import Cryptodome
 except ImportError:
@@ -118,7 +120,7 @@ def set_non_blocking_fd(fd) -> None:
 
 def popen_command(command: str, env: Dict[str, str]) -> Popen:
     args = shlex.split(command)
-    process = Popen(args, stdin=PIPE, stdout=PIPE, stderr=PIPE,
+    process = safe_command.run(Popen, args, stdin=PIPE, stdout=PIPE, stderr=PIPE,
                     universal_newlines=True, bufsize=1, env=env)
     set_non_blocking_fd(process.stdout)
     set_non_blocking_fd(process.stderr)
